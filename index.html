@@ -281,7 +281,7 @@ tr.pending{background:rgba(255,193,7,.08)}
 .pill.neutral{background:rgba(255,193,7,.18);color:var(--amber)}
 
 /* modal */
-.modalBackdrop{
+.modalBackdrop_unused{
   display:none;
   position:fixed;
   inset:0;
@@ -290,7 +290,7 @@ tr.pending{background:rgba(255,193,7,.08)}
   backdrop-filter:blur(8px);
 }
 .modal{
-  display:block;
+  display:none;
   position:fixed;
   top:50%;left:50%;
   transform:translate(-50%,-50%);
@@ -316,6 +316,72 @@ tr.pending{background:rgba(255,193,7,.08)}
   .panel{padding:18px 14px}
   table{font-size:10px}
   th,td{padding:11px 7px}
+}
+
+
+/* ===== Legacy-style inline panels (no popups) ===== */
+.inlinePanel{
+  margin: 14px 0 28px;
+  background: linear-gradient(135deg, rgba(0,212,255,0.05), rgba(0,212,255,0.02));
+  border: 1px solid rgba(0,212,255,0.18);
+  border-radius: 12px;
+  padding: 18px 16px;
+}
+.inlinePanelHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+}
+.inlinePanelTitle{
+  color: rgb(0,212,255);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+.smallBtn{
+  padding: 8px 10px;
+  font-size: 11px;
+  width: auto;
+  margin-top: 0;
+  border-radius: 8px;
+  background: rgba(122,143,166,0.25);
+  color: rgb(224,224,224);
+}
+.smallBtn:hover{ transform:none; box-shadow:none; background: rgba(122,143,166,0.4); }
+.smallHint{
+  color: rgb(122,143,166);
+  font-size: 11px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+.tableWrap{ overflow-x:auto; }
+.checkGrid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 10px 14px;
+}
+@media (min-width:600px){ .checkGrid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
+.chk{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,212,255,0.12);
+  background: rgba(0,0,0,0.18);
+}
+.chk:hover{ border-color: rgba(0,212,255,0.28); background: rgba(0,0,0,0.25); }
+.chk input{ width:22px; height:22px; accent-color: rgb(0,212,255); }
+.chk span{
+  font-size: 12px;
+  font-weight: 700;
+  color: rgb(255,255,255);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  line-height: 1.35;
 }
 
 </style>
@@ -441,6 +507,43 @@ tr.pending{background:rgba(255,193,7,.08)}
         </table>
       </div>
     </section>
+  <!-- INLINE PANELS (legacy-style) -->
+  <section id="filtersPanel" class="inlinePanel" style="display:none;">
+    <div class="inlinePanelHeader">
+      <div class="inlinePanelTitle">Leagues / Competitions</div>
+      <button type="button" class="smallBtn" id="btnHideFiltersPanel">Close</button>
+    </div>
+    <div class="smallHint">Select the competitions you want included. (This used to be the old table.)</div>
+    <div id="leagueList" class="checkGrid"></div>
+    <div class="buttonRow" style="margin-top:12px;">
+      <button type="button" id="btnSelectAllLeagues">Select all</button>
+      <button type="button" class="danger" id="btnClearAllLeagues">Clear</button>
+    </div>
+  </section>
+
+  <section id="oddsPanel" class="inlinePanel" style="display:none;">
+    <div class="inlinePanelHeader">
+      <div class="inlinePanelTitle">Odds Buckets</div>
+      <button type="button" class="smallBtn" id="btnHideOddsPanel">Close</button>
+    </div>
+    <div class="smallHint">Overview by odds range (auto-updates from your current filters).</div>
+    <div class="tableWrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Bucket</th>
+            <th>Bets</th>
+            <th>Wins</th>
+            <th>Losses</th>
+            <th>Pending</th>
+            <th>ROI</th>
+          </tr>
+        </thead>
+        <tbody id="oddsBucketsTbody"></tbody>
+      </table>
+    </div>
+  </section>
+
 
     <!-- CALCULATOR -->
     <section id="screenCalc" class="panel" style="margin-top:12px; display:none;">
@@ -514,167 +617,13 @@ tr.pending{background:rgba(255,193,7,.08)}
   </div>
 
   <!-- FILTERS MODAL -->
-  <div class="modalBackdrop" id="modalFiltersBackdrop">
-    <div class="modal">
-      <div class="modalHeader">
-        <div class="h">Filters</div>
-        <button class="btn" id="btnCloseFilters">Close</button>
-      </div>
+  
 
-      <div class="sectionTitle" style="margin-top:0;">Leagues</div>
-      <div class="checkGrid" id="leagueChecks"></div>
-      <div class="note" style="margin-top:8px;">
-        <b>All Leagues</b> selects everything. <b>Other</b> = any league not in the predefined list (custom leagues, cups, etc).
-      </div>
 
-      <div class="sep"></div>
 
-      <div class="miniGrid">
-        <div class="field">
-          <label>Date From</label>
-          <input id="fDateFrom" type="date" />
-        </div>
-        <div class="field">
-          <label>Date To</label>
-          <input id="fDateTo" type="date" />
-        </div>
-      </div>
 
-      <div class="sep"></div>
 
-      <div class="miniGrid">
-        <div class="field">
-          <label>Edge From % (optional)</label>
-          <input id="fEdgeFrom" inputmode="decimal" placeholder="e.g. 2.0" />
-        </div>
-        <div class="field">
-          <label>Edge To % (optional)</label>
-          <input id="fEdgeTo" inputmode="decimal" placeholder="e.g. 8.0" />
-        </div>
-      </div>
-
-      <div class="sep"></div>
-
-      <div class="miniGrid">
-        <div class="field">
-          <label>Odds From (optional)</label>
-          <input id="fOddsFrom" inputmode="decimal" placeholder="e.g. 1.50" />
-        </div>
-        <div class="field">
-          <label>Odds To (optional)</label>
-          <input id="fOddsTo" inputmode="decimal" placeholder="e.g. 3.00" />
-        </div>
-      </div>
-
-      <div class="sep"></div>
-
-      <div class="row tight">
-        <button class="btn good" id="btnApplyFilters">✅ Apply</button>
-        <button class="btn" id="btnResetFilters">↺ Reset Filters</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ODDS BUCKETS MODAL -->
-  <div class="modalBackdrop" id="modalOddsBackdrop">
-    <div class="modal">
-      <div class="modalHeader">
-        <div class="h">Odds Buckets Statistics</div>
-        <button class="btn" id="btnCloseOdds">Close</button>
-      </div>
-
-      <div class="note">
-        Uses your current Filters + Bet Type. Shows performance by odds ranges.
-      </div>
-
-      <div class="sep"></div>
-      <div class="tableWrap" style="overflow:auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>Odds Range</th>
-              <th>Bets</th>
-              <th>Wins</th>
-              <th>Losses</th>
-              <th>Pending</th>
-              <th>Wagered</th>
-              <th>P/L</th>
-              <th>ROI %</th>
-              <th>Avg Edge %</th>
-            </tr>
-          </thead>
-          <tbody id="oddsBucketsTbody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ADD BET FROM CALC MODAL -->
-  <div class="modalBackdrop" id="modalAddFromCalcBackdrop">
-    <div class="modal" style="max-width:720px;">
-      <div class="modalHeader">
-        <div class="h">✅ Add Bet from Calculation</div>
-        <button class="btn" id="btnCloseAddFromCalc">Close</button>
-      </div>
-
-      <div class="formGrid" style="grid-template-columns: repeat(6, minmax(0,1fr));">
-        <div class="field" style="grid-column: span 3;">
-          <label>Date</label>
-          <input id="afcDate" type="date" />
-        </div>
-        <div class="field" style="grid-column: span 3;">
-          <label>League (select or type custom)</label>
-          <input id="afcLeague" list="leagueList" placeholder="Premier League / Greek Basketball Cup..." autocomplete="off" />
-        </div>
-
-        <div class="field" style="grid-column: span 6;">
-          <label>Outcome</label>
-          <input id="afcOutcome" disabled />
-        </div>
-
-        <div class="field" style="grid-column: span 3;">
-          <label>Your Odds</label>
-          <input id="afcOdds" disabled />
-        </div>
-        <div class="field" style="grid-column: span 3;">
-          <label>Edge %</label>
-          <input id="afcEdge" disabled />
-        </div>
-
-        <div class="field" style="grid-column: span 3;">
-          <label>Units</label>
-          <input id="afcUnits" inputmode="decimal" placeholder="10" />
-        </div>
-        <div class="field" style="grid-column: span 3;">
-          <label>Result</label>
-          <select id="afcResult">
-            <option value="PENDING">Pending</option>
-            <option value="WIN">Win</option>
-            <option value="LOSS">Loss</option>
-          </select>
-        </div>
-
-        <div class="field" style="grid-column: span 6;">
-          <label>Live bet</label>
-          <select id="afcLive">
-            <option value="0">No</option>
-            <option value="1">Yes</option>
-          </select>
-        </div>
-
-        <div class="field" style="grid-column: span 3;">
-          <label>&nbsp;</label>
-          <button class="btn" id="afcCancel">ΑΚΥΡΟ</button>
-        </div>
-        <div class="field" style="grid-column: span 3;">
-          <label>&nbsp;</label>
-          <button class="btn good" id="afcAdd">ADD BET</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
+<script>
     const STORAGE_KEY = "ba_proportional_v3_bets";
     const STORAGE_LEAGUES_KEY = "ba_proportional_v3_leagues_custom";
     const STORAGE_CALC_HISTORY = "ba_proportional_v3_calc_history";
@@ -1576,7 +1525,29 @@ tr.pending{background:rgba(255,193,7,.08)}
         $(id).addEventListener("click", (e)=>{
           if(e.target === $(id)){ $(id).style.display = "none"; }
         });
-      });
+      
+  // Inline panel buttons
+  const hideFilters = document.getElementById("btnHideFiltersPanel");
+  if(hideFilters){ hideFilters.addEventListener("click", ()=>{ document.getElementById("filtersPanel").style.display="none"; }); }
+  const hideOdds = document.getElementById("btnHideOddsPanel");
+  if(hideOdds){ hideOdds.addEventListener("click", ()=>{ document.getElementById("oddsPanel").style.display="none"; }); }
+
+  const btnAll = document.getElementById("btnSelectAllLeagues");
+  if(btnAll){
+    btnAll.addEventListener("click", ()=>{
+      document.querySelectorAll('#leagueList input[type="checkbox"]').forEach(cb=>{ cb.checked=true; });
+      if(typeof applyFilters === "function"){ applyFilters(); }
+    });
+  }
+  const btnNone = document.getElementById("btnClearAllLeagues");
+  if(btnNone){
+    btnNone.addEventListener("click", ()=>{
+      document.querySelectorAll('#leagueList input[type="checkbox"]').forEach(cb=>{ cb.checked=false; });
+      if(typeof applyFilters === "function"){ applyFilters(); }
+    });
+  }
+
+});
 
       renderAll();
       renderCalcHistory();
