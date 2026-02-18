@@ -1483,10 +1483,10 @@ tr.pending{background:rgba(255,193,7,.08)}
       $("betType").value = "all";
       setMarketUI();
 
-      $("tabTracker").addEventListener("click", ()=>switchTab("tracker"));
-      $("tabCalc").addEventListener("click", ()=>{ switchTab("calc"); renderCalcHistory(); });
+      on("tabTracker", "click", ()=>switchTab("tracker"));
+      on("tabCalc", "click", ()=>{ switchTab("calc"); renderCalcHistory(); });
 
-      $("btnAddBet").addEventListener("click", addBetFromTracker);
+      on("btnAddBet", "click", addBetFromTracker);
 
       const order = ["inOdds","inUnits","inEdge"];
       order.forEach((id, idx)=>{
@@ -1499,41 +1499,41 @@ tr.pending{background:rgba(255,193,7,.08)}
         });
       });
 
-      $("btnFilters").addEventListener("click", openFilters);
-      $("btnCloseFilters").addEventListener("click", closeFilters);
-      $("btnApplyFilters").addEventListener("click", applyFilters);
-      $("btnResetFilters").addEventListener("click", resetFilters);
+      on("btnFilters", "click", openFilters);
+      on("btnCloseFilters", "click", closeFilters);
+      on("btnApplyFilters", "click", applyFilters);
+      on("btnResetFilters", "click", resetFilters);
 
-      $("btnOddsStats").addEventListener("click", openOddsBuckets);
-      $("btnCloseOdds").addEventListener("click", closeOddsBuckets);
+      on("btnOddsStats", "click", openOddsBuckets);
+      on("btnCloseOdds", "click", closeOddsBuckets);
 
-      $("betType").addEventListener("change", renderAll);
+      on("betType", "change", renderAll);
 
-      $("btnDangerZone").addEventListener("click", dangerReset);
+      on("btnDangerZone", "click", dangerReset);
 
-      $("btnExport").addEventListener("click", exportCSV);
-      $("btnImport").addEventListener("click", ()=>$("fileImport").click());
-      $("fileImport").addEventListener("change", ()=>{
+      on("btnExport", "click", exportCSV);
+      on("btnImport", "click", ()=>$("fileImport").click());
+      on("fileImport", "change", ()=>{
         const f = $("fileImport").files && $("fileImport").files[0];
         if(!f) return;
         importCSVFile(f);
         $("fileImport").value = "";
       });
 
-      $("marketType").addEventListener("change", setMarketUI);
-      $("btnCalc").addEventListener("click", calcNow);
-      $("btnReloadCalc").addEventListener("click", clearCalcInputs);
+      on("marketType", "change", setMarketUI);
+      on("btnCalc", "click", calcNow);
+      on("btnReloadCalc", "click", clearCalcInputs);
 
-      $("btnClearHistory").addEventListener("click", ()=>{
+      on("btnClearHistory", "click", ()=>{
         const ok = confirm("Clear calculation history?");
         if(!ok) return;
         localStorage.removeItem(STORAGE_CALC_HISTORY);
         renderCalcHistory();
       });
 
-      $("btnCloseAddFromCalc").addEventListener("click", closeAddFromCalc);
-      $("afcCancel").addEventListener("click", closeAddFromCalc);
-      $("afcAdd").addEventListener("click", addBetFromCalcConfirm);
+      on("btnCloseAddFromCalc", "click", closeAddFromCalc);
+      on("afcCancel", "click", closeAddFromCalc);
+      on("afcAdd", "click", addBetFromCalcConfirm);
 
       ["modalFiltersBackdrop","modalOddsBackdrop","modalAddFromCalcBackdrop"].forEach(id=>{
         $(id).addEventListener("click", (e)=>{
