@@ -1327,6 +1327,9 @@ tr.pending{background:rgba(255,193,7,.08)}
                 <div class="k">Fair (Prop):</div><div class="v mono">${fmt2(it.fair)}</div>
                 <div class="k">EV% (Prop):</div><div class="v mono" style="color:${it.ev>=0?'var(--green)':'var(--red)'};">${it.ev>=0?"+":""}${fmtPct(it.ev)}</div>
               </div>
+              <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn good" style="padding:8px 10px; font-size:11px;" data-addhist="${r.id}|${it.key}">ADD BET</button>
+              </div>
             </div>
           `).join("")}
           <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
@@ -1377,6 +1380,17 @@ tr.pending{background:rgba(255,193,7,.08)}
           const h = loadCalcHistory().filter(x=>x.id!==id);
           saveCalcHistory(h);
           renderCalcHistory();
+        });
+      });
+
+      host.querySelectorAll("[data-addhist]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const v = btn.getAttribute("data-addhist") || "";
+          const [id,key] = v.split("|");
+          const h = loadCalcHistory().find(x=>x.id===id);
+          if(!h) return;
+          // open add-bet flow using stored calc result
+          openAddFromCalc(h.result, key);
         });
       });
     }
