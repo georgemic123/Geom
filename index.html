@@ -2417,260 +2417,162 @@ const names = marketType === '3way' ? [
     });
   }
 
-  // history actions: add bet / remove
-  let pendingRemoveHistoryId = null;
-  let pendingAddFromHistory = null; // {historyId, outcomeKey}
-
-  const removeHistoryModalId = 'removeHistoryModal';
-  const clearHistoryModalId = 'clearHistoryModal';
-  const addFromHistoryModalId = 'addFromHistoryModal';
-
-  wireModalCancel(removeHistoryModalId);
-  wireModalCancel(clearHistoryModalId);
-  wireModalCancel(addFromHistoryModalId);
-
-  const historyList = el('historyList');
-  if(historyList){
-    historyList.addEventListener('click', (e)=>{
-      const btn = e.target.closest('button');
-      const card = e.target.closest('.history-card');
-      if(!btn || !card) return;
-      const id = card.dataset.id;
-      const action = btn.dataset.action;
-      if(!id || !action) return;
-
-      if(action === 'remove'){
-        pendingRemoveHistoryId = id;
-        showModal(removeHistoryModalId);
-      }
-      if(action === 'reload'){
-        const item = history.find(h=>h.id===id);
-        if(!item) return;
-        // Switch to calculator tab and load the odds back into inputs
-        if(btnCalc){
-          activateTab('calculatorTab', btnCalc);
-        }
-        // Set market type
-        const mtSel = el('marketType');
-        if(mtSel){
-          mtSel.value = item.marketType || '2way';
-        }
-        if(typeof applyMarketVisibility === 'function'){ applyMarketVisibility(); }
-        // Map outcomes -> inputs
-        const home = item.outcomes.find(o=>o.key==='home');
-        const away = item.outcomes.find(o=>o.key==='away');
-        const draw = item.outcomes.find(o=>o.key==='draw');
-
-        if(home){
-          const ph = el('pinnHome'); if(ph) ph.value = String(home.pinn ?? '');
-          const yh = el('yourHome'); if(yh) yh.value = String(home.your ?? '');
-        }
-        if(away){
-          const pa = el('pinnAway'); if(pa) pa.value = String(away.pinn ?? '');
-          const ya = el('yourAway'); if(ya) ya.value = String(away.your ?? '');
-        }
-        if(draw){
-          const pd = el('pinnDraw'); if(pd) pd.value = String(draw.pinn ?? '');
-          const yd = el('yourDraw'); if(yd) yd.value = String(draw.your ?? '');
-        }else{
-          const pd = el('pinnDraw'); if(pd) pd.value = '';
-          const yd = el('yourDraw'); if(yd) yd.value = '';
-        }
-
-        // Optional: scroll to top of calculator panel for fast edits
-        const calcPanel = document.getElementById('calculatorTab');
-        if(calcPanel && calcPanel.scrollIntoView){
-          calcPanel.scrollIntoView({behavior:'smooth', block:'start'});
-        }
-        return;
-      }
-
-      if(action === 'addBet'){
-        // pick best outcome by default
-        const item = history.find(h=>h.id===id);
-        if(!item) return;
-        const best = item.outcomes.reduce((a,b)=> (b.edgeProp > a.edgeProp ? b : a), item.outcomes[0]);
-        pendingAddFromHistory = {historyId:id, outcomeKey: best.key};
-        openAddFromHistoryModal(item, best);
-      }
-    });
-
-    // allow clicking an outcome box to select that outcome for Add Bet
-    historyList.addEventListener('click', (e)=>{
-      const outcomeBox = e.target.closest('.history-outcome');
-      const card = e.target.closest('.history-card');
-      if(!outcomeBox || !card) return;
-      const item = history.find(h=>h.id===card.dataset.id);
-      if(!item) return;
-      const key = outcomeBox.dataset.outcome;
-      const o = item.outcomes.find(x=>x.key===key);
-      if(!o) return;
-      // store selection for next Add Bet click
-      pendingAddFromHistory = {historyId:item.id, outcomeKey:key};
-    });
-  }
-
-  const btnClearHistory = el('clearHistory');
-  if(btnClearHistory){
-    btnClearHistory.addEventListener('click', ()=> showModal(clearHistoryModalId));
-  }
-
-  // Confirm remove single history item
-  const removeHistModal = el(removeHistoryModalId);
-  if(removeHistModal){
-    const confirm = removeHistModal.querySelector('.btn-confirm');
-    if(confirm){
-      confirm.addEventListener('click', ()=>{
-        if(pendingRemoveHistoryId){
-          history = history.filter(h=>h.id !== pendingRemoveHistoryId);
-          pendingRemoveHistoryId = null;
-          saveHistory();
-          hideModal(removeHistoryModalId);
-          renderHistory();
-        }else{
-          hideModal(removeHistoryModalId);
-        }
-      });
-    }
-  }
-
-  // Confirm clear history
-  const clearHistModal = el(clearHistoryModalId);
-  if(clearHistModal){
-    const confirm = clearHistModal.querySelector('.btn-confirm');
-    if(confirm){
-      confirm.addEventListener('click', ()=>{
-        history = [];
-        saveHistory();
-        hideModal(clearHistoryModalId);
-        renderHistory();
-      });
-    }
-  }
-
-  // Add from history modal logic
-  function openAddFromHistoryModal(item, outcome){
-    // Pre-fill fields (method selection removed: Add always goes to BOTH methods)
-    if(el('histDate')){
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth()+1).padStart(2,'0');
-      const dd = String(today.getDate()).padStart(2,'0');
-      el('histDate').value = `${yyyy}-${mm}-${dd}`;
-    }
-    // league: keep as-is
-    if(el('histOutcome')) el('histOutcome').value = outcome.name;
-    if(el('histOdds')) el('histOdds').value = formatNum(outcome.your, 2);
-    if(el('histUnits')) el('histUnits').value = '1';
-    if(el('histResult')) el('histResult').value = 'pending';
-    if(el('histLive')) el('histLive').checked = false;
-
-    const m = el(addFromHistoryModalId);
-    if(m){ m.dataset.historyId = item.id; m.dataset.outcomeKey = outcome.key; }
-
-    // Display EV% (Proportional) for the current odds as a reference
-    const oddsNow = normalizeOdds(el('histOdds')?.value) ?? outcome.your;
-    const edgeNow = Number.isFinite(oddsNow) ? ((oddsNow / outcome.fairProp) - 1) * 100 : outcome.edgeProp;
-    if(el('histEdge')) el('histEdge').value = formatNum(edgeNow, 2);
-
-    showModal(addFromHistoryModalId);
-  }
-
   
-  // Keep Edge % in sync when user switches method in "Add Bet from History" modal
-  let __histModalWired = false;
-  function wireHistModalSync(){
-    if(__histModalWired) return;
-    const m = el(addFromHistoryModalId);
-    if(!m) return;
+// history actions: add bet / remove (NO MODALS - mobile friendly)
+let selectedOutcomeByHistoryId = {}; // {historyId: 'HOME'|'DRAW'|'AWAY'}
 
-    // Remove method choice in UI: Add always goes to BOTH methods
-    const sel = el('histMethod');
-    if(sel){
-      try{
-        const grp = sel.closest('.input-group');
-        if(grp) grp.style.display = 'none';
-      }catch(e){}
-    }
+function pickBestOutcome(item){
+  // choose outcome with max edge among available
+  const outcomes = item?.outcomes || {};
+  const keys = Object.keys(outcomes);
+  if(!keys.length) return null;
+  let bestKey = keys[0];
+  let bestEdge = -Infinity;
+  keys.forEach(k=>{
+    const e = outcomes[k]?.edge ?? -Infinity;
+    if (typeof e === "number" && e > bestEdge) { bestEdge = e; bestKey = k; }
+  });
+  return bestKey;
+}
 
-    const oddsInput = el('histOdds');
+function promptNumber(msg, def){
+  const raw = window.prompt(msg, def);
+  if(raw === null) return null;
+  const v = parseFloat(String(raw).replace(",", "."));
+  if(Number.isFinite(v)) return v;
+  alert("Please enter a valid number.");
+  return promptNumber(msg, def);
+}
 
-    const sync = ()=>{
-      const hid = m.dataset.historyId || pendingAddFromHistory?.historyId;
-      const ok = m.dataset.outcomeKey || pendingAddFromHistory?.outcomeKey;
-      const item = history.find(h=>h.id===hid);
-      if(!item) return;
-      const o = item.outcomes.find(x=>x.key===ok) || item.outcomes[0];
-      if(!o) return;
+function addFromHistoryDirect(historyId){
+  const item = history.find(h=>h.id===historyId);
+  if(!item) return;
 
-      const oddsNow = normalizeOdds(oddsInput?.value) ?? o.your;
-      const ep = Number.isFinite(oddsNow) ? ((oddsNow / o.fairProp) - 1) * 100 : o.edgeProp;
-      if(el('histEdge')) el('histEdge').value = formatNum(ep, 2);
-    };
-
-    if(oddsInput) oddsInput.addEventListener('input', sync);
-    m.addEventListener('focusin', sync);
-    __histModalWired = true;
+  const chosen = selectedOutcomeByHistoryId[historyId] || pickBestOutcome(item);
+  if(!chosen || !item.outcomes?.[chosen]){
+    alert("Select an outcome first.");
+    return;
   }
-  wireHistModalSync();
+  const o = item.outcomes[chosen];
 
-const addFromHistModal = el(addFromHistoryModalId);
-  if(addFromHistModal){
-    const confirm = addFromHistModal.querySelector('.btn-confirm');
-    if(confirm){
-      confirm.addEventListener('click', ()=>{
-        // Add ALWAYS to BOTH methods, using the SAME pick (chosen by Proportional earlier)
-        const modal = el(addFromHistoryModalId);
-        const hid = modal?.dataset.historyId || pendingAddFromHistory?.historyId;
-        const ok = modal?.dataset.outcomeKey || pendingAddFromHistory?.outcomeKey;
-        const item = history.find(h=>h.id===hid);
-        if(!item) return;
+  const units = promptNumber("Units for this bet?", "1");
+  if(units === null) return;
 
-        const o = (item.outcomes.find(x=>x.key===ok)) || item.outcomes[0];
-        if(!o) return;
+  const league = window.prompt("League / Competition (optional):", item.meta?.league || "") ?? "";
+  if(league === null) return;
 
-        // Read fields (with safe defaults)
-        let date = el('histDate')?.value || '';
-        if(!date){
-          const t = new Date();
-          const yyyy = t.getFullYear();
-          const mm = String(t.getMonth()+1).padStart(2,'0');
-          const dd = String(t.getDate()).padStart(2,'0');
-          date = `${yyyy}-${mm}-${dd}`;
-        }
+  // Result defaults to Pending
+  const bet = {
+    id: uid(),
+    date: new Date().toISOString().slice(0,10),
+    league: (league||"").trim(),
+    odds: Number(o.yourOdds),
+    units: Number(units),
+    edge: Number(o.edge),
+    result: "Pending",
+    pl: 0,
+    isLive: !!(item.meta?.isLive)
+  };
 
-        const league = el('histLeague')?.value || '';
-        const odds = normalizeOdds(el('histOdds')?.value) ?? normalizeOdds(o.your);
-        const units = safeNum(el('histUnits')?.value) ?? 1;
-        const live = !!el('histLive')?.checked;
+  // Add to BOTH logs (as discussed) - user can filter later
+  proportionalBets.push({...bet, method:"proportional"});
+  powerBets.push({...bet, method:"power"});
 
-        if(odds === null || !Number.isFinite(units) || units<=0) return;
+  saveArray("proportionalBets", proportionalBets);
+  saveArray("powerBets", powerBets);
 
-        // EV% edges for BOTH methods for the SAME pick/odds
-        const edgeProp = ((odds / o.fairProp) - 1) * 100;
-        const edgePow  = ((odds / o.fairPow)  - 1) * 100;
+  showAlert("Added to BOTH logs ✅", "success");
+  updateStats();
+  renderBetsTable();
+}
 
-        const result = normalizeResult(el('histResult')?.value || 'pending');
+function removeHistoryItem(historyId){
+  const idx = history.findIndex(h=>h.id===historyId);
+  if(idx===-1) return;
+  if(!confirm("Remove this history entry?")) return;
+  history.splice(idx,1);
+  saveArray("history", history);
+  renderHistory();
+  showAlert("Removed ✅","success");
+}
 
-        const base = { date, league, odds, units, live, result };
+function clearHistoryAll(){
+  if(!history.length){ showAlert("History already empty","success"); return; }
+  if(!confirm("Clear ALL history?")) return;
+  history = [];
+  saveArray("history", history);
+  renderHistory();
+  showAlert("History cleared ✅","success");
+}
 
-        bets.prop.push({ id: uid(), ...base, edge: edgeProp });
-        bets.power.push({ id: uid(), ...base, edge: edgePow });
+function reloadHistoryItem(historyId){
+  const item = history.find(h=>h.id===historyId);
+  if(!item) return;
 
-        saveArray(STORAGE_KEYS.prop, bets.prop);
-        saveArray(STORAGE_KEYS.power, bets.power);
+  const mt = item.meta?.marketType || "";
+  marketTypeSelect.value = mt;
 
-        hideModal(addFromHistoryModalId);
-        render('prop');
-        render('power');
+  if(mt === "2-way"){
+    pinHomeInput.value = item.inputs?.pinHome ?? "";
+    yourHomeInput.value = item.inputs?.yourHome ?? "";
+    pinAwayInput.value = item.inputs?.pinAway ?? "";
+    yourAwayInput.value = item.inputs?.yourAway ?? "";
+  }else{
+    pinHomeInput.value = item.inputs?.pinHome ?? "";
+    yourHomeInput.value = item.inputs?.yourHome ?? "";
+    pinDrawInput.value = item.inputs?.pinDraw ?? "";
+    yourDrawInput.value = item.inputs?.yourDraw ?? "";
+    pinAwayInput.value = item.inputs?.pinAway ?? "";
+    yourAwayInput.value = item.inputs?.yourAway ?? "";
+  }
+  updateMarketInputs();
+  showAlert("Loaded ✅","success");
+  // jump to calculator tab
+  tabButtons.forEach(b=>b.classList.remove("active"));
+  tabContents.forEach(c=>c.classList.remove("active"));
+  document.querySelector('[data-tab="calculator"]').classList.add("active");
+  document.getElementById("calculator").classList.add("active");
+  window.scrollTo({top:0, behavior:"smooth"});
+}
 
-        // Switch to Proportional tab (pick source)
-        if(btnProp) activateTab('proportionalTab', btnProp);
-      });
-    }
+// One single click handler for history (prevents double-actions)
+historyList.addEventListener("click", (e)=>{
+  const btn = e.target.closest("button");
+  const outcomeBox = e.target.closest(".history-outcome");
+  const card = e.target.closest(".history-card");
+  if(!card) return;
+  const id = card.dataset.historyId;
+
+  if(btn){
+    e.preventDefault();
+    e.stopPropagation();
+    if(btn.classList.contains("btn-add-both")) return addFromHistoryDirect(id);
+    if(btn.classList.contains("btn-remove-history")) return removeHistoryItem(id);
+    if(btn.classList.contains("btn-load")) return reloadHistoryItem(id);
+    return;
   }
 
-  // Initial render
+  if(outcomeBox){
+    const nameEl = outcomeBox.querySelector(".history-outcome-name");
+    if(!nameEl) return;
+    const key = nameEl.textContent.trim();
+    selectedOutcomeByHistoryId[id] = key;
+
+    // visual highlight
+    card.querySelectorAll(".history-outcome").forEach(el=>el.style.outline="none");
+    outcomeBox.style.outline = "2px solid rgba(0,212,255,0.6)";
+    showAlert(`Selected: ${key}`, "success");
+  }
+});
+
+// Wire clear history
+clearHistoryBtn.addEventListener("click", (e)=>{ e.preventDefault(); clearHistoryAll(); });
+
+// Make every button non-submit (important on mobile)
+document.querySelectorAll("button").forEach(b=>{ if(!b.getAttribute("type")) b.type="button"; });
+
+
+// Initial render
   render('prop');
   render('power');
   renderHistory();
