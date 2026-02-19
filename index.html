@@ -1394,7 +1394,7 @@ tr.pending{background:rgba(255,193,7,.08)}
           const h = loadCalcHistory().find(x=>x.id===id);
           if(!h) return;
           // open add-bet flow using stored calc result
-          openAddFromCalc(h.result, key);
+          openAddFromCalc(h, key);
         });
       });
     }
@@ -1540,32 +1540,33 @@ tr.pending{background:rgba(255,193,7,.08)}
       $("afcAdd").addEventListener("click", addBetFromCalcConfirm);
 
       ["modalFiltersBackdrop","modalOddsBackdrop","modalAddFromCalcBackdrop"].forEach(id=>{
-        $(id).addEventListener("click", (e)=>{
-          if(e.target === $(id)){ $(id).style.display = "none"; }
+        const el = $(id);
+        if(!el) return;
+        el.addEventListener("click", (e)=>{
+          if(e.target === el){ el.style.display = "none"; }
         });
-      
-  // Inline panel buttons
-  const hideFilters = document.getElementById("btnHideFiltersPanel");
-  if(hideFilters){ hideFilters.addEventListener("click", ()=>{ document.getElementById("filtersPanel").style.display="none"; }); }
-  const hideOdds = document.getElementById("btnHideOddsPanel");
-  if(hideOdds){ hideOdds.addEventListener("click", ()=>{ document.getElementById("oddsPanel").style.display="none"; }); }
+      });
 
-  const btnAll = document.getElementById("btnSelectAllLeagues");
-  if(btnAll){
-    btnAll.addEventListener("click", ()=>{
-      document.querySelectorAll('#leagueList input[type="checkbox"]').forEach(cb=>{ cb.checked=true; });
-      if(typeof applyFilters === "function"){ applyFilters(); }
-    });
-  }
-  const btnNone = document.getElementById("btnClearAllLeagues");
-  if(btnNone){
-    btnNone.addEventListener("click", ()=>{
-      document.querySelectorAll('#leagueList input[type="checkbox"]').forEach(cb=>{ cb.checked=false; });
-      if(typeof applyFilters === "function"){ applyFilters(); }
-    });
-  }
+      // Inline panel buttons
+      const hideFilters = document.getElementById("btnHideFiltersPanel");
+      if(hideFilters){ hideFilters.addEventListener("click", ()=>{ const fp=document.getElementById("filtersPanel"); if(fp) fp.style.display="none"; }); }
+      const hideOdds = document.getElementById("btnHideOddsPanel");
+      if(hideOdds){ hideOdds.addEventListener("click", ()=>{ const op=document.getElementById("oddsPanel"); if(op) op.style.display="none"; }); }
 
-});
+      const btnAll = document.getElementById("btnSelectAllLeagues");
+      if(btnAll){
+        btnAll.addEventListener("click", ()=>{
+          document.querySelectorAll('#leagueList input[type="checkbox"]').forEach(cb=>{ cb.checked=true; });
+          if(typeof applyFilters === "function"){ applyFilters(); }
+        });
+      }
+      const btnNone = document.getElementById("btnClearAllLeagues");
+      if(btnNone){
+        btnNone.addEventListener("click", ()=>{
+          document.querySelectorAll('#leagueList input[type="checkbox"]').forEach(cb=>{ cb.checked=false; });
+          if(typeof applyFilters === "function"){ applyFilters(); }
+        });
+      }
 
       renderAll();
       renderCalcHistory();
