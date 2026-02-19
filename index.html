@@ -299,53 +299,16 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 /* PATCH: prevent invisible overlay blocking clicks */
 .modal-overlay{pointer-events:none;}
 .modal-overlay.show{pointer-events:auto;}
-
-/* --- NO-POWER MODE (hide/remove Power Bets UI) --- */
-.tab-btn.power-tab,
-.method-badge.power,
-.btn-add-power,
-.btn-add-both,
-.power-only,
-#powerTab,
-#tab-power,
-#power-content,
-[data-method="power"],
-[data-tab="power"]{
-  display: none !important;
-}
-
 </style>
 </head>
 <body>
-<script>
-/* --- NO-POWER MODE (runtime cleanup) --- */
-(function(){
-  function remove(sel){ document.querySelectorAll(sel).forEach(n=>n.remove()); }
-  function hide(sel){ document.querySelectorAll(sel).forEach(n=>n.style.display='none'); }
-  document.addEventListener('DOMContentLoaded', function(){
-    // Remove Power tab button/content if present
-    remove('.tab-btn.power-tab');
-    remove('#powerTab, #tab-power, #power-content, [data-tab="power"], [data-method="power"]');
-    remove('.btn-add-power, .btn-add-both, .method-badge.power');
-
-    // Ensure Proportional tab is selected if tabs exist
-    const propBtn = document.querySelector('.tab-btn.proportional-tab') || document.querySelector('.tab-btn');
-    if (propBtn && !propBtn.classList.contains('active')) {
-      // Try to click it to trigger existing tab logic
-      propBtn.click?.();
-    }
-  });
-})();
-</script>
-
 <div class="container">
 <h1>⚡ BetAnalytics Pro</h1>
-<div class="subtitle">Advanced Dual-Method Edge Tracking System</div>
+<div class="subtitle">Advanced Proportional Edge Tracking System</div>
 <!-- Tab Navigation -->
 <div class="tab-nav">
-<button class="tab-btn proportional-tab active">📊 Proportional Bets</button>
-<button class="tab-btn power-tab">⚡ Power Bets</button>
-<button class="tab-btn">💡 Calculator</button>
+<button class="tab-btn proportional-tab active" type="button">📊 Proportional Bets</button>
+<button class="tab-btn" type="button">💡 Calculator</button>
 </div>
 <!-- PROPORTIONAL BETS TAB -->
 <div class="tab-content active" id="proportionalTab">
@@ -390,7 +353,7 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 <option value="pregame">Pregame only</option>
 </select>
 </div>
-<button id="resetFiltersProp">Reset Filters</button>
+<button id="resetFiltersProp" type="button">Reset Filters</button>
 </div>
 <!-- Stats Proportional -->
 <div class="filter-section" style="margin-top:-12px;">
@@ -475,7 +438,7 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 <input id="betLiveProp" style="width:22px;height:22px;accent-color:#00ff88;" type="checkbox"/>
 <label for="betLiveProp" style="margin:0;font-size:13px;text-transform:none;letter-spacing:0;cursor:pointer;">Live bet</label>
 </div>
-<button id="addBetProp" style="margin-top:20px;background:linear-gradient(135deg,#00ff88,#00cc66);">Add Proportional Bet</button>
+<button id="addBetProp" style="margin-top:20px;background:linear-gradient(135deg,#00ff88,#00cc66);" type="button">Add Proportional Bet</button>
 </div>
 <!-- Table Proportional -->
 <div class="table-wrapper">
@@ -496,162 +459,8 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 </table>
 </div>
 <div class="button-group">
-<button id="exportCsvProp">📥 Export CSV</button>
-<button class="button-danger" id="clearAllProp">🗑 Clear All</button>
-</div>
-</div>
-<!-- POWER BETS TAB -->
-<div class="tab-content" id="powerTab">
-<div style="text-align:center;margin-bottom:20px;">
-<span class="method-badge power">⚡ POWER/EXPONENT DE-VIG METHOD</span>
-</div>
-<!-- Filters Power -->
-<div class="filter-section">
-<div class="input-group" style="margin-bottom:20px;">
-<div class="small-label">ΔΙΟΡΓΑΝΩΣΕΙΣ (Leagues)</div>
-<div class="league-item" style="margin-bottom:14px;">
-<input checked="" id="allLeaguesPower" type="checkbox"/>
-<label for="allLeaguesPower">All Leagues</label>
-</div>
-<div class="league-grid" id="leagueGridPower"><div class="league-item"><input id="lg_Power_0" type="checkbox"/><label for="lg_Power_0">Premier League</label></div><div class="league-item"><input id="lg_Power_1" type="checkbox"/><label for="lg_Power_1">La Liga</label></div><div class="league-item"><input id="lg_Power_2" type="checkbox"/><label for="lg_Power_2">Serie A</label></div><div class="league-item"><input id="lg_Power_3" type="checkbox"/><label for="lg_Power_3">Bundesliga</label></div><div class="league-item"><input id="lg_Power_4" type="checkbox"/><label for="lg_Power_4">Ligue 1</label></div><div class="league-item"><input id="lg_Power_5" type="checkbox"/><label for="lg_Power_5">UCL</label></div><div class="league-item"><input id="lg_Power_6" type="checkbox"/><label for="lg_Power_6">Europa League</label></div><div class="league-item"><input id="lg_Power_7" type="checkbox"/><label for="lg_Power_7">NBA</label></div><div class="league-item"><input id="lg_Power_8" type="checkbox"/><label for="lg_Power_8">NFL</label></div><div class="league-item"><input id="lg_Power_9" type="checkbox"/><label for="lg_Power_9">Tennis ATP</label></div><div class="league-item"><input id="lg_Power_10" type="checkbox"/><label for="lg_Power_10">Tennis WTA</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_11" type="checkbox"/><label for="lg_Power_11">Eredivisie</label></div><div class="league-item"><input id="lg_Power_12" type="checkbox"/><label for="lg_Power_12">Primeira Liga</label></div><div class="league-item"><input id="lg_Power_13" type="checkbox"/><label for="lg_Power_13">Super League 1</label></div><div class="league-item"><input id="lg_Power_14" type="checkbox"/><label for="lg_Power_14">Scottish Premiership</label></div><div class="league-item"><input id="lg_Power_15" type="checkbox"/><label for="lg_Power_15">Belgian Pro League</label></div><div class="league-item"><input id="lg_Power_16" type="checkbox"/><label for="lg_Power_16">Super Lig</label></div><div class="league-item"><input id="lg_Power_17" type="checkbox"/><label for="lg_Power_17">Austrian Bundesliga</label></div><div class="league-item"><input id="lg_Power_18" type="checkbox"/><label for="lg_Power_18">Swiss Super League</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_19" type="checkbox"/><label for="lg_Power_19">EFL Cup</label></div><div class="league-item"><input id="lg_Power_20" type="checkbox"/><label for="lg_Power_20">FA Cup</label></div><div class="league-item"><input id="lg_Power_21" type="checkbox"/><label for="lg_Power_21">Copa del Rey</label></div><div class="league-item"><input id="lg_Power_22" type="checkbox"/><label for="lg_Power_22">Coppa Italia</label></div><div class="league-item"><input id="lg_Power_23" type="checkbox"/><label for="lg_Power_23">DFB Pokal</label></div><div class="league-item"><input id="lg_Power_24" type="checkbox"/><label for="lg_Power_24">Coupe de France</label></div><div class="league-item"><input id="lg_Power_25" type="checkbox"/><label for="lg_Power_25">Greek Cup</label></div><div class="league-item"><input id="lg_Power_26" type="checkbox"/><label for="lg_Power_26">Taça de Portugal</label></div><div class="league-item"><input id="lg_Power_27" type="checkbox"/><label for="lg_Power_27">KNVB Beker</label></div><div class="league-item"><input id="lg_Power_28" type="checkbox"/><label for="lg_Power_28">Turkish Cup</label></div><div class="league-item"><input id="lg_Power_29" type="checkbox"/><label for="lg_Power_29">Conference League</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_30" type="checkbox"/><label for="lg_Power_30">World Cup</label></div><div class="league-item"><input id="lg_Power_31" type="checkbox"/><label for="lg_Power_31">Euro Championship</label></div><div class="league-item"><input id="lg_Power_32" type="checkbox"/><label for="lg_Power_32">Copa America</label></div><div class="league-item"><input id="lg_Power_33" type="checkbox"/><label for="lg_Power_33">UEFA Nations League</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_34" type="checkbox"/><label for="lg_Power_34">Championship</label></div><div class="league-item"><input id="lg_Power_35" type="checkbox"/><label for="lg_Power_35">Segunda Division</label></div><div class="league-item"><input id="lg_Power_36" type="checkbox"/><label for="lg_Power_36">Serie B</label></div><div class="league-item"><input id="lg_Power_37" type="checkbox"/><label for="lg_Power_37">2. Bundesliga</label></div><div class="league-item"><input id="lg_Power_38" type="checkbox"/><label for="lg_Power_38">Ligue 2</label></div><div class="league-item"><input id="lg_Power_39" type="checkbox"/><label for="lg_Power_39">Super League 2</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_40" type="checkbox"/><label for="lg_Power_40">MLS</label></div><div class="league-item"><input id="lg_Power_41" type="checkbox"/><label for="lg_Power_41">Liga MX</label></div><div class="league-item"><input id="lg_Power_42" type="checkbox"/><label for="lg_Power_42">Campeonato Brasileiro</label></div><div class="league-item"><input id="lg_Power_43" type="checkbox"/><label for="lg_Power_43">Copa Libertadores</label></div><div class="league-item"><input id="lg_Power_44" type="checkbox"/><label for="lg_Power_44">Copa Sudamericana</label></div><div class="league-item"><input id="lg_Power_45" type="checkbox"/><label for="lg_Power_45">Copa do Brasil</label></div><div class="league-item"><input id="lg_Power_46" type="checkbox"/><label for="lg_Power_46">Copa MX</label></div><div class="league-item"><input id="lg_Power_47" type="checkbox"/><label for="lg_Power_47">US Open Cup</label></div><div class="league-item"><input id="lg_Power_48" type="checkbox"/><label for="lg_Power_48">Leagues Cup</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_49" type="checkbox"/><label for="lg_Power_49">Euroleague</label></div><div class="league-item"><input id="lg_Power_50" type="checkbox"/><label for="lg_Power_50">Eurocup</label></div><div class="league-item"><input id="lg_Power_51" type="checkbox"/><label for="lg_Power_51">Greek Basket League</label></div><div class="league-item"><input id="lg_Power_52" type="checkbox"/><label for="lg_Power_52">Spain ACB</label></div><div class="league-item"><input id="lg_Power_53" type="checkbox"/><label for="lg_Power_53">Italy Lega A</label></div><div class="league-item"><input id="lg_Power_54" type="checkbox"/><label for="lg_Power_54">Germany BBL</label></div><div class="league-item"><input id="lg_Power_55" type="checkbox"/><label for="lg_Power_55">France LNB</label></div><div class="league-item"><input id="lg_Power_56" type="checkbox"/><label for="lg_Power_56">FIBA World Cup</label></div><div class="league-item"><input id="lg_Power_57" type="checkbox"/><label for="lg_Power_57">EuroBasket</label></div><div class="league-item"><input id="lg_Power_58" type="checkbox"/><label for="lg_Power_58">NBA Playoffs</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_59" type="checkbox"/><label for="lg_Power_59">NCAA Football</label></div><div class="league-item"><input id="lg_Power_60" type="checkbox"/><label for="lg_Power_60">NFL Playoffs</label></div><div class="league-item"><input id="lg_Power_61" type="checkbox"/><label for="lg_Power_61">Super Bowl</label></div><div class="league-item"><input id="lg_Power_62" type="checkbox"/><label for="lg_Power_62">MLB</label></div><div class="league-item"><input id="lg_Power_63" type="checkbox"/><label for="lg_Power_63">MLB Playoffs</label></div><div class="league-item"><input id="lg_Power_64" type="checkbox"/><label for="lg_Power_64">World Series</label></div><div class="league-item"><input id="lg_Power_65" type="checkbox"/><label for="lg_Power_65">NHL</label></div><div class="league-item"><input id="lg_Power_66" type="checkbox"/><label for="lg_Power_66">NHL Playoffs</label></div><div class="league-item"><input id="lg_Power_67" type="checkbox"/><label for="lg_Power_67">Stanley Cup</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_68" type="checkbox"/><label for="lg_Power_68">Grand Slams</label></div><div class="league-item"><input id="lg_Power_69" type="checkbox"/><label for="lg_Power_69">UFC</label></div><div class="league-item"><input id="lg_Power_70" type="checkbox"/><label for="lg_Power_70">Boxing</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_71" type="checkbox"/><label for="lg_Power_71">Volleyball</label></div><div class="league-item"><input id="lg_Power_72" type="checkbox"/><label for="lg_Power_72">Handball</label></div><div class="league-item"><input id="lg_Power_73" type="checkbox"/><label for="lg_Power_73">Rugby</label></div><div class="league-item"><input id="lg_Power_74" type="checkbox"/><label for="lg_Power_74">Cricket</label></div><div class="league-item"><input id="lg_Power_75" type="checkbox"/><label for="lg_Power_75">Other</label></div></div>
-</div>
-<div class="inline-range" style="margin-bottom:20px;">
-<div class="input-group">
-<label for="fromDatePower">Date From</label>
-<input id="fromDatePower" type="date"/>
-</div>
-<div class="input-group">
-<label for="toDatePower">Date To</label>
-<input id="toDatePower" type="date"/>
-</div>
-</div>
-<div class="inline-range" style="margin-bottom:20px;">
-<div class="input-group">
-<label for="edgeFromPower">Edge From % (optional)</label>
-<input id="edgeFromPower" placeholder="0" step="0.1" type="number"/>
-</div>
-<div class="input-group">
-<label for="edgeToPower">Edge To % (optional)</label>
-<input id="edgeToPower" placeholder="10" step="0.1" type="number"/>
-</div>
-</div>
-<div class="input-group">
-<label for="betTypeFilterPower">Bet Type</label>
-<select id="betTypeFilterPower">
-<option value="all">All bets</option>
-<option value="live">Live only</option>
-<option value="pregame">Pregame only</option>
-</select>
-</div>
-<button id="resetFiltersPower">Reset Filters</button>
-</div>
-<!-- Stats Power -->
-<div class="filter-section" style="margin-top:-12px;">
-<div class="stat-grid">
-<div class="stat-box">
-<div class="stat-label">Total Bets</div>
-<div class="stat-value" id="statTotalBetsPower">0</div>
-</div>
-<div class="stat-box">
-<div class="stat-label">Wins</div>
-<div class="stat-value" id="statWinsPower">0</div>
-</div>
-<div class="stat-box">
-<div class="stat-label">Losses</div>
-<div class="stat-value" id="statLossesPower">0</div>
-</div>
-<div class="stat-box">
-<div class="stat-label">Pending</div>
-<div class="stat-value" id="statPendingPower">0</div>
-</div>
-<div class="stat-box">
-<div class="stat-label">Win %</div>
-<div class="stat-value" id="statWinRatePower">0.0%</div>
-</div>
-<div class="stat-box">
-<div class="stat-label">Total Units</div>
-<div class="stat-value positive" id="statTotalUnitsPower">0.00</div>
-</div>
-<div class="stat-box">
-<div class="stat-label">Total Wagered</div>
-<div class="stat-value" id="statTotalWageredPower">0.00</div>
-</div>
-<div class="stat-box">
-<div class="stat-label">ROI %</div>
-<div class="stat-value positive" id="statRoiPower">0.0%</div>
-</div>
-<div class="stat-box">
-<div class="stat-label">Avg Edge %</div>
-<div class="stat-value neutral" id="statAvgEdgePower">-</div>
-</div>
-</div>
-</div>
-<!-- Add Bet Power -->
-<div class="input-section">
-<h2 style="font-size:16px; margin-bottom:16px; color:#ffc107;">Add Power Bet</h2>
-<div class="inline-range">
-<div class="input-group">
-<label for="betDatePower">Date</label>
-<input id="betDatePower" type="date"/>
-</div>
-<div class="input-group">
-<label for="betLeaguePower">League</label>
-<select id="betLeaguePower"><option value="Premier League">Premier League</option><option value="La Liga">La Liga</option><option value="Serie A">Serie A</option><option value="Bundesliga">Bundesliga</option><option value="Ligue 1">Ligue 1</option><option value="UCL">UCL</option><option value="Europa League">Europa League</option><option value="NBA">NBA</option><option value="NFL">NFL</option><option value="Tennis ATP">Tennis ATP</option><option value="Tennis WTA">Tennis WTA</option><option value="Eredivisie">Eredivisie</option><option value="Primeira Liga">Primeira Liga</option><option value="Super League 1">Super League 1</option><option value="Scottish Premiership">Scottish Premiership</option><option value="Belgian Pro League">Belgian Pro League</option><option value="Super Lig">Super Lig</option><option value="Austrian Bundesliga">Austrian Bundesliga</option><option value="Swiss Super League">Swiss Super League</option><option value="EFL Cup">EFL Cup</option><option value="FA Cup">FA Cup</option><option value="Copa del Rey">Copa del Rey</option><option value="Coppa Italia">Coppa Italia</option><option value="DFB Pokal">DFB Pokal</option><option value="Coupe de France">Coupe de France</option><option value="Greek Cup">Greek Cup</option><option value="Taça de Portugal">Taça de Portugal</option><option value="KNVB Beker">KNVB Beker</option><option value="Turkish Cup">Turkish Cup</option><option value="Conference League">Conference League</option><option value="World Cup">World Cup</option><option value="Euro Championship">Euro Championship</option><option value="Copa America">Copa America</option><option value="UEFA Nations League">UEFA Nations League</option><option value="Championship">Championship</option><option value="Segunda Division">Segunda Division</option><option value="Serie B">Serie B</option><option value="2. Bundesliga">2. Bundesliga</option><option value="Ligue 2">Ligue 2</option><option value="Super League 2">Super League 2</option><option value="MLS">MLS</option><option value="Liga MX">Liga MX</option><option value="Campeonato Brasileiro">Campeonato Brasileiro</option><option value="Copa Libertadores">Copa Libertadores</option><option value="Copa Sudamericana">Copa Sudamericana</option><option value="Copa do Brasil">Copa do Brasil</option><option value="Copa MX">Copa MX</option><option value="US Open Cup">US Open Cup</option><option value="Leagues Cup">Leagues Cup</option><option value="Euroleague">Euroleague</option><option value="Eurocup">Eurocup</option><option value="Greek Basket League">Greek Basket League</option><option value="Spain ACB">Spain ACB</option><option value="Italy Lega A">Italy Lega A</option><option value="Germany BBL">Germany BBL</option><option value="France LNB">France LNB</option><option value="FIBA World Cup">FIBA World Cup</option><option value="EuroBasket">EuroBasket</option><option value="NBA Playoffs">NBA Playoffs</option><option value="NCAA Football">NCAA Football</option><option value="NFL Playoffs">NFL Playoffs</option><option value="Super Bowl">Super Bowl</option><option value="MLB">MLB</option><option value="MLB Playoffs">MLB Playoffs</option><option value="World Series">World Series</option><option value="NHL">NHL</option><option value="NHL Playoffs">NHL Playoffs</option><option value="Stanley Cup">Stanley Cup</option><option value="Grand Slams">Grand Slams</option><option value="UFC">UFC</option><option value="Boxing">Boxing</option><option value="Volleyball">Volleyball</option><option value="Handball">Handball</option><option value="Rugby">Rugby</option><option value="Cricket">Cricket</option><option value="Other">Other</option></select>
-</div>
-</div>
-<div class="inline-range">
-<div class="input-group">
-<label for="betOddsPower">Odds</label>
-<input id="betOddsPower" min="1.01" placeholder="1.90" step="0.01" type="number"/>
-</div>
-<div class="input-group">
-<label for="betUnitsPower">Units</label>
-<input id="betUnitsPower" min="0.01" step="0.01" type="number" value="10"/>
-</div>
-</div>
-<div class="inline-range">
-<div class="input-group">
-<label for="betEdgePower">Edge % (optional)</label>
-<input id="betEdgePower" placeholder="3.5" step="0.1" type="number"/>
-</div>
-<div class="input-group">
-<label for="betResultPower">Result</label>
-<select id="betResultPower">
-<option value="pending">Pending</option>
-<option value="win">Win</option>
-<option value="loss">Loss</option>
-<option value="push">Push</option>
-</select>
-</div>
-</div>
-<div class="input-group" style="flex-direction:row;align-items:center;gap:11px;margin-top:10px;">
-<input id="betLivePower" style="width:22px;height:22px;accent-color:#ffc107;" type="checkbox"/>
-<label for="betLivePower" style="margin:0;font-size:13px;text-transform:none;letter-spacing:0;cursor:pointer;">Live bet</label>
-</div>
-<button id="addBetPower" style="margin-top:20px;background:linear-gradient(135deg,#ffc107,#ff9800);">Add Power Bet</button>
-</div>
-<!-- Table Power -->
-<div class="table-wrapper">
-<table>
-<thead>
-<tr>
-<th>Date</th>
-<th>League</th>
-<th>Odds</th>
-<th>Units</th>
-<th>Edge %</th>
-<th>P/L</th>
-<th>Result</th>
-<th>Actions</th>
-</tr>
-</thead>
-<tbody id="betsTablePower"><tr><td colspan="8" style="text-align:center;padding:30px;color:#7a8fa6;">No bets match your filters 📭</td></tr></tbody>
-</table>
-</div>
-<div class="button-group">
-<button id="exportCsvPower">📥 Export CSV</button>
-<button id="importPower">📤 Import</button>
-<button class="button-danger" id="clearAllPower">🗑 Clear All</button>
+<button id="exportCsvProp" type="button">📥 Export CSV</button>
+<button class="button-danger" id="clearAllProp" type="button">🗑 Clear All</button>
 </div>
 </div>
 <!-- CALCULATOR TAB -->
@@ -696,13 +505,13 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 <input id="yourAway" min="1.01" placeholder="4.00" step="0.01" type="number"/>
 </div>
 </div>
-<button id="calculateEdge">Calculate Edge</button>
+<button id="calculateEdge" type="button">Calculate Edge</button>
 </div>
 <!-- Calculation History -->
 <div class="filter-section">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
 <h2 style="font-size:16px; color:#00d4ff;">📋 Calculation History</h2>
-<button id="clearHistory" style="width:auto;margin:0;padding:8px 16px;font-size:11px;background:rgba(255,51,102,0.3);color:#ff3366;">Clear History</button>
+<button id="clearHistory" style="width:auto;margin:0;padding:8px 16px;font-size:11px;background:rgba(255,51,102,0.3);color:#ff3366;" type="button">Clear History</button>
 </div>
 <div id="historyList"><div class="empty-state"><div class="empty-state-icon">📊</div>No calculations yet!</div></div>
 </div>
@@ -716,8 +525,8 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 <h3>Προειδοποίηση</h3>
 <p>Διαγραφή Proportional bet;<br/><span class="user-name">George</span>, είσαι σίγουρος;</p>
 <div class="modal-buttons">
-<button class="btn-cancel">Άκυρο</button>
-<button class="btn-confirm">Ναι, Διέγραψε</button>
+<button class="btn-cancel" type="button">Άκυρο</button>
+<button class="btn-confirm" type="button">Ναι, Διέγραψε</button>
 </div>
 </div>
 <div class="modal" id="deleteModalPower">
@@ -725,8 +534,8 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 <h3>Προειδοποίηση</h3>
 <p>Διαγραφή Power bet;<br/><span class="user-name">George</span>, είσαι σίγουρος;</p>
 <div class="modal-buttons">
-<button class="btn-cancel">Άκυρο</button>
-<button class="btn-confirm">Ναι, Διέγραψε</button>
+<button class="btn-cancel" type="button">Άκυρο</button>
+<button class="btn-confirm" type="button">Ναι, Διέγραψε</button>
 </div>
 </div>
 <div class="modal" id="clearAllModalProp">
@@ -734,8 +543,8 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 <h3>Προειδοποίηση</h3>
 <p>Διαγραφή ΟΛΩΝ των Proportional bets;<br/><span class="user-name">George</span>, είσαι σίγουρος;</p>
 <div class="modal-buttons">
-<button class="btn-cancel">Άκυρο</button>
-<button class="btn-confirm">Ναι, Διέγραψε Όλα</button>
+<button class="btn-cancel" type="button">Άκυρο</button>
+<button class="btn-confirm" type="button">Ναι, Διέγραψε Όλα</button>
 </div>
 </div>
 <div class="modal" id="clearAllModalPower">
@@ -753,8 +562,8 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
       Replace existing POWER bets
     </label>
 <div class="button-group" style="margin:0;">
-<button class="button-secondary" id="closeImportPower">Cancel</button>
-<button id="doImportPower" style="background:linear-gradient(135deg,#00d4ff,#0099ff);">Import</button>
+<button class="button-secondary" id="closeImportPower" type="button">Cancel</button>
+<button id="doImportPower" style="background:linear-gradient(135deg,#00d4ff,#0099ff);" type="button">Import</button>
 </div>
 </div>
 <details style="margin-top:12px;">
@@ -774,8 +583,8 @@ JSON:
 <h3>Προειδοποίηση</h3>
 <p>Διαγραφή ΟΛΩΝ των Power bets;<br/><span class="user-name">George</span>, είσαι σίγουρος;</p>
 <div class="modal-buttons">
-<button class="btn-cancel">Άκυρο</button>
-<button class="btn-confirm">Ναι, Διέγραψε Όλα</button>
+<button class="btn-cancel" type="button">Άκυρο</button>
+<button class="btn-confirm" type="button">Ναι, Διέγραψε Όλα</button>
 </div>
 </div>
 <div class="modal" id="clearHistoryModal">
@@ -783,8 +592,8 @@ JSON:
 <h3>Προειδοποίηση</h3>
 <p>Καθαρισμός ιστορικού υπολογισμών;<br/><span class="user-name">George</span>, είσαι σίγουρος;</p>
 <div class="modal-buttons">
-<button class="btn-cancel">Άκυρο</button>
-<button class="btn-confirm">Ναι, Καθάρισε</button>
+<button class="btn-cancel" type="button">Άκυρο</button>
+<button class="btn-confirm" type="button">Ναι, Καθάρισε</button>
 </div>
 </div>
 <div class="modal" id="removeHistoryModal">
@@ -792,8 +601,8 @@ JSON:
 <h3>Προειδοποίηση</h3>
 <p>Διαγραφή υπολογισμού από ιστορικό;<br/><span class="user-name">George</span>, είσαι σίγουρος;</p>
 <div class="modal-buttons">
-<button class="btn-cancel">Άκυρο</button>
-<button class="btn-confirm">Ναι, Διέγραψε</button>
+<button class="btn-cancel" type="button">Άκυρο</button>
+<button class="btn-confirm" type="button">Ναι, Διέγραψε</button>
 </div>
 </div>
 <div class="modal edit-modal" id="addFromHistoryModal">
@@ -847,8 +656,8 @@ JSON:
 <label for="histLive" style="margin:0;font-size:12px;text-transform:none;letter-spacing:0;">Live bet</label>
 </div>
 <div class="modal-buttons" style="margin-top:20px;">
-<button class="btn-cancel">Άκυρο</button>
-<button class="btn-confirm" style="background:linear-gradient(135deg,#00ff88,#00cc66);">Add Bet</button>
+<button class="btn-cancel" type="button">Άκυρο</button>
+<button class="btn-confirm" style="background:linear-gradient(135deg,#00ff88,#00cc66);" type="button">Add Bet</button>
 </div>
 </div>
 <!-- VERSION RIBBON (v28) -->
@@ -1183,6 +992,34 @@ window.addEventListener('load', () => {
   });
 });
 </script>
+
+<script>
+(function(){
+  function hardenButtons(){
+    try{
+      document.querySelectorAll('form').forEach(function(f){
+        f.addEventListener('submit', function(e){ e.preventDefault(); }, true);
+      });
+      // Defensive: any button click should not submit forms on iOS
+      document.addEventListener('click', function(e){
+        var btn = e.target.closest && e.target.closest('button');
+        if(!btn) return;
+        // If any stray submit sneaks in, block it
+        if(btn.getAttribute('type') === 'submit'){
+          // We don't use native submit flow; app uses click handlers.
+          e.preventDefault();
+        }
+      }, true);
+    }catch(err){}
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', hardenButtons);
+  } else {
+    hardenButtons();
+  }
+})();
+</script>
+
 </body>
 <script>
 (function(){
@@ -1764,61 +1601,33 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
     wireModalCancel(modalId);
     const modal = el(modalId);
     if(!modal) return;
-    const confirm = modal.querySelector('.btn-confirm');
-    if(confirm){
-      confirm.addEventListener('click', ()=>{ 
-        const date = el('histDate')?.value || '';
-        const league = el('histLeague')?.value || '';
-        const units = safeNum(el('histUnits')?.value);
-        const live = !!el('histLive')?.checked;
 
-        const errors = [];
-        if(!date) errors.push('Date');
-        if(!league) errors.push('League');
-        if(units === null || units<=0) errors.push('Units');
-        if(errors.length){
-          alert('Please fill: ' + errors.join(', '));
-          return;
-        }
+    const btnConfirm = modal.querySelector('.btn-confirm');
+    if(!btnConfirm) return;
 
-        // Always add the SAME pick (chosen by Proportional) to BOTH methods.
-        // Edges are computed per-method for that same pick.
-        const modal = el(addFromHistoryModalId);
-        const hid = modal?.dataset?.historyId;
-        const ok = modal?.dataset?.outcomeKey;
-        const item = history.find(h=>h.id===hid);
-        const o = item?.outcomes?.find(x=>x.key===ok);
-        if(!o){
-          alert('Could not find calculation outcome to add.');
-          return;
-        }
+    // Prevent double-binding if script re-runs
+    if(btnConfirm.dataset.wired === '1') return;
+    btnConfirm.dataset.wired = '1';
 
-        const baseBet = {
-          date,
-          league,
-          odds: normalizeOdds(o.your),
-          units,
-          live,
-          result: 'pending'
-        };
-        if(baseBet.odds === null){
-          alert('Invalid odds for selected outcome.');
-          return;
-        }
+    btnConfirm.addEventListener('click', ()=>{
+      const { method: mth, id } = pendingDelete || {};
+      if(!mth || !id){
+        hideModal(modalId);
+        return;
+      }
 
-        bets.prop.push({ id: uid(), ...baseBet, edge: safeNum(o.edgeProp) });
-        bets.power.push({ id: uid(), ...baseBet, edge: safeNum(o.edgePow) });
+      // Delete by id (stable even when table is filtered/sorted)
+      const idx = bets[mth].findIndex(b => b.id === id);
+      if(idx >= 0){
+        bets[mth].splice(idx, 1);
+        saveArray(STORAGE_KEYS[mth], bets[mth]);
+      }
 
-        saveArray(STORAGE_KEYS.prop, bets.prop);
-        saveArray(STORAGE_KEYS.power, bets.power);
-
-        hideModal(addFromHistoryModalId);
-        render('prop');
-        render('power');
-        // Switch to proportional tab by default after adding
-        if(btnProp) activateTab('proportionalTab', btnProp);
-      });
-    }
+      pendingDelete = {method:null, id:null};
+      hideModal(modalId);
+      clearEditing(mth);
+      render(mth);
+    });
   }
 
   function wireClearAllModal(method){
