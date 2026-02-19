@@ -400,8 +400,8 @@ tr.pending{background:rgba(255,193,7,.08)}
       <div class="tab active" id="tabTracker">🧾 Proportional Bets</div>
       <div class="tab" id="tabCalc">🧮 Calculator</div>
       <div style="flex:1"></div>
-      <button class="btn ghost" id="btnExport">⬇ Export CSV</button>
-      <button class="btn ghost" id="btnImport">⬆ Import CSV</button>
+      <button class="btn ghost" id="btnExport" type="button">⬇ Export CSV</button>
+      <button class="btn ghost" id="btnImport" type="button">⬆ Import CSV</button>
       <input type="file" id="fileImport" accept=".csv,text/csv" style="display:none" />
     </div>
 
@@ -418,15 +418,15 @@ tr.pending{background:rgba(255,193,7,.08)}
         </div>
         <div class="field" style="flex:1">
           <label>&nbsp;</label>
-          <button class="btn primary" id="btnFilters">🧪 Filters</button>
+          <button class="btn primary" id="btnFilters" type="button">🧪 Filters</button>
         </div>
         <div class="field" style="flex:1">
           <label>&nbsp;</label>
-          <button class="btn" id="btnOddsStats">📊 Odds Buckets</button>
+          <button class="btn" id="btnOddsStats" type="button">📊 Odds Buckets</button>
         </div>
         <div class="field" style="flex:1">
           <label>&nbsp;</label>
-          <button class="btn bad" id="btnDangerZone">🧹 Reset</button>
+          <button class="btn bad" id="btnDangerZone" type="button">🧹 Reset</button>
         </div>
       </div>
 
@@ -479,7 +479,7 @@ tr.pending{background:rgba(255,193,7,.08)}
 
         <div class="field" style="grid-column: span 2;">
           <label>&nbsp;</label>
-          <button class="btn good" id="btnAddBet">✅ Add Bet</button>
+          <button class="btn good" id="btnAddBet" type="button">✅ Add Bet</button>
         </div>
       </div>
 
@@ -601,8 +601,8 @@ tr.pending{background:rgba(255,193,7,.08)}
         </div>
 
         <div class="row tight" style="margin-top:10px;">
-          <button class="btn primary" id="btnCalc">✨ Calculate Edge</button>
-          <button class="btn" id="btnReloadCalc">↻ Reload</button>
+          <button class="btn primary" id="btnCalc" type="button">✨ Calculate Edge</button>
+          <button class="btn" id="btnReloadCalc" type="button">↻ Reload</button>
         </div>
 
         <div id="calcOut" class="calcResult" style="display:none;"></div>
@@ -610,7 +610,7 @@ tr.pending{background:rgba(255,193,7,.08)}
 
       <div class="sectionTitle">Calculation History</div>
       <div class="row tight" style="align-items:center;">
-        <button class="btn bad" id="btnClearHistory">🧨 Clear History</button>
+        <button class="btn bad" id="btnClearHistory" type="button">🧨 Clear History</button>
       </div>
       <div id="history"></div>
     </section>
@@ -624,6 +624,10 @@ tr.pending{background:rgba(255,193,7,.08)}
 
 
 <script>
+(()=>{
+  if (window.__BA_INITED) return;
+  window.__BA_INITED = true;
+
     const STORAGE_KEY = "ba_proportional_v3_bets";
     const STORAGE_LEAGUES_KEY = "ba_proportional_v3_leagues_custom";
     const STORAGE_CALC_HISTORY = "ba_proportional_v3_calc_history";
@@ -864,7 +868,7 @@ tr.pending{background:rgba(255,193,7,.08)}
           <td class="mono pl ${plCls}">${pl>=0?"+":""}${fmt2(pl)}</td>
           <td><span class="pill ${resultPill}">${b.result}</span></td>
           <td>${b.live ? "✅" : "—"}</td>
-          <td><button class="iconBtn bad" title="Delete" data-del="${b.id}">🗑</button></td>
+          <td><button class="iconBtn bad" title="Delete" data-del="${b.id}" type="button">🗑</button></td>
         `;
         tbody.appendChild(tr);
       }
@@ -1225,7 +1229,7 @@ tr.pending{background:rgba(255,193,7,.08)}
               <div class="k">EV% (Prop):</div><div class="v mono" style="color:${item.ev>=0?'var(--green)':'var(--red)'};">${item.ev>=0?"+":""}${fmtPct(item.ev)}</div>
             </div>
             <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="btn good" data-addcalc="${item.key}">ADD BET</button>
+              <button class="btn good" data-addcalc="${item.key}" type="button">ADD BET</button>
             </div>
           </div>
         `);
@@ -1328,13 +1332,13 @@ tr.pending{background:rgba(255,193,7,.08)}
                 <div class="k">EV% (Prop):</div><div class="v mono" style="color:${it.ev>=0?'var(--green)':'var(--red)'};">${it.ev>=0?"+":""}${fmtPct(it.ev)}</div>
               </div>
               <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="btn good" style="padding:8px 10px; font-size:11px;" data-addhist="${r.id}|${it.key}">ADD BET</button>
+                <button class="btn good" style="padding:8px 10px; font-size:11px;" data-addhist="${r.id}|${it.key}" type="button">ADD BET</button>
               </div>
             </div>
           `).join("")}
           <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="btn" data-reload="${r.id}">RELOAD</button>
-            <button class="btn bad" data-remove="${r.id}">REMOVE</button>
+            <button class="btn" data-reload="${r.id}" type="button">RELOAD</button>
+            <button class="btn bad" data-remove="${r.id}" type="button">REMOVE</button>
           </div>
         `;
         host.appendChild(div);
@@ -1483,10 +1487,10 @@ tr.pending{background:rgba(255,193,7,.08)}
       $("betType").value = "all";
       setMarketUI();
 
-      on("tabTracker", "click", ()=>switchTab("tracker"));
-      on("tabCalc", "click", ()=>{ switchTab("calc"); renderCalcHistory(); });
+      $("tabTracker").addEventListener("click", ()=>switchTab("tracker"));
+      $("tabCalc").addEventListener("click", ()=>{ switchTab("calc"); renderCalcHistory(); });
 
-      on("btnAddBet", "click", addBetFromTracker);
+      $("btnAddBet").addEventListener("click", addBetFromTracker);
 
       const order = ["inOdds","inUnits","inEdge"];
       order.forEach((id, idx)=>{
@@ -1499,41 +1503,41 @@ tr.pending{background:rgba(255,193,7,.08)}
         });
       });
 
-      on("btnFilters", "click", openFilters);
-      on("btnCloseFilters", "click", closeFilters);
-      on("btnApplyFilters", "click", applyFilters);
-      on("btnResetFilters", "click", resetFilters);
+      $("btnFilters").addEventListener("click", openFilters);
+      $("btnCloseFilters").addEventListener("click", closeFilters);
+      $("btnApplyFilters").addEventListener("click", applyFilters);
+      $("btnResetFilters").addEventListener("click", resetFilters);
 
-      on("btnOddsStats", "click", openOddsBuckets);
-      on("btnCloseOdds", "click", closeOddsBuckets);
+      $("btnOddsStats").addEventListener("click", openOddsBuckets);
+      $("btnCloseOdds").addEventListener("click", closeOddsBuckets);
 
-      on("betType", "change", renderAll);
+      $("betType").addEventListener("change", renderAll);
 
-      on("btnDangerZone", "click", dangerReset);
+      $("btnDangerZone").addEventListener("click", dangerReset);
 
-      on("btnExport", "click", exportCSV);
-      on("btnImport", "click", ()=>$("fileImport").click());
-      on("fileImport", "change", ()=>{
+      $("btnExport").addEventListener("click", exportCSV);
+      $("btnImport").addEventListener("click", ()=>$("fileImport").click());
+      $("fileImport").addEventListener("change", ()=>{
         const f = $("fileImport").files && $("fileImport").files[0];
         if(!f) return;
         importCSVFile(f);
         $("fileImport").value = "";
       });
 
-      on("marketType", "change", setMarketUI);
-      on("btnCalc", "click", calcNow);
-      on("btnReloadCalc", "click", clearCalcInputs);
+      $("marketType").addEventListener("change", setMarketUI);
+      $("btnCalc").addEventListener("click", calcNow);
+      $("btnReloadCalc").addEventListener("click", clearCalcInputs);
 
-      on("btnClearHistory", "click", ()=>{
+      $("btnClearHistory").addEventListener("click", ()=>{
         const ok = confirm("Clear calculation history?");
         if(!ok) return;
         localStorage.removeItem(STORAGE_CALC_HISTORY);
         renderCalcHistory();
       });
 
-      on("btnCloseAddFromCalc", "click", closeAddFromCalc);
-      on("afcCancel", "click", closeAddFromCalc);
-      on("afcAdd", "click", addBetFromCalcConfirm);
+      $("btnCloseAddFromCalc").addEventListener("click", closeAddFromCalc);
+      $("afcCancel").addEventListener("click", closeAddFromCalc);
+      $("afcAdd").addEventListener("click", addBetFromCalcConfirm);
 
       ["modalFiltersBackdrop","modalOddsBackdrop","modalAddFromCalcBackdrop"].forEach(id=>{
         $(id).addEventListener("click", (e)=>{
@@ -1568,6 +1572,8 @@ tr.pending{background:rgba(255,193,7,.08)}
     }
 
     init();
-  </script>
+  
+})();
+</script>
 </body>
 </html>
