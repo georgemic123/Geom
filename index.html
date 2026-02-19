@@ -1,1580 +1,2680 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="theme-color" content="#08101a" />
-  <title>BetAnalytics Pro — Proportional</title>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BetAnalytics Pro – Dual Method Tracking (v10)</title>
+<style>
+* { margin: 0px; padding: 0px; box-sizing: border-box; }
 
-  <style>
+html, body { width: 100%; height: 100%; }
 
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%}
-body{
-  font-family:"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
-  background:linear-gradient(135deg,#0f1419 0%,#1a1f3a 100%);
-  padding:15px 10px;
-  color:#e0e0e0;
-  overflow-x:hidden;
-  min-height:100vh;
-  -webkit-text-size-adjust:100%;
-}
-:root{
-  --cyan:#00d4ff;
-  --cyan2:#0099cc;
-  --green:#00ff88;
-  --red:#ff3366;
-  --amber:#ffc107;
-  --muted:#7a8fa6;
-  --panel:rgba(26,31,58,.95);
-  --panelBorder:rgba(0,212,255,.15);
-}
+body { font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif; background: linear-gradient(135deg, rgb(15, 20, 25) 0%, rgb(26, 31, 58) 100%); padding: 15px 10px; color: rgb(224, 224, 224); overflow-x: hidden; min-height: 100vh; }
 
-.wrap{
-  max-width:1200px;
-  width:100%;
-  margin:0 auto;
-  background:var(--panel);
-  border-radius:16px;
-  padding:28px 20px;
-  box-shadow:0 20px 60px rgba(0,0,0,.5);
-  border:1px solid rgba(0,212,255,.1);
-}
-.title{
-  text-align:center;
-  margin-bottom:10px;
-  font-size:28px;
-  color:var(--cyan);
-  font-weight:300;
-  letter-spacing:2px;
-}
-.subtitle{
-  text-align:center;
-  color:var(--muted);
-  font-size:11px;
-  margin-bottom:28px;
-  text-transform:uppercase;
-  letter-spacing:1px;
-}
+.container { max-width: 1200px; width: 100%; margin: 0px auto; background: rgba(26, 31, 58, 0.95); border-radius: 16px; padding: 28px 20px; box-shadow: rgba(0, 0, 0, 0.5) 0px 20px 60px; border: 1px solid rgba(0, 212, 255, 0.1); }
 
-/* tabs */
-.tabs{
-  display:flex;
-  gap:10px;
-  margin-bottom:28px;
-  border-bottom:2px solid rgba(0,212,255,.2);
-  padding-bottom:12px;
-  flex-wrap:wrap;
-}
-.tab{
-  padding:12px 20px;
-  background:rgba(0,212,255,.10);
-  border:1px solid rgba(0,212,255,.20);
-  border-radius:8px 8px 0 0;
-  color:var(--muted);
-  font-size:13px;
-  font-weight:700;
-  cursor:pointer;
-  transition:.25s;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  flex:1 1 0;
-  min-width:150px;
-  text-align:center;
-  user-select:none;
-}
-.tab.active{
-  background:linear-gradient(135deg, rgba(0,212,255,.20), rgba(0,212,255,.10));
-  border-color:var(--cyan);
-  color:var(--cyan);
-}
-.tab:hover{background:rgba(0,212,255,.15)}
+h1 { text-align: center; margin-bottom: 10px; font-size: 28px; color: rgb(0, 212, 255); font-weight: 300; letter-spacing: 2px; }
 
-/* sections / panels */
-.panel{
-  background:linear-gradient(135deg, rgba(0,212,255,.05), rgba(0,212,255,.02));
-  border:1px solid var(--panelBorder);
-  border-radius:12px;
-  padding:22px 20px;
-  margin-bottom:28px;
-}
-.sectionTitle{
-  margin:14px 0 10px;
-  font-size:11px;
-  font-weight:700;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:.7px;
-}
-.field{display:flex;flex-direction:column;margin-bottom:16px}
-label{
-  font-size:10px;
-  font-weight:700;
-  color:var(--muted);
-  margin-bottom:7px;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-}
-input,select{
-  padding:12px;
-  border:1px solid rgba(0,212,255,.2);
-  border-radius:8px;
-  font-size:16px; /* prevent iOS zoom */
-  font-family:inherit;
-  background:rgba(255,255,255,.05);
-  color:#e0e0e0;
-  width:100%;
-}
-input:focus,select:focus{
-  outline:none;
-  border-color:var(--cyan);
-  background:rgba(0,212,255,.08);
-  box-shadow:0 0 10px rgba(0,212,255,.15);
-}
-select{appearance:none;-webkit-appearance:none}
+.subtitle { text-align: center; color: rgb(122, 143, 166); font-size: 11px; margin-bottom: 28px; text-transform: uppercase; letter-spacing: 1px; }
 
-/* buttons */
-.btn, button{
-  padding:13px 24px;
-  background:linear-gradient(135deg,var(--cyan),var(--cyan2));
-  color:#0f1419;
-  border:none;
-  border-radius:8px;
-  font-size:13px;
-  font-weight:800;
-  cursor:pointer;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  margin-top:12px;
-  width:100%;
-  transition:.2s;
-}
-.btn:hover, button:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 20px rgba(0,212,255,.30);
-}
-.btn:active, button:active{transform:scale(.98)}
-.btn.ghost{background:rgba(0,212,255,.10);color:#e0e0e0;border:1px solid rgba(0,212,255,.20)}
-.btn.good, .good{color:var(--green)}
-.btn.bad, .bad{color:var(--red)}
-.btn.primary, .primary{}
+.tab-nav { display: flex; gap: 10px; margin-bottom: 28px; border-bottom: 2px solid rgba(0, 212, 255, 0.2); padding-bottom: 12px; flex-wrap: wrap; }
 
-/* stats cards */
-.stats{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
-  margin-bottom:18px;
-}
-@media(min-width:600px){.stats{grid-template-columns:repeat(3,1fr)}}
-@media(min-width:900px){.stats{grid-template-columns:repeat(5,1fr)}}
+.tab-btn { padding: 12px 20px; background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 8px 8px 0px 0px; color: rgb(122, 143, 166); font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; flex: 1 1 0%; min-width: 150px; text-align: center; }
 
-.card{
-  background:linear-gradient(135deg, rgba(0,212,255,.08), rgba(0,212,255,.03));
-  border:1px solid rgba(0,212,255,.15);
-  border-radius:12px;
-  padding:18px 16px;
-  text-align:center;
-  transition:.3s;
-}
-.card:hover{
-  transform:translateY(-3px);
-  border-color:var(--cyan);
-  box-shadow:0 8px 20px rgba(0,212,255,.20);
-}
-.card .k{
-  font-size:10px;
-  color:var(--muted);
-  text-transform:uppercase;
-  font-weight:800;
-  margin-bottom:9px;
-  letter-spacing:1px;
-}
-.card .v{
-  font-size:22px;
-  font-weight:800;
-  color:var(--cyan);
-  font-family:"Courier New", monospace;
-}
-.card .v.good{color:var(--green)}
-.card .v.bad{color:var(--red)}
-.card .v.neutral{color:var(--amber)}
+.tab-btn.active { background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1)); border-color: rgb(0, 212, 255); color: rgb(0, 212, 255); }
 
-.formGrid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
-}
-@media(min-width:700px){.formGrid{grid-template-columns:repeat(4,1fr)}}
+.tab-btn.proportional-tab.active { background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 255, 136, 0.1)); border-color: rgb(0, 255, 136); color: rgb(0, 255, 136); }
 
-.inline-range{display:flex;gap:12px;flex-wrap:wrap}
-.inline-range .field{flex:1 1 0;min-width:140px}
+.tab-btn.power-tab.active { background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.1)); border-color: rgb(255, 193, 7); color: rgb(255, 193, 7); }
 
-/* leagues grid */
-.checkGrid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:15px 18px;
-  margin-bottom:16px;
-}
-@media(min-width:600px){.checkGrid{grid-template-columns:repeat(3,1fr)}}
-.checkGrid label{
-  margin:0;
-  font-size:13px;
-  cursor:pointer;
-  line-height:1.5;
-  font-weight:800;
-  color:#fff;
-  text-transform:uppercase;
-  letter-spacing:.3px;
-}
-.checkGrid input[type="checkbox"]{
-  width:22px;height:22px;
-  accent-color:var(--cyan);
-  flex-shrink:0;
-  cursor:pointer;
+.tab-btn:hover { background: rgba(0, 212, 255, 0.15); }
+
+.tab-content { display: none; }
+
+.tab-content.active { display: block; }
+
+.method-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.method-badge.proportional { background: rgba(0, 255, 136, 0.2); color: rgb(0, 255, 136); }
+
+.method-badge.power { background: rgba(255, 193, 7, 0.2); color: rgb(255, 193, 7); }
+
+.filter-section, .input-section { background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(0, 212, 255, 0.02)); border: 1px solid rgba(0, 212, 255, 0.15); border-radius: 12px; padding: 22px 20px; margin-bottom: 28px; }
+
+.input-group { display: flex; flex-direction: column; margin-bottom: 16px; }
+
+label { font-size: 10px; font-weight: 600; color: rgb(122, 143, 166); margin-bottom: 7px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+input, select { padding: 12px; border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 8px; font-size: 14px; font-family: inherit; background: rgba(255, 255, 255, 0.05); color: rgb(224, 224, 224); width: 100%; }
+
+input:focus, select:focus { outline: none; border-color: rgb(0, 212, 255); background: rgba(0, 212, 255, 0.08); box-shadow: rgba(0, 212, 255, 0.15) 0px 0px 10px; }
+
+button { padding: 13px 24px; background: linear-gradient(135deg, rgb(0, 212, 255), rgb(0, 153, 204)); color: rgb(15, 20, 25); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-top: 12px; width: 100%; transition: 0.2s; }
+
+button:hover { transform: translateY(-2px); box-shadow: rgba(0, 212, 255, 0.3) 0px 8px 20px; }
+
+button:active { transform: scale(0.98); }
+
+.stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+@media (min-width: 600px) {
+  .stat-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* table */
-.tableWrap{overflow-x:auto;margin:0 -20px;padding:0 20px}
-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:12px}
-th{
-  background:linear-gradient(135deg, rgba(0,212,255,.15), rgba(0,212,255,.08));
-  color:var(--cyan);
-  padding:13px 9px;
-  text-align:left;
-  font-size:10px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  border-bottom:2px solid rgba(0,212,255,.20);
-  white-space:nowrap;
-}
-td{
-  padding:13px 9px;
-  border-bottom:1px solid rgba(0,212,255,.10);
-  font-family:"Courier New", monospace;
-  font-size:11px;
-}
-tr{transition:.2s}
-tr:hover{background:rgba(0,212,255,.05)}
-tr.win{background:rgba(0,255,136,.08)}
-tr.loss{background:rgba(255,51,102,.08)}
-tr.push{background:rgba(122,143,166,.08)}
-tr.pending{background:rgba(255,193,7,.08)}
-
-/* pills/badges */
-.pill{
-  display:inline-block;
-  padding:4px 8px;
-  border-radius:4px;
-  font-size:9px;
-  font-weight:800;
-  background:rgba(0,212,255,.20);
-  color:var(--cyan);
-  white-space:nowrap;
-}
-.pill.good{background:rgba(0,255,136,.18);color:var(--green)}
-.pill.bad{background:rgba(255,51,102,.18);color:var(--red)}
-.pill.neutral{background:rgba(255,193,7,.18);color:var(--amber)}
-
-/* modal */
-.modalBackdrop_unused{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.85);
-  z-index:9998;
-  backdrop-filter:blur(8px);
-}
-.modal{
-  display:none;
-  position:fixed;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  background:linear-gradient(135deg, rgba(26,31,58,.98), rgba(15,20,25,.98));
-  border:2px solid rgba(0,212,255,.30);
-  border-radius:16px;
-  padding:30px 22px;
-  z-index:9999;
-  max-width:90%;
-  width:450px;
-  box-shadow:0 30px 90px rgba(0,212,255,.40);
-  max-height:90vh;
-  overflow-y:auto;
+@media (min-width: 900px) {
+  .stat-grid { grid-template-columns: repeat(5, 1fr); }
 }
 
-@media(max-width:600px){
-  body{padding:10px 6px}
-  .wrap{padding:22px 16px;border-radius:12px}
-  .title{font-size:24px}
-  .subtitle{font-size:10px;margin-bottom:22px}
-  .tabs{gap:8px}
-  .tab{padding:10px 14px;font-size:11px;min-width:120px}
-  .panel{padding:18px 14px}
-  table{font-size:10px}
-  th,td{padding:11px 7px}
+.stat-box { background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(0, 212, 255, 0.03)); border: 1px solid rgba(0, 212, 255, 0.15); border-radius: 12px; padding: 18px 16px; text-align: center; transition: 0.3s; }
+
+.stat-box:hover { transform: translateY(-3px); border-color: rgb(0, 212, 255); box-shadow: rgba(0, 212, 255, 0.2) 0px 8px 20px; }
+
+.stat-label { font-size: 10px; color: rgb(122, 143, 166); text-transform: uppercase; font-weight: 600; margin-bottom: 9px; letter-spacing: 1px; }
+
+.stat-value { font-size: 22px; font-weight: 600; color: rgb(0, 212, 255); font-family: "Courier New", monospace; }
+
+.stat-value.positive { color: rgb(0, 255, 136); }
+
+.stat-value.negative { color: rgb(255, 51, 102); }
+
+.stat-value.neutral { color: rgb(255, 193, 7); }
+
+.league-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px 18px; margin-bottom: 16px; }
+
+@media (min-width: 600px) {
+  .league-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
+.league-item { display: flex; align-items: center; gap: 11px; font-size: 13px; }
 
-/* ===== Legacy-style inline panels (no popups) ===== */
-.inlinePanel{
-  margin: 14px 0 28px;
-  background: linear-gradient(135deg, rgba(0,212,255,0.05), rgba(0,212,255,0.02));
-  border: 1px solid rgba(0,212,255,0.18);
-  border-radius: 12px;
-  padding: 18px 16px;
-}
-.inlinePanelHeader{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin-bottom:10px;
-}
-.inlinePanelTitle{
-  color: rgb(0,212,255);
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  font-size: 12px;
-}
-.smallBtn{
-  padding: 8px 10px;
-  font-size: 11px;
-  width: auto;
-  margin-top: 0;
-  border-radius: 8px;
-  background: rgba(122,143,166,0.25);
-  color: rgb(224,224,224);
-}
-.smallBtn:hover{ transform:none; box-shadow:none; background: rgba(122,143,166,0.4); }
-.smallHint{
-  color: rgb(122,143,166);
-  font-size: 11px;
-  margin-bottom: 10px;
-  line-height: 1.5;
-}
-.tableWrap{ overflow-x:auto; }
-.checkGrid{
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0,1fr));
-  gap: 10px 14px;
-}
-@media (min-width:600px){ .checkGrid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
-.chk{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(0,212,255,0.12);
-  background: rgba(0,0,0,0.18);
-}
-.chk:hover{ border-color: rgba(0,212,255,0.28); background: rgba(0,0,0,0.25); }
-.chk input{ width:22px; height:22px; accent-color: rgb(0,212,255); }
-.chk span{
-  font-size: 12px;
-  font-weight: 700;
-  color: rgb(255,255,255);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  line-height: 1.35;
+.league-item input { width: 22px; height: 22px; accent-color: rgb(0, 212, 255); flex-shrink: 0; cursor: pointer; }
+
+.league-item label { margin: 0px; text-transform: uppercase; letter-spacing: 0.3px; font-size: 13px; cursor: pointer; line-height: 1.5; font-weight: 700; color: rgb(255, 255, 255); }
+
+.league-divider { grid-column: 1 / -1; height: 1px; background: rgba(0, 212, 255, 0.2); margin: 8px 0px; }
+
+.table-wrapper { overflow-x: auto; margin: 0px -20px; padding: 0px 20px; }
+
+table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
+
+th { background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.08)); color: rgb(0, 212, 255); padding: 13px 9px; text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid rgba(0, 212, 255, 0.2); white-space: nowrap; }
+
+td { padding: 13px 9px; border-bottom: 1px solid rgba(0, 212, 255, 0.1); font-family: "Courier New", monospace; font-size: 11px; }
+
+tr { transition: 0.2s; }
+
+tr:hover { background: rgba(0, 212, 255, 0.05); }
+
+tr.win { background: rgba(0, 255, 136, 0.08); }
+
+tr.loss { background: rgba(255, 51, 102, 0.08); }
+
+tr.push { background: rgba(122, 143, 166, 0.08); }
+
+tr.pending { background: rgba(255, 193, 7, 0.08); }
+
+.sport-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; background: rgba(0, 212, 255, 0.2); color: rgb(0, 212, 255); white-space: nowrap; }
+
+.edge-badge { display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; background: rgba(255, 193, 7, 0.2); color: rgb(255, 193, 7); }
+
+.button-group { display: flex; gap: 12px; margin-top: 12px; justify-content: center; flex-wrap: wrap; }
+
+.button-group button { flex: 1 1 0%; min-width: 140px; }
+
+.button-danger { background: linear-gradient(135deg, rgb(255, 51, 102), rgb(204, 0, 51)); color: rgb(255, 255, 255); }
+
+.small-label { font-size: 11px; color: rgb(122, 143, 166); margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.inline-range { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.inline-range .input-group { flex: 1 1 0%; min-width: 140px; }
+
+.action-buttons { display: flex; gap: 6px; align-items: center; }
+
+.btn-edit { padding: 6px 10px; font-size: 11px; background: linear-gradient(135deg, rgb(0, 212, 255), rgb(0, 153, 204)); border-radius: 6px; color: rgb(15, 20, 25); border: none; cursor: pointer; font-weight: 600; margin: 0px; }
+
+.btn-delete { padding: 6px 10px; font-size: 11px; background: rgb(255, 51, 102); border-radius: 6px; color: rgb(255, 255, 255); border: none; cursor: pointer; font-weight: 600; margin: 0px; }
+
+.modal-overlay { display: none; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 9998; backdrop-filter: blur(8px); animation: 0.2s ease 0s 1 normal none running fadeIn; }
+
+@keyframes fadeIn { 
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
+.modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, rgba(26, 31, 58, 0.98), rgba(15, 20, 25, 0.98)); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 16px; padding: 35px 30px; z-index: 9999; max-width: 90%; width: 450px; box-shadow: rgba(0, 212, 255, 0.4) 0px 30px 90px; max-height: 90vh; overflow-y: auto; animation: 0.3s ease 0s 1 normal none running slideIn; }
+
+@keyframes slideIn { 
+  0% { transform: translate(-50%, -60%); opacity: 0; }
+  100% { transform: translate(-50%, -50%); opacity: 1; }
+}
+
+.modal h3 { color: rgb(0, 212, 255); font-size: 20px; margin-bottom: 10px; text-align: center; font-weight: 600; letter-spacing: 0.5px; }
+
+.modal .user-name { color: rgb(0, 255, 136); font-weight: 700; font-size: 22px; }
+
+.modal p { color: rgb(224, 224, 224); font-size: 15px; line-height: 1.7; margin-bottom: 28px; text-align: center; }
+
+.modal-icon { text-align: center; font-size: 48px; margin-bottom: 20px; animation: 2s ease-in-out 0s infinite normal none running pulse; }
+
+@keyframes pulse { 
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.modal-buttons { display: flex; gap: 12px; }
+
+.modal-buttons button { flex: 1 1 0%; margin: 0px; padding: 14px; font-size: 13px; transition: 0.2s; }
+
+.modal-buttons button:hover { transform: translateY(-2px); box-shadow: rgba(0, 212, 255, 0.3) 0px 8px 20px; }
+
+.btn-cancel { background: rgba(122, 143, 166, 0.3); color: rgb(224, 224, 224); }
+
+.btn-cancel:hover { background: rgba(122, 143, 166, 0.5); }
+
+.btn-confirm { background: linear-gradient(135deg, rgb(255, 51, 102), rgb(204, 0, 51)); color: rgb(255, 255, 255); }
+
+.btn-confirm:hover { box-shadow: rgba(255, 51, 102, 0.4) 0px 8px 20px; }
+
+.edit-modal { width: 500px; max-width: 95%; }
+
+.edit-modal .inline-range { margin-bottom: 12px; }
+
+.edit-modal .input-group { margin-bottom: 12px; }
+
+.history-card { background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(0, 212, 255, 0.03)); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 12px; padding: 16px; margin-bottom: 14px; transition: 0.3s; position: relative; }
+
+.history-card:hover { background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.08)); border-color: rgb(0, 212, 255); transform: translateY(-2px); box-shadow: rgba(0, 212, 255, 0.2) 0px 8px 20px; }
+
+.history-card.suggested { border: 2px solid rgba(0, 255, 136, 0.4); background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 255, 136, 0.03)); }
+
+.history-card.suggested:hover { background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.08)); border-color: rgb(0, 255, 136); box-shadow: rgba(0, 255, 136, 0.3) 0px 8px 20px; }
+
+.history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+
+.history-market-type { font-size: 11px; font-weight: 700; color: rgb(0, 212, 255); text-transform: uppercase; letter-spacing: 1px; }
+
+.history-timestamp { font-size: 10px; color: rgb(122, 143, 166); }
+
+.suggested-badge { position: absolute; top: 12px; right: 12px; padding: 4px 10px; border-radius: 12px; font-size: 9px; font-weight: 700; background: linear-gradient(135deg, rgb(0, 255, 136), rgb(0, 204, 102)); color: rgb(15, 20, 25); text-transform: uppercase; letter-spacing: 0.5px; animation: 2s ease-in-out 0s infinite normal none running glow; }
+
+@keyframes glow { 
+  0%, 100% { box-shadow: rgba(0, 255, 136, 0.3) 0px 0px 5px; }
+  50% { box-shadow: rgba(0, 255, 136, 0.6) 0px 0px 20px; }
+}
+
+.history-outcomes { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 12px; }
+
+.history-outcome { background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 12px; border: 1px solid rgba(0, 212, 255, 0.1); transition: 0.2s; }
+
+.history-outcome:hover { border-color: rgba(0, 212, 255, 0.3); background: rgba(0, 0, 0, 0.3); }
+
+.history-outcome-name { font-size: 12px; color: rgb(0, 212, 255); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.history-outcome-details { font-size: 11px; line-height: 1.8; color: rgb(224, 224, 224); font-family: "Courier New", monospace; }
+
+.history-outcome-details span { display: block; }
+
+.edge-value { font-weight: 700; font-size: 13px; }
+
+.edge-value.positive { color: rgb(0, 255, 136); }
+
+.edge-value.negative { color: rgb(255, 51, 102); }
+
+.devig-comparison { background: rgba(0, 0, 0, 0.3); border-radius: 8px; padding: 10px; margin-top: 8px; border: 1px solid rgba(0, 212, 255, 0.15); }
+
+.devig-method { margin-bottom: 6px; }
+
+.devig-method:last-child { margin-bottom: 0px; }
+
+.devig-method-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+
+.devig-method-title.proportional { color: rgb(0, 255, 136); }
+
+.devig-method-title.power { color: rgb(255, 193, 7); }
+
+.devig-method-values { font-size: 10px; color: rgb(224, 224, 224); font-family: "Courier New", monospace; }
+
+.empty-state { text-align: center; padding: 40px 20px; color: rgb(122, 143, 166); font-size: 14px; }
+
+.history-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(0, 212, 255, 0.1); }
+
+.history-actions button { flex: 1 1 0%; margin: 0px; padding: 8px; font-size: 11px; }
+
+.btn-load { background: linear-gradient(135deg, rgb(0, 212, 255), rgb(0, 153, 204)); }
+
+.btn-add-proportional { background: linear-gradient(135deg, rgb(0, 255, 136), rgb(0, 204, 102)); color: rgb(15, 20, 25); }
+
+.btn-add-power { background: linear-gradient(135deg, rgb(255, 193, 7), rgb(255, 152, 0)); color: rgb(15, 20, 25); }
+
+.btn-add-both { background: linear-gradient(135deg, rgb(156, 39, 176), rgb(123, 31, 162)); color: rgb(255, 255, 255); }
+
+.btn-remove-history { background: rgba(255, 51, 102, 0.3); color: rgb(255, 51, 102); }
+
+.alert { position: fixed; top: 20px; right: 20px; padding: 16px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; z-index: 10000; animation: 0.3s ease 0s 1 normal none running slideInRight; box-shadow: rgba(0, 0, 0, 0.3) 0px 8px 20px; max-width: 300px; }
+
+@keyframes slideInRight { 
+  0% { transform: translateX(400px); opacity: 0; }
+  100% { transform: translateX(0px); opacity: 1; }
+}
+
+.alert.success { background: linear-gradient(135deg, rgb(0, 255, 136), rgb(0, 204, 102)); color: rgb(15, 20, 25); }
+
+.alert.error { background: linear-gradient(135deg, rgb(255, 51, 102), rgb(204, 0, 51)); color: rgb(255, 255, 255); }
+
+.empty-state-icon { font-size: 48px; margin-bottom: 16px; animation: 3s ease-in-out 0s infinite normal none running float; }
+
+@keyframes float { 
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@media (max-width: 600px) {
+  body { padding: 10px 6px; }
+  .container { padding: 22px 16px; border-radius: 12px; }
+  h1 { font-size: 24px; }
+  .subtitle { font-size: 10px; margin-bottom: 22px; }
+  .tab-nav { gap: 8px; }
+  .tab-btn { padding: 10px 14px; font-size: 11px; min-width: 120px; }
+  .filter-section, .input-section { padding: 18px 14px; }
+  .stat-grid { gap: 10px; }
+  .stat-box { padding: 14px 12px; }
+  .stat-value { font-size: 20px; }
+  table { font-size: 10px; }
+  th, td { padding: 11px 7px; }
+  .league-item input { width: 21px; height: 21px; }
+  .league-item { font-size: 12px; }
+  .league-item label { font-size: 12px; }
+  .league-grid { gap: 13px 16px; }
+  .action-buttons { flex-direction: column; gap: 4px; }
+  .btn-edit, .btn-delete { width: 100%; padding: 5px 8px; }
+  .modal { width: 95%; padding: 25px 20px; }
+  .history-outcomes { grid-template-columns: 1fr; }
+  .alert { right: 10px; left: 10px; max-width: calc(100% - 20px); }
+  .history-actions { flex-wrap: wrap; }
+  .history-actions button { min-width: calc(50% - 4px); }
+}
+
+/* PATCH: prevent invisible overlay blocking clicks */
+.modal-overlay{pointer-events:none;}
+.modal-overlay.show{pointer-events:auto;}
 </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="title">⚡ BetAnalytics Pro</div>
-        <div class="subtitle">ADVANCED PROPORTIONAL EDGE TRACKING SYSTEM</div>
-      </div>
-    </header>
+<div class="container">
+<h1>⚡ BetAnalytics Pro</h1>
+<div class="subtitle">Advanced Dual-Method Edge Tracking System</div>
+<!-- Tab Navigation -->
+<div class="tab-nav">
+<button class="tab-btn proportional-tab active">📊 Proportional Bets</button>
+<button class="tab-btn power-tab">⚡ Power Bets</button>
+<button class="tab-btn">💡 Calculator</button>
+</div>
+<!-- PROPORTIONAL BETS TAB -->
+<div class="tab-content active" id="proportionalTab">
+<div style="text-align:center;margin-bottom:20px;">
+<span class="method-badge proportional">📊 PROPORTIONAL DE-VIG METHOD</span>
+</div>
+<!-- Filters Proportional -->
+<div class="filter-section">
+<div class="input-group" style="margin-bottom:20px;">
+<div class="small-label">ΔΙΟΡΓΑΝΩΣΕΙΣ (Leagues)</div>
+<div class="league-item" style="margin-bottom:14px;">
+<input checked="" id="allLeaguesProp" type="checkbox"/>
+<label for="allLeaguesProp">All Leagues</label>
+</div>
+<div class="league-grid" id="leagueGridProp"><div class="league-item"><input id="lg_Prop_0" type="checkbox"/><label for="lg_Prop_0">Premier League</label></div><div class="league-item"><input id="lg_Prop_1" type="checkbox"/><label for="lg_Prop_1">La Liga</label></div><div class="league-item"><input id="lg_Prop_2" type="checkbox"/><label for="lg_Prop_2">Serie A</label></div><div class="league-item"><input id="lg_Prop_3" type="checkbox"/><label for="lg_Prop_3">Bundesliga</label></div><div class="league-item"><input id="lg_Prop_4" type="checkbox"/><label for="lg_Prop_4">Ligue 1</label></div><div class="league-item"><input id="lg_Prop_5" type="checkbox"/><label for="lg_Prop_5">UCL</label></div><div class="league-item"><input id="lg_Prop_6" type="checkbox"/><label for="lg_Prop_6">Europa League</label></div><div class="league-item"><input id="lg_Prop_7" type="checkbox"/><label for="lg_Prop_7">NBA</label></div><div class="league-item"><input id="lg_Prop_8" type="checkbox"/><label for="lg_Prop_8">NFL</label></div><div class="league-item"><input id="lg_Prop_9" type="checkbox"/><label for="lg_Prop_9">Tennis ATP</label></div><div class="league-item"><input id="lg_Prop_10" type="checkbox"/><label for="lg_Prop_10">Tennis WTA</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Prop_11" type="checkbox"/><label for="lg_Prop_11">Eredivisie</label></div><div class="league-item"><input id="lg_Prop_12" type="checkbox"/><label for="lg_Prop_12">Primeira Liga</label></div><div class="league-item"><input id="lg_Prop_13" type="checkbox"/><label for="lg_Prop_13">Super League 1</label></div><div class="league-item"><input id="lg_Prop_14" type="checkbox"/><label for="lg_Prop_14">Scottish Premiership</label></div><div class="league-item"><input id="lg_Prop_15" type="checkbox"/><label for="lg_Prop_15">Belgian Pro League</label></div><div class="league-item"><input id="lg_Prop_16" type="checkbox"/><label for="lg_Prop_16">Super Lig</label></div><div class="league-item"><input id="lg_Prop_17" type="checkbox"/><label for="lg_Prop_17">Austrian Bundesliga</label></div><div class="league-item"><input id="lg_Prop_18" type="checkbox"/><label for="lg_Prop_18">Swiss Super League</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Prop_19" type="checkbox"/><label for="lg_Prop_19">EFL Cup</label></div><div class="league-item"><input id="lg_Prop_20" type="checkbox"/><label for="lg_Prop_20">FA Cup</label></div><div class="league-item"><input id="lg_Prop_21" type="checkbox"/><label for="lg_Prop_21">Copa del Rey</label></div><div class="league-item"><input id="lg_Prop_22" type="checkbox"/><label for="lg_Prop_22">Coppa Italia</label></div><div class="league-item"><input id="lg_Prop_23" type="checkbox"/><label for="lg_Prop_23">DFB Pokal</label></div><div class="league-item"><input id="lg_Prop_24" type="checkbox"/><label for="lg_Prop_24">Coupe de France</label></div><div class="league-item"><input id="lg_Prop_25" type="checkbox"/><label for="lg_Prop_25">Greek Cup</label></div><div class="league-item"><input id="lg_Prop_26" type="checkbox"/><label for="lg_Prop_26">Taça de Portugal</label></div><div class="league-item"><input id="lg_Prop_27" type="checkbox"/><label for="lg_Prop_27">KNVB Beker</label></div><div class="league-item"><input id="lg_Prop_28" type="checkbox"/><label for="lg_Prop_28">Turkish Cup</label></div><div class="league-item"><input id="lg_Prop_29" type="checkbox"/><label for="lg_Prop_29">Conference League</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Prop_30" type="checkbox"/><label for="lg_Prop_30">World Cup</label></div><div class="league-item"><input id="lg_Prop_31" type="checkbox"/><label for="lg_Prop_31">Euro Championship</label></div><div class="league-item"><input id="lg_Prop_32" type="checkbox"/><label for="lg_Prop_32">Copa America</label></div><div class="league-item"><input id="lg_Prop_33" type="checkbox"/><label for="lg_Prop_33">UEFA Nations League</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Prop_34" type="checkbox"/><label for="lg_Prop_34">Championship</label></div><div class="league-item"><input id="lg_Prop_35" type="checkbox"/><label for="lg_Prop_35">Segunda Division</label></div><div class="league-item"><input id="lg_Prop_36" type="checkbox"/><label for="lg_Prop_36">Serie B</label></div><div class="league-item"><input id="lg_Prop_37" type="checkbox"/><label for="lg_Prop_37">2. Bundesliga</label></div><div class="league-item"><input id="lg_Prop_38" type="checkbox"/><label for="lg_Prop_38">Ligue 2</label></div><div class="league-item"><input id="lg_Prop_39" type="checkbox"/><label for="lg_Prop_39">Super League 2</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Prop_40" type="checkbox"/><label for="lg_Prop_40">MLS</label></div><div class="league-item"><input id="lg_Prop_41" type="checkbox"/><label for="lg_Prop_41">Liga MX</label></div><div class="league-item"><input id="lg_Prop_42" type="checkbox"/><label for="lg_Prop_42">Campeonato Brasileiro</label></div><div class="league-item"><input id="lg_Prop_43" type="checkbox"/><label for="lg_Prop_43">Copa Libertadores</label></div><div class="league-item"><input id="lg_Prop_44" type="checkbox"/><label for="lg_Prop_44">Copa Sudamericana</label></div><div class="league-item"><input id="lg_Prop_45" type="checkbox"/><label for="lg_Prop_45">Copa do Brasil</label></div><div class="league-item"><input id="lg_Prop_46" type="checkbox"/><label for="lg_Prop_46">Copa MX</label></div><div class="league-item"><input id="lg_Prop_47" type="checkbox"/><label for="lg_Prop_47">US Open Cup</label></div><div class="league-item"><input id="lg_Prop_48" type="checkbox"/><label for="lg_Prop_48">Leagues Cup</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Prop_49" type="checkbox"/><label for="lg_Prop_49">Euroleague</label></div><div class="league-item"><input id="lg_Prop_50" type="checkbox"/><label for="lg_Prop_50">Eurocup</label></div><div class="league-item"><input id="lg_Prop_51" type="checkbox"/><label for="lg_Prop_51">Greek Basket League</label></div><div class="league-item"><input id="lg_Prop_52" type="checkbox"/><label for="lg_Prop_52">Spain ACB</label></div><div class="league-item"><input id="lg_Prop_53" type="checkbox"/><label for="lg_Prop_53">Italy Lega A</label></div><div class="league-item"><input id="lg_Prop_54" type="checkbox"/><label for="lg_Prop_54">Germany BBL</label></div><div class="league-item"><input id="lg_Prop_55" type="checkbox"/><label for="lg_Prop_55">France LNB</label></div><div class="league-item"><input id="lg_Prop_56" type="checkbox"/><label for="lg_Prop_56">FIBA World Cup</label></div><div class="league-item"><input id="lg_Prop_57" type="checkbox"/><label for="lg_Prop_57">EuroBasket</label></div><div class="league-item"><input id="lg_Prop_58" type="checkbox"/><label for="lg_Prop_58">NBA Playoffs</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Prop_59" type="checkbox"/><label for="lg_Prop_59">NCAA Football</label></div><div class="league-item"><input id="lg_Prop_60" type="checkbox"/><label for="lg_Prop_60">NFL Playoffs</label></div><div class="league-item"><input id="lg_Prop_61" type="checkbox"/><label for="lg_Prop_61">Super Bowl</label></div><div class="league-item"><input id="lg_Prop_62" type="checkbox"/><label for="lg_Prop_62">MLB</label></div><div class="league-item"><input id="lg_Prop_63" type="checkbox"/><label for="lg_Prop_63">MLB Playoffs</label></div><div class="league-item"><input id="lg_Prop_64" type="checkbox"/><label for="lg_Prop_64">World Series</label></div><div class="league-item"><input id="lg_Prop_65" type="checkbox"/><label for="lg_Prop_65">NHL</label></div><div class="league-item"><input id="lg_Prop_66" type="checkbox"/><label for="lg_Prop_66">NHL Playoffs</label></div><div class="league-item"><input id="lg_Prop_67" type="checkbox"/><label for="lg_Prop_67">Stanley Cup</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Prop_68" type="checkbox"/><label for="lg_Prop_68">Grand Slams</label></div><div class="league-item"><input id="lg_Prop_69" type="checkbox"/><label for="lg_Prop_69">UFC</label></div><div class="league-item"><input id="lg_Prop_70" type="checkbox"/><label for="lg_Prop_70">Boxing</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Prop_71" type="checkbox"/><label for="lg_Prop_71">Volleyball</label></div><div class="league-item"><input id="lg_Prop_72" type="checkbox"/><label for="lg_Prop_72">Handball</label></div><div class="league-item"><input id="lg_Prop_73" type="checkbox"/><label for="lg_Prop_73">Rugby</label></div><div class="league-item"><input id="lg_Prop_74" type="checkbox"/><label for="lg_Prop_74">Cricket</label></div><div class="league-item"><input id="lg_Prop_75" type="checkbox"/><label for="lg_Prop_75">Other</label></div></div>
+</div>
+<div class="inline-range" style="margin-bottom:20px;">
+<div class="input-group">
+<label for="fromDateProp">Date From</label>
+<input id="fromDateProp" type="date"/>
+</div>
+<div class="input-group">
+<label for="toDateProp">Date To</label>
+<input id="toDateProp" type="date"/>
+</div>
+</div>
+<div class="inline-range" style="margin-bottom:20px;">
+<div class="input-group">
+<label for="edgeFromProp">Edge From % (optional)</label>
+<input id="edgeFromProp" placeholder="0" step="0.1" type="number"/>
+</div>
+<div class="input-group">
+<label for="edgeToProp">Edge To % (optional)</label>
+<input id="edgeToProp" placeholder="10" step="0.1" type="number"/>
+</div>
+</div>
+<div class="input-group">
+<label for="betTypeFilterProp">Bet Type</label>
+<select id="betTypeFilterProp">
+<option value="all">All bets</option>
+<option value="live">Live only</option>
+<option value="pregame">Pregame only</option>
+</select>
+</div>
+<button id="resetFiltersProp">Reset Filters</button>
+</div>
+<!-- Stats Proportional -->
+<div class="filter-section" style="margin-top:-12px;">
+<div class="stat-grid">
+<div class="stat-box">
+<div class="stat-label">Total Bets</div>
+<div class="stat-value" id="statTotalBetsProp">0</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Wins</div>
+<div class="stat-value" id="statWinsProp">0</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Losses</div>
+<div class="stat-value" id="statLossesProp">0</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Pending</div>
+<div class="stat-value" id="statPendingProp">0</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Win %</div>
+<div class="stat-value" id="statWinRateProp">0.0%</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Total Units</div>
+<div class="stat-value positive" id="statTotalUnitsProp">0.00</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Total Wagered</div>
+<div class="stat-value" id="statTotalWageredProp">0.00</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">ROI %</div>
+<div class="stat-value positive" id="statRoiProp">0.0%</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Avg Edge %</div>
+<div class="stat-value neutral" id="statAvgEdgeProp">-</div>
+</div>
+</div>
+</div>
+<!-- Add Bet Proportional -->
+<div class="input-section">
+<h2 style="font-size:16px; margin-bottom:16px; color:#00ff88;">Add Proportional Bet</h2>
+<div class="inline-range">
+<div class="input-group">
+<label for="betDateProp">Date</label>
+<input id="betDateProp" type="date"/>
+</div>
+<div class="input-group">
+<label for="betLeagueProp">League</label>
+<select id="betLeagueProp"><option value="Premier League">Premier League</option><option value="La Liga">La Liga</option><option value="Serie A">Serie A</option><option value="Bundesliga">Bundesliga</option><option value="Ligue 1">Ligue 1</option><option value="UCL">UCL</option><option value="Europa League">Europa League</option><option value="NBA">NBA</option><option value="NFL">NFL</option><option value="Tennis ATP">Tennis ATP</option><option value="Tennis WTA">Tennis WTA</option><option value="Eredivisie">Eredivisie</option><option value="Primeira Liga">Primeira Liga</option><option value="Super League 1">Super League 1</option><option value="Scottish Premiership">Scottish Premiership</option><option value="Belgian Pro League">Belgian Pro League</option><option value="Super Lig">Super Lig</option><option value="Austrian Bundesliga">Austrian Bundesliga</option><option value="Swiss Super League">Swiss Super League</option><option value="EFL Cup">EFL Cup</option><option value="FA Cup">FA Cup</option><option value="Copa del Rey">Copa del Rey</option><option value="Coppa Italia">Coppa Italia</option><option value="DFB Pokal">DFB Pokal</option><option value="Coupe de France">Coupe de France</option><option value="Greek Cup">Greek Cup</option><option value="Taça de Portugal">Taça de Portugal</option><option value="KNVB Beker">KNVB Beker</option><option value="Turkish Cup">Turkish Cup</option><option value="Conference League">Conference League</option><option value="World Cup">World Cup</option><option value="Euro Championship">Euro Championship</option><option value="Copa America">Copa America</option><option value="UEFA Nations League">UEFA Nations League</option><option value="Championship">Championship</option><option value="Segunda Division">Segunda Division</option><option value="Serie B">Serie B</option><option value="2. Bundesliga">2. Bundesliga</option><option value="Ligue 2">Ligue 2</option><option value="Super League 2">Super League 2</option><option value="MLS">MLS</option><option value="Liga MX">Liga MX</option><option value="Campeonato Brasileiro">Campeonato Brasileiro</option><option value="Copa Libertadores">Copa Libertadores</option><option value="Copa Sudamericana">Copa Sudamericana</option><option value="Copa do Brasil">Copa do Brasil</option><option value="Copa MX">Copa MX</option><option value="US Open Cup">US Open Cup</option><option value="Leagues Cup">Leagues Cup</option><option value="Euroleague">Euroleague</option><option value="Eurocup">Eurocup</option><option value="Greek Basket League">Greek Basket League</option><option value="Spain ACB">Spain ACB</option><option value="Italy Lega A">Italy Lega A</option><option value="Germany BBL">Germany BBL</option><option value="France LNB">France LNB</option><option value="FIBA World Cup">FIBA World Cup</option><option value="EuroBasket">EuroBasket</option><option value="NBA Playoffs">NBA Playoffs</option><option value="NCAA Football">NCAA Football</option><option value="NFL Playoffs">NFL Playoffs</option><option value="Super Bowl">Super Bowl</option><option value="MLB">MLB</option><option value="MLB Playoffs">MLB Playoffs</option><option value="World Series">World Series</option><option value="NHL">NHL</option><option value="NHL Playoffs">NHL Playoffs</option><option value="Stanley Cup">Stanley Cup</option><option value="Grand Slams">Grand Slams</option><option value="UFC">UFC</option><option value="Boxing">Boxing</option><option value="Volleyball">Volleyball</option><option value="Handball">Handball</option><option value="Rugby">Rugby</option><option value="Cricket">Cricket</option><option value="Other">Other</option></select>
+</div>
+</div>
+<div class="inline-range">
+<div class="input-group">
+<label for="betOddsProp">Odds</label>
+<input id="betOddsProp" min="1.01" placeholder="1.90" step="0.01" type="number"/>
+</div>
+<div class="input-group">
+<label for="betUnitsProp">Units</label>
+<input id="betUnitsProp" min="0.01" step="0.01" type="number" value="10"/>
+</div>
+</div>
+<div class="inline-range">
+<div class="input-group">
+<label for="betEdgeProp">Edge % (optional)</label>
+<input id="betEdgeProp" placeholder="3.5" step="0.1" type="number"/>
+</div>
+<div class="input-group">
+<label for="betResultProp">Result</label>
+<select id="betResultProp">
+<option value="pending">Pending</option>
+<option value="win">Win</option>
+<option value="loss">Loss</option>
+<option value="push">Push</option>
+</select>
+</div>
+</div>
+<div class="input-group" style="flex-direction:row;align-items:center;gap:11px;margin-top:10px;">
+<input id="betLiveProp" style="width:22px;height:22px;accent-color:#00ff88;" type="checkbox"/>
+<label for="betLiveProp" style="margin:0;font-size:13px;text-transform:none;letter-spacing:0;cursor:pointer;">Live bet</label>
+</div>
+<button id="addBetProp" style="margin-top:20px;background:linear-gradient(135deg,#00ff88,#00cc66);">Add Proportional Bet</button>
+</div>
+<!-- Table Proportional -->
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>League</th>
+<th>Odds</th>
+<th>Units</th>
+<th>Edge %</th>
+<th>P/L</th>
+<th>Result</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="betsTableProp"><tr><td colspan="8" style="text-align:center;padding:30px;color:#7a8fa6;">No bets match your filters 📭</td></tr></tbody>
+</table>
+</div>
+<div class="button-group">
+<button id="exportCsvProp">📥 Export CSV</button>
+<button class="button-danger" id="clearAllProp">🗑 Clear All</button>
+</div>
+</div>
+<!-- POWER BETS TAB -->
+<div class="tab-content" id="powerTab">
+<div style="text-align:center;margin-bottom:20px;">
+<span class="method-badge power">⚡ POWER/EXPONENT DE-VIG METHOD</span>
+</div>
+<!-- Filters Power -->
+<div class="filter-section">
+<div class="input-group" style="margin-bottom:20px;">
+<div class="small-label">ΔΙΟΡΓΑΝΩΣΕΙΣ (Leagues)</div>
+<div class="league-item" style="margin-bottom:14px;">
+<input checked="" id="allLeaguesPower" type="checkbox"/>
+<label for="allLeaguesPower">All Leagues</label>
+</div>
+<div class="league-grid" id="leagueGridPower"><div class="league-item"><input id="lg_Power_0" type="checkbox"/><label for="lg_Power_0">Premier League</label></div><div class="league-item"><input id="lg_Power_1" type="checkbox"/><label for="lg_Power_1">La Liga</label></div><div class="league-item"><input id="lg_Power_2" type="checkbox"/><label for="lg_Power_2">Serie A</label></div><div class="league-item"><input id="lg_Power_3" type="checkbox"/><label for="lg_Power_3">Bundesliga</label></div><div class="league-item"><input id="lg_Power_4" type="checkbox"/><label for="lg_Power_4">Ligue 1</label></div><div class="league-item"><input id="lg_Power_5" type="checkbox"/><label for="lg_Power_5">UCL</label></div><div class="league-item"><input id="lg_Power_6" type="checkbox"/><label for="lg_Power_6">Europa League</label></div><div class="league-item"><input id="lg_Power_7" type="checkbox"/><label for="lg_Power_7">NBA</label></div><div class="league-item"><input id="lg_Power_8" type="checkbox"/><label for="lg_Power_8">NFL</label></div><div class="league-item"><input id="lg_Power_9" type="checkbox"/><label for="lg_Power_9">Tennis ATP</label></div><div class="league-item"><input id="lg_Power_10" type="checkbox"/><label for="lg_Power_10">Tennis WTA</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_11" type="checkbox"/><label for="lg_Power_11">Eredivisie</label></div><div class="league-item"><input id="lg_Power_12" type="checkbox"/><label for="lg_Power_12">Primeira Liga</label></div><div class="league-item"><input id="lg_Power_13" type="checkbox"/><label for="lg_Power_13">Super League 1</label></div><div class="league-item"><input id="lg_Power_14" type="checkbox"/><label for="lg_Power_14">Scottish Premiership</label></div><div class="league-item"><input id="lg_Power_15" type="checkbox"/><label for="lg_Power_15">Belgian Pro League</label></div><div class="league-item"><input id="lg_Power_16" type="checkbox"/><label for="lg_Power_16">Super Lig</label></div><div class="league-item"><input id="lg_Power_17" type="checkbox"/><label for="lg_Power_17">Austrian Bundesliga</label></div><div class="league-item"><input id="lg_Power_18" type="checkbox"/><label for="lg_Power_18">Swiss Super League</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_19" type="checkbox"/><label for="lg_Power_19">EFL Cup</label></div><div class="league-item"><input id="lg_Power_20" type="checkbox"/><label for="lg_Power_20">FA Cup</label></div><div class="league-item"><input id="lg_Power_21" type="checkbox"/><label for="lg_Power_21">Copa del Rey</label></div><div class="league-item"><input id="lg_Power_22" type="checkbox"/><label for="lg_Power_22">Coppa Italia</label></div><div class="league-item"><input id="lg_Power_23" type="checkbox"/><label for="lg_Power_23">DFB Pokal</label></div><div class="league-item"><input id="lg_Power_24" type="checkbox"/><label for="lg_Power_24">Coupe de France</label></div><div class="league-item"><input id="lg_Power_25" type="checkbox"/><label for="lg_Power_25">Greek Cup</label></div><div class="league-item"><input id="lg_Power_26" type="checkbox"/><label for="lg_Power_26">Taça de Portugal</label></div><div class="league-item"><input id="lg_Power_27" type="checkbox"/><label for="lg_Power_27">KNVB Beker</label></div><div class="league-item"><input id="lg_Power_28" type="checkbox"/><label for="lg_Power_28">Turkish Cup</label></div><div class="league-item"><input id="lg_Power_29" type="checkbox"/><label for="lg_Power_29">Conference League</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_30" type="checkbox"/><label for="lg_Power_30">World Cup</label></div><div class="league-item"><input id="lg_Power_31" type="checkbox"/><label for="lg_Power_31">Euro Championship</label></div><div class="league-item"><input id="lg_Power_32" type="checkbox"/><label for="lg_Power_32">Copa America</label></div><div class="league-item"><input id="lg_Power_33" type="checkbox"/><label for="lg_Power_33">UEFA Nations League</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_34" type="checkbox"/><label for="lg_Power_34">Championship</label></div><div class="league-item"><input id="lg_Power_35" type="checkbox"/><label for="lg_Power_35">Segunda Division</label></div><div class="league-item"><input id="lg_Power_36" type="checkbox"/><label for="lg_Power_36">Serie B</label></div><div class="league-item"><input id="lg_Power_37" type="checkbox"/><label for="lg_Power_37">2. Bundesliga</label></div><div class="league-item"><input id="lg_Power_38" type="checkbox"/><label for="lg_Power_38">Ligue 2</label></div><div class="league-item"><input id="lg_Power_39" type="checkbox"/><label for="lg_Power_39">Super League 2</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_40" type="checkbox"/><label for="lg_Power_40">MLS</label></div><div class="league-item"><input id="lg_Power_41" type="checkbox"/><label for="lg_Power_41">Liga MX</label></div><div class="league-item"><input id="lg_Power_42" type="checkbox"/><label for="lg_Power_42">Campeonato Brasileiro</label></div><div class="league-item"><input id="lg_Power_43" type="checkbox"/><label for="lg_Power_43">Copa Libertadores</label></div><div class="league-item"><input id="lg_Power_44" type="checkbox"/><label for="lg_Power_44">Copa Sudamericana</label></div><div class="league-item"><input id="lg_Power_45" type="checkbox"/><label for="lg_Power_45">Copa do Brasil</label></div><div class="league-item"><input id="lg_Power_46" type="checkbox"/><label for="lg_Power_46">Copa MX</label></div><div class="league-item"><input id="lg_Power_47" type="checkbox"/><label for="lg_Power_47">US Open Cup</label></div><div class="league-item"><input id="lg_Power_48" type="checkbox"/><label for="lg_Power_48">Leagues Cup</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_49" type="checkbox"/><label for="lg_Power_49">Euroleague</label></div><div class="league-item"><input id="lg_Power_50" type="checkbox"/><label for="lg_Power_50">Eurocup</label></div><div class="league-item"><input id="lg_Power_51" type="checkbox"/><label for="lg_Power_51">Greek Basket League</label></div><div class="league-item"><input id="lg_Power_52" type="checkbox"/><label for="lg_Power_52">Spain ACB</label></div><div class="league-item"><input id="lg_Power_53" type="checkbox"/><label for="lg_Power_53">Italy Lega A</label></div><div class="league-item"><input id="lg_Power_54" type="checkbox"/><label for="lg_Power_54">Germany BBL</label></div><div class="league-item"><input id="lg_Power_55" type="checkbox"/><label for="lg_Power_55">France LNB</label></div><div class="league-item"><input id="lg_Power_56" type="checkbox"/><label for="lg_Power_56">FIBA World Cup</label></div><div class="league-item"><input id="lg_Power_57" type="checkbox"/><label for="lg_Power_57">EuroBasket</label></div><div class="league-item"><input id="lg_Power_58" type="checkbox"/><label for="lg_Power_58">NBA Playoffs</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_59" type="checkbox"/><label for="lg_Power_59">NCAA Football</label></div><div class="league-item"><input id="lg_Power_60" type="checkbox"/><label for="lg_Power_60">NFL Playoffs</label></div><div class="league-item"><input id="lg_Power_61" type="checkbox"/><label for="lg_Power_61">Super Bowl</label></div><div class="league-item"><input id="lg_Power_62" type="checkbox"/><label for="lg_Power_62">MLB</label></div><div class="league-item"><input id="lg_Power_63" type="checkbox"/><label for="lg_Power_63">MLB Playoffs</label></div><div class="league-item"><input id="lg_Power_64" type="checkbox"/><label for="lg_Power_64">World Series</label></div><div class="league-item"><input id="lg_Power_65" type="checkbox"/><label for="lg_Power_65">NHL</label></div><div class="league-item"><input id="lg_Power_66" type="checkbox"/><label for="lg_Power_66">NHL Playoffs</label></div><div class="league-item"><input id="lg_Power_67" type="checkbox"/><label for="lg_Power_67">Stanley Cup</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_68" type="checkbox"/><label for="lg_Power_68">Grand Slams</label></div><div class="league-item"><input id="lg_Power_69" type="checkbox"/><label for="lg_Power_69">UFC</label></div><div class="league-item"><input id="lg_Power_70" type="checkbox"/><label for="lg_Power_70">Boxing</label></div><div class="league-divider"></div><div class="league-item"><input id="lg_Power_71" type="checkbox"/><label for="lg_Power_71">Volleyball</label></div><div class="league-item"><input id="lg_Power_72" type="checkbox"/><label for="lg_Power_72">Handball</label></div><div class="league-item"><input id="lg_Power_73" type="checkbox"/><label for="lg_Power_73">Rugby</label></div><div class="league-item"><input id="lg_Power_74" type="checkbox"/><label for="lg_Power_74">Cricket</label></div><div class="league-item"><input id="lg_Power_75" type="checkbox"/><label for="lg_Power_75">Other</label></div></div>
+</div>
+<div class="inline-range" style="margin-bottom:20px;">
+<div class="input-group">
+<label for="fromDatePower">Date From</label>
+<input id="fromDatePower" type="date"/>
+</div>
+<div class="input-group">
+<label for="toDatePower">Date To</label>
+<input id="toDatePower" type="date"/>
+</div>
+</div>
+<div class="inline-range" style="margin-bottom:20px;">
+<div class="input-group">
+<label for="edgeFromPower">Edge From % (optional)</label>
+<input id="edgeFromPower" placeholder="0" step="0.1" type="number"/>
+</div>
+<div class="input-group">
+<label for="edgeToPower">Edge To % (optional)</label>
+<input id="edgeToPower" placeholder="10" step="0.1" type="number"/>
+</div>
+</div>
+<div class="input-group">
+<label for="betTypeFilterPower">Bet Type</label>
+<select id="betTypeFilterPower">
+<option value="all">All bets</option>
+<option value="live">Live only</option>
+<option value="pregame">Pregame only</option>
+</select>
+</div>
+<button id="resetFiltersPower">Reset Filters</button>
+</div>
+<!-- Stats Power -->
+<div class="filter-section" style="margin-top:-12px;">
+<div class="stat-grid">
+<div class="stat-box">
+<div class="stat-label">Total Bets</div>
+<div class="stat-value" id="statTotalBetsPower">0</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Wins</div>
+<div class="stat-value" id="statWinsPower">0</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Losses</div>
+<div class="stat-value" id="statLossesPower">0</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Pending</div>
+<div class="stat-value" id="statPendingPower">0</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Win %</div>
+<div class="stat-value" id="statWinRatePower">0.0%</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Total Units</div>
+<div class="stat-value positive" id="statTotalUnitsPower">0.00</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Total Wagered</div>
+<div class="stat-value" id="statTotalWageredPower">0.00</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">ROI %</div>
+<div class="stat-value positive" id="statRoiPower">0.0%</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Avg Edge %</div>
+<div class="stat-value neutral" id="statAvgEdgePower">-</div>
+</div>
+</div>
+</div>
+<!-- Add Bet Power -->
+<div class="input-section">
+<h2 style="font-size:16px; margin-bottom:16px; color:#ffc107;">Add Power Bet</h2>
+<div class="inline-range">
+<div class="input-group">
+<label for="betDatePower">Date</label>
+<input id="betDatePower" type="date"/>
+</div>
+<div class="input-group">
+<label for="betLeaguePower">League</label>
+<select id="betLeaguePower"><option value="Premier League">Premier League</option><option value="La Liga">La Liga</option><option value="Serie A">Serie A</option><option value="Bundesliga">Bundesliga</option><option value="Ligue 1">Ligue 1</option><option value="UCL">UCL</option><option value="Europa League">Europa League</option><option value="NBA">NBA</option><option value="NFL">NFL</option><option value="Tennis ATP">Tennis ATP</option><option value="Tennis WTA">Tennis WTA</option><option value="Eredivisie">Eredivisie</option><option value="Primeira Liga">Primeira Liga</option><option value="Super League 1">Super League 1</option><option value="Scottish Premiership">Scottish Premiership</option><option value="Belgian Pro League">Belgian Pro League</option><option value="Super Lig">Super Lig</option><option value="Austrian Bundesliga">Austrian Bundesliga</option><option value="Swiss Super League">Swiss Super League</option><option value="EFL Cup">EFL Cup</option><option value="FA Cup">FA Cup</option><option value="Copa del Rey">Copa del Rey</option><option value="Coppa Italia">Coppa Italia</option><option value="DFB Pokal">DFB Pokal</option><option value="Coupe de France">Coupe de France</option><option value="Greek Cup">Greek Cup</option><option value="Taça de Portugal">Taça de Portugal</option><option value="KNVB Beker">KNVB Beker</option><option value="Turkish Cup">Turkish Cup</option><option value="Conference League">Conference League</option><option value="World Cup">World Cup</option><option value="Euro Championship">Euro Championship</option><option value="Copa America">Copa America</option><option value="UEFA Nations League">UEFA Nations League</option><option value="Championship">Championship</option><option value="Segunda Division">Segunda Division</option><option value="Serie B">Serie B</option><option value="2. Bundesliga">2. Bundesliga</option><option value="Ligue 2">Ligue 2</option><option value="Super League 2">Super League 2</option><option value="MLS">MLS</option><option value="Liga MX">Liga MX</option><option value="Campeonato Brasileiro">Campeonato Brasileiro</option><option value="Copa Libertadores">Copa Libertadores</option><option value="Copa Sudamericana">Copa Sudamericana</option><option value="Copa do Brasil">Copa do Brasil</option><option value="Copa MX">Copa MX</option><option value="US Open Cup">US Open Cup</option><option value="Leagues Cup">Leagues Cup</option><option value="Euroleague">Euroleague</option><option value="Eurocup">Eurocup</option><option value="Greek Basket League">Greek Basket League</option><option value="Spain ACB">Spain ACB</option><option value="Italy Lega A">Italy Lega A</option><option value="Germany BBL">Germany BBL</option><option value="France LNB">France LNB</option><option value="FIBA World Cup">FIBA World Cup</option><option value="EuroBasket">EuroBasket</option><option value="NBA Playoffs">NBA Playoffs</option><option value="NCAA Football">NCAA Football</option><option value="NFL Playoffs">NFL Playoffs</option><option value="Super Bowl">Super Bowl</option><option value="MLB">MLB</option><option value="MLB Playoffs">MLB Playoffs</option><option value="World Series">World Series</option><option value="NHL">NHL</option><option value="NHL Playoffs">NHL Playoffs</option><option value="Stanley Cup">Stanley Cup</option><option value="Grand Slams">Grand Slams</option><option value="UFC">UFC</option><option value="Boxing">Boxing</option><option value="Volleyball">Volleyball</option><option value="Handball">Handball</option><option value="Rugby">Rugby</option><option value="Cricket">Cricket</option><option value="Other">Other</option></select>
+</div>
+</div>
+<div class="inline-range">
+<div class="input-group">
+<label for="betOddsPower">Odds</label>
+<input id="betOddsPower" min="1.01" placeholder="1.90" step="0.01" type="number"/>
+</div>
+<div class="input-group">
+<label for="betUnitsPower">Units</label>
+<input id="betUnitsPower" min="0.01" step="0.01" type="number" value="10"/>
+</div>
+</div>
+<div class="inline-range">
+<div class="input-group">
+<label for="betEdgePower">Edge % (optional)</label>
+<input id="betEdgePower" placeholder="3.5" step="0.1" type="number"/>
+</div>
+<div class="input-group">
+<label for="betResultPower">Result</label>
+<select id="betResultPower">
+<option value="pending">Pending</option>
+<option value="win">Win</option>
+<option value="loss">Loss</option>
+<option value="push">Push</option>
+</select>
+</div>
+</div>
+<div class="input-group" style="flex-direction:row;align-items:center;gap:11px;margin-top:10px;">
+<input id="betLivePower" style="width:22px;height:22px;accent-color:#ffc107;" type="checkbox"/>
+<label for="betLivePower" style="margin:0;font-size:13px;text-transform:none;letter-spacing:0;cursor:pointer;">Live bet</label>
+</div>
+<button id="addBetPower" style="margin-top:20px;background:linear-gradient(135deg,#ffc107,#ff9800);">Add Power Bet</button>
+</div>
+<!-- Table Power -->
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>League</th>
+<th>Odds</th>
+<th>Units</th>
+<th>Edge %</th>
+<th>P/L</th>
+<th>Result</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="betsTablePower"><tr><td colspan="8" style="text-align:center;padding:30px;color:#7a8fa6;">No bets match your filters 📭</td></tr></tbody>
+</table>
+</div>
+<div class="button-group">
+<button id="exportCsvPower">📥 Export CSV</button>
+<button id="importPower">📤 Import</button>
+<button class="button-danger" id="clearAllPower">🗑 Clear All</button>
+</div>
+</div>
+<!-- CALCULATOR TAB -->
+<div class="tab-content" id="calculatorTab">
+<!-- Pinnacle Edge Calculator -->
+<div class="input-section">
+<h2 style="font-size:16px; margin-bottom:16px; color:#00d4ff;">⚡ Pinnacle Edge Calculator</h2>
+<div class="input-group">
+<label for="marketType">Market Type</label>
+<select id="marketType">
+<option value="2way">2-Way (Home/Away)</option>
+<option value="3way">3-Way (1X2)</option>
+</select>
+</div>
+<div class="small-label" style="margin-top:16px;">Pinnacle Odds</div>
+<div class="inline-range">
+<div class="input-group">
+<label for="pinnHome">Home/1</label>
+<input id="pinnHome" min="1.01" placeholder="1.90" step="0.01" type="number"/>
+</div>
+<div class="input-group" id="pinnDrawGroup" style="display: none;">
+<label for="pinnDraw">Draw/X</label>
+<input id="pinnDraw" min="1.01" placeholder="3.40" step="0.01" type="number"/>
+</div>
+<div class="input-group">
+<label for="pinnAway">Away/2</label>
+<input id="pinnAway" min="1.01" placeholder="4.50" step="0.01" type="number"/>
+</div>
+</div>
+<div class="small-label" style="margin-top:16px;">Your Odds</div>
+<div class="inline-range">
+<div class="input-group">
+<label for="yourHome">Home/1</label>
+<input id="yourHome" min="1.01" placeholder="2.00" step="0.01" type="number"/>
+</div>
+<div class="input-group" id="yourDrawGroup" style="display: none;">
+<label for="yourDraw">Draw/X</label>
+<input id="yourDraw" min="1.01" placeholder="3.50" step="0.01" type="number"/>
+</div>
+<div class="input-group">
+<label for="yourAway">Away/2</label>
+<input id="yourAway" min="1.01" placeholder="4.00" step="0.01" type="number"/>
+</div>
+</div>
+<button id="calculateEdge">Calculate Edge</button>
+</div>
+<!-- Calculation History -->
+<div class="filter-section">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+<h2 style="font-size:16px; color:#00d4ff;">📋 Calculation History</h2>
+<button id="clearHistory" style="width:auto;margin:0;padding:8px 16px;font-size:11px;background:rgba(255,51,102,0.3);color:#ff3366;">Clear History</button>
+</div>
+<div id="historyList"><div class="empty-state"><div class="empty-state-icon">📊</div>No calculations yet!</div></div>
+</div>
+</div>
+</div>
+<!-- Modals -->
+<div class="modal-overlay" id="modalOverlay"></div>
+<!-- Delete modals for both methods -->
+<div class="modal" id="deleteModalProp">
+<div class="modal-icon">⚠️</div>
+<h3>Προειδοποίηση</h3>
+<p>Διαγραφή Proportional bet;<br/><span class="user-name">George</span>, είσαι σίγουρος;</p>
+<div class="modal-buttons">
+<button class="btn-cancel">Άκυρο</button>
+<button class="btn-confirm">Ναι, Διέγραψε</button>
+</div>
+</div>
+<div class="modal" id="deleteModalPower">
+<div class="modal-icon">⚠️</div>
+<h3>Προειδοποίηση</h3>
+<p>Διαγραφή Power bet;<br/><span class="user-name">George</span>, είσαι σίγουρος;</p>
+<div class="modal-buttons">
+<button class="btn-cancel">Άκυρο</button>
+<button class="btn-confirm">Ναι, Διέγραψε</button>
+</div>
+</div>
+<div class="modal" id="clearAllModalProp">
+<div class="modal-icon">🗑️</div>
+<h3>Προειδοποίηση</h3>
+<p>Διαγραφή ΟΛΩΝ των Proportional bets;<br/><span class="user-name">George</span>, είσαι σίγουρος;</p>
+<div class="modal-buttons">
+<button class="btn-cancel">Άκυρο</button>
+<button class="btn-confirm">Ναι, Διέγραψε Όλα</button>
+</div>
+</div>
+<div class="modal" id="clearAllModalPower">
+<div class="modal-icon">🗑️</div>
+<!-- IMPORT POWER MODAL -->
+<div aria-labelledby="importModalPowerTitle" aria-modal="true" class="modal" id="importModalPower" role="dialog">
+<h3 id="importModalPowerTitle" style="margin-top:0;">📤 Import POWER Bets</h3>
+<p style="margin:8px 0 14px; color:#a8bed4; line-height:1.4;">
+    Paste <b>CSV</b> (with header) or <b>JSON</b> (array of bets). Supported columns/keys: <code>date</code>, <code>league</code>, <code>odds</code>, <code>units</code>, <code>edge</code>, <code>result</code> (win/loss/push/pending), optional <code>live</code>.
+  </p>
+<textarea id="importTextPower" style="width:100%; min-height:160px; resize:vertical; background:#0f1623; color:#e6f3ff; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size:12px;"></textarea>
+<div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:12px; flex-wrap:wrap;">
+<label style="display:flex; gap:8px; align-items:center; color:#cfe4f7;">
+<input checked="" id="importReplacePower" type="checkbox"/>
+      Replace existing POWER bets
+    </label>
+<div class="button-group" style="margin:0;">
+<button class="button-secondary" id="closeImportPower">Cancel</button>
+<button id="doImportPower" style="background:linear-gradient(135deg,#00d4ff,#0099ff);">Import</button>
+</div>
+</div>
+<details style="margin-top:12px;">
+<summary style="cursor:pointer; color:#7fb6d9;">Examples</summary>
+<pre style="white-space:pre-wrap; margin-top:10px; padding:12px; border-radius:12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); color:#cfe4f7;">CSV:
+date,league,odds,units,edge,result,live
+2025-12-28,NBA,1.91,2,4.5,win,false
+12/30/2025,EPL,-110,1.5,3.2,loss,true
 
-    <div class="tabs">
-      <div class="tab active" id="tabTracker">🧾 Proportional Bets</div>
-      <div class="tab" id="tabCalc">🧮 Calculator</div>
-      <div style="flex:1"></div>
-      <button class="btn ghost" id="btnExport" type="button">⬇ Export CSV</button>
-      <button class="btn ghost" id="btnImport" type="button">⬆ Import CSV</button>
-      <input type="file" id="fileImport" accept=".csv,text/csv" style="display:none" />
-    </div>
-
-    <!-- TRACKER -->
-    <section id="screenTracker" class="panel" style="margin-top:12px;">
-      <div class="row tight" style="align-items:center;">
-        <div class="field" style="flex:2">
-          <label>Bet Type</label>
-          <select id="betType">
-            <option value="all">All bets</option>
-            <option value="live">Live bets only</option>
-            <option value="prematch">Pre-match only</option>
-          </select>
-        </div>
-        <div class="field" style="flex:1">
-          <label>&nbsp;</label>
-          <button class="btn primary" id="btnFilters" type="button">🧪 Filters</button>
-        </div>
-        <div class="field" style="flex:1">
-          <label>&nbsp;</label>
-          <button class="btn" id="btnOddsStats" type="button">📊 Odds Buckets</button>
-        </div>
-        <div class="field" style="flex:1">
-          <label>&nbsp;</label>
-          <button class="btn bad" id="btnDangerZone" type="button">🧹 Reset</button>
-        </div>
-      </div>
-
-      <div class="stats" id="statsGrid"></div>
-
-      <div class="sectionTitle">Add Proportional Bet</div>
-      <div class="formGrid">
-        <div class="field" style="grid-column: span 2;">
-          <label>Date</label>
-          <input id="inDate" type="date" />
-        </div>
-
-        <div class="field" style="grid-column: span 2;">
-          <label>League</label>
-          <input id="inLeague" list="leagueList" placeholder="Select or type custom..." autocomplete="off" />
-          <datalist id="leagueList"></datalist>
-        </div>
-
-        <div class="field">
-          <label>Odds</label>
-          <input id="inOdds" inputmode="decimal" enterkeyhint="next" placeholder="1.56" />
-        </div>
-
-        <div class="field">
-          <label>Units</label>
-          <input id="inUnits" inputmode="decimal" enterkeyhint="next" placeholder="10" />
-        </div>
-
-        <div class="field">
-          <label>Edge %</label>
-          <input id="inEdge" inputmode="decimal" enterkeyhint="next" placeholder="4.80" />
-        </div>
-
-        <div class="field">
-          <label>Result</label>
-          <select id="inResult">
-            <option value="PENDING">Pending</option>
-            <option value="WIN">Win</option>
-            <option value="LOSS">Loss</option>
-          </select>
-        </div>
-
-        <div class="field" style="grid-column: span 2;">
-          <label>Live bet</label>
-          <select id="inLive">
-            <option value="0">No</option>
-            <option value="1">Yes</option>
-          </select>
-        </div>
-
-        <div class="field" style="grid-column: span 2;">
-          <label>&nbsp;</label>
-          <button class="btn good" id="btnAddBet" type="button">✅ Add Bet</button>
-        </div>
-      </div>
-
-      <div class="hint">
-        Tip: Odds/Units/Edge accept <b>dot</b> or <b>comma</b>. Display stays with dot. New bets appear <b>at the bottom</b> (saved order).
-      </div>
-
-      <div class="sectionTitle">Bets</div>
-      <div class="tableWrap" style="overflow:auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>League</th>
-              <th>Odds</th>
-              <th>Units</th>
-              <th>Edge %</th>
-              <th>P/L</th>
-              <th>Result</th>
-              <th>Live</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="betsTbody"></tbody>
-        </table>
-      </div>
-    </section>
-  <!-- INLINE PANELS (legacy-style) -->
-  <section id="filtersPanel" class="inlinePanel" style="display:none;">
-    <div class="inlinePanelHeader">
-      <div class="inlinePanelTitle">Leagues / Competitions</div>
-      <button type="button" class="smallBtn" id="btnHideFiltersPanel">Close</button>
-    </div>
-    <div class="smallHint">Select the competitions you want included. (This used to be the old table.)</div>
-    <div id="leagueList" class="checkGrid"></div>
-    <div class="buttonRow" style="margin-top:12px;">
-      <button type="button" id="btnSelectAllLeagues">Select all</button>
-      <button type="button" class="danger" id="btnClearAllLeagues">Clear</button>
-    </div>
-  </section>
-
-  <section id="oddsPanel" class="inlinePanel" style="display:none;">
-    <div class="inlinePanelHeader">
-      <div class="inlinePanelTitle">Odds Buckets</div>
-      <button type="button" class="smallBtn" id="btnHideOddsPanel">Close</button>
-    </div>
-    <div class="smallHint">Overview by odds range (auto-updates from your current filters).</div>
-    <div class="tableWrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Bucket</th>
-            <th>Bets</th>
-            <th>Wins</th>
-            <th>Losses</th>
-            <th>Pending</th>
-            <th>ROI</th>
-          </tr>
-        </thead>
-        <tbody id="oddsBucketsTbody"></tbody>
-      </table>
-    </div>
-  </section>
-
-
-    <!-- CALCULATOR -->
-    <section id="screenCalc" class="panel" style="margin-top:12px; display:none;">
-      <div class="sectionTitle">Calculate Edge (Proportional — de-vig)</div>
-
-      <div class="calcBox">
-        <div class="row tight">
-          <div class="field">
-            <label>Market Type</label>
-            <select id="marketType">
-              <option value="2">2-Way (Home/Away)</option>
-              <option value="3">3-Way (Home/Draw/Away)</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>League (optional)</label>
-            <input id="calcLeague" list="leagueList" placeholder="Select or type custom..." autocomplete="off" />
-          </div>
-          <div class="field">
-            <label>Date</label>
-            <input id="calcDate" type="date" />
-          </div>
-        </div>
-
-        <div class="sep"></div>
-
-        <div class="row tight">
-          <div class="field">
-            <label>Pinnacle Home</label>
-            <input id="pHome" inputmode="decimal" enterkeyhint="next" placeholder="2.77" />
-          </div>
-          <div class="field" id="wrapPDraw" style="display:none;">
-            <label>Pinnacle Draw</label>
-            <input id="pDraw" inputmode="decimal" enterkeyhint="next" placeholder="3.25" />
-          </div>
-          <div class="field">
-            <label>Pinnacle Away</label>
-            <input id="pAway" inputmode="decimal" enterkeyhint="next" placeholder="1.46" />
-          </div>
-        </div>
-
-        <div class="row tight" style="margin-top:10px;">
-          <div class="field">
-            <label>Your Home</label>
-            <input id="yHome" inputmode="decimal" enterkeyhint="next" placeholder="3.50" />
-          </div>
-          <div class="field" id="wrapYDraw" style="display:none;">
-            <label>Your Draw</label>
-            <input id="yDraw" inputmode="decimal" enterkeyhint="next" placeholder="3.10" />
-          </div>
-          <div class="field">
-            <label>Your Away</label>
-            <input id="yAway" inputmode="decimal" enterkeyhint="next" placeholder="1.40" />
-          </div>
-        </div>
-
-        <div class="row tight" style="margin-top:10px;">
-          <button class="btn primary" id="btnCalc" type="button">✨ Calculate Edge</button>
-          <button class="btn" id="btnReloadCalc" type="button">↻ Reload</button>
-        </div>
-
-        <div id="calcOut" class="calcResult" style="display:none;"></div>
-      </div>
-
-      <div class="sectionTitle">Calculation History</div>
-      <div class="row tight" style="align-items:center;">
-        <button class="btn bad" id="btnClearHistory" type="button">🧨 Clear History</button>
-      </div>
-      <div id="history"></div>
-    </section>
-  </div>
-
-  <!-- FILTERS MODAL -->
-  
-
-
-
-
-
+JSON:
+[
+  {"date":"2025-12-28","league":"NBA","odds":1.91,"units":2,"edge":4.5,"result":"win","live":false},
+  {"date":"2025-12-30","league":"EPL","odds":"-110","units":1.5,"edge":3.2,"result":"loss","live":true}
+]</pre>
+</details>
+</div>
+<h3>Προειδοποίηση</h3>
+<p>Διαγραφή ΟΛΩΝ των Power bets;<br/><span class="user-name">George</span>, είσαι σίγουρος;</p>
+<div class="modal-buttons">
+<button class="btn-cancel">Άκυρο</button>
+<button class="btn-confirm">Ναι, Διέγραψε Όλα</button>
+</div>
+</div>
+<div class="modal" id="clearHistoryModal">
+<div class="modal-icon">🧹</div>
+<h3>Προειδοποίηση</h3>
+<p>Καθαρισμός ιστορικού υπολογισμών;<br/><span class="user-name">George</span>, είσαι σίγουρος;</p>
+<div class="modal-buttons">
+<button class="btn-cancel">Άκυρο</button>
+<button class="btn-confirm">Ναι, Καθάρισε</button>
+</div>
+</div>
+<div class="modal" id="removeHistoryModal">
+<div class="modal-icon">🗑️</div>
+<h3>Προειδοποίηση</h3>
+<p>Διαγραφή υπολογισμού από ιστορικό;<br/><span class="user-name">George</span>, είσαι σίγουρος;</p>
+<div class="modal-buttons">
+<button class="btn-cancel">Άκυρο</button>
+<button class="btn-confirm">Ναι, Διέγραψε</button>
+</div>
+</div>
+<div class="modal edit-modal" id="addFromHistoryModal">
+<h3>✅ Add Bet from Calculation</h3>
+<div class="input-group">
+<label>Select Method</label>
+<select id="histMethod">
+<option value="proportional">📊 Proportional</option>
+<option value="power">⚡ Power</option>
+</select>
+</div>
+<div class="inline-range">
+<div class="input-group">
+<label for="histDate">Date</label>
+<input id="histDate" type="date"/>
+</div>
+<div class="input-group">
+<label for="histLeague">League</label>
+<select id="histLeague"><option value="Premier League">Premier League</option><option value="La Liga">La Liga</option><option value="Serie A">Serie A</option><option value="Bundesliga">Bundesliga</option><option value="Ligue 1">Ligue 1</option><option value="UCL">UCL</option><option value="Europa League">Europa League</option><option value="NBA">NBA</option><option value="NFL">NFL</option><option value="Tennis ATP">Tennis ATP</option><option value="Tennis WTA">Tennis WTA</option><option value="Eredivisie">Eredivisie</option><option value="Primeira Liga">Primeira Liga</option><option value="Super League 1">Super League 1</option><option value="Scottish Premiership">Scottish Premiership</option><option value="Belgian Pro League">Belgian Pro League</option><option value="Super Lig">Super Lig</option><option value="Austrian Bundesliga">Austrian Bundesliga</option><option value="Swiss Super League">Swiss Super League</option><option value="EFL Cup">EFL Cup</option><option value="FA Cup">FA Cup</option><option value="Copa del Rey">Copa del Rey</option><option value="Coppa Italia">Coppa Italia</option><option value="DFB Pokal">DFB Pokal</option><option value="Coupe de France">Coupe de France</option><option value="Greek Cup">Greek Cup</option><option value="Taça de Portugal">Taça de Portugal</option><option value="KNVB Beker">KNVB Beker</option><option value="Turkish Cup">Turkish Cup</option><option value="Conference League">Conference League</option><option value="World Cup">World Cup</option><option value="Euro Championship">Euro Championship</option><option value="Copa America">Copa America</option><option value="UEFA Nations League">UEFA Nations League</option><option value="Championship">Championship</option><option value="Segunda Division">Segunda Division</option><option value="Serie B">Serie B</option><option value="2. Bundesliga">2. Bundesliga</option><option value="Ligue 2">Ligue 2</option><option value="Super League 2">Super League 2</option><option value="MLS">MLS</option><option value="Liga MX">Liga MX</option><option value="Campeonato Brasileiro">Campeonato Brasileiro</option><option value="Copa Libertadores">Copa Libertadores</option><option value="Copa Sudamericana">Copa Sudamericana</option><option value="Copa do Brasil">Copa do Brasil</option><option value="Copa MX">Copa MX</option><option value="US Open Cup">US Open Cup</option><option value="Leagues Cup">Leagues Cup</option><option value="Euroleague">Euroleague</option><option value="Eurocup">Eurocup</option><option value="Greek Basket League">Greek Basket League</option><option value="Spain ACB">Spain ACB</option><option value="Italy Lega A">Italy Lega A</option><option value="Germany BBL">Germany BBL</option><option value="France LNB">France LNB</option><option value="FIBA World Cup">FIBA World Cup</option><option value="EuroBasket">EuroBasket</option><option value="NBA Playoffs">NBA Playoffs</option><option value="NCAA Football">NCAA Football</option><option value="NFL Playoffs">NFL Playoffs</option><option value="Super Bowl">Super Bowl</option><option value="MLB">MLB</option><option value="MLB Playoffs">MLB Playoffs</option><option value="World Series">World Series</option><option value="NHL">NHL</option><option value="NHL Playoffs">NHL Playoffs</option><option value="Stanley Cup">Stanley Cup</option><option value="Grand Slams">Grand Slams</option><option value="UFC">UFC</option><option value="Boxing">Boxing</option><option value="Volleyball">Volleyball</option><option value="Handball">Handball</option><option value="Rugby">Rugby</option><option value="Cricket">Cricket</option><option value="Other">Other</option></select>
+</div>
+</div>
+<div class="input-group">
+<label for="histOutcome">Outcome</label>
+<input id="histOutcome" readonly="" style="background:rgba(0,212,255,0.1);" type="text"/>
+</div>
+<div class="inline-range">
+<div class="input-group">
+<label for="histOdds">Your Odds</label>
+<input id="histOdds" readonly="" step="0.01" style="background:rgba(0,212,255,0.1);" type="number"/>
+</div>
+<div class="input-group">
+<label for="histEdge">Edge %</label>
+<input id="histEdge" readonly="" step="0.1" style="background:rgba(0,212,255,0.1);" type="number"/>
+</div>
+</div>
+<div class="input-group">
+<label for="histUnits">Units</label>
+<input id="histUnits" min="0.01" step="0.01" type="number" value="10"/>
+</div>
+<div class="input-group">
+<label for="histResult">Result</label>
+<select id="histResult">
+  <option value="pending">Pending</option>
+  <option value="win">Win</option>
+  <option value="loss">Loss</option>
+  <option value="push">Push</option>
+</select>
+</div>
+<div class="input-group" style="flex-direction:row;align-items:center;gap:10px;">
+<input id="histLive" style="width:20px;height:20px;accent-color:#00d4ff;" type="checkbox"/>
+<label for="histLive" style="margin:0;font-size:12px;text-transform:none;letter-spacing:0;">Live bet</label>
+</div>
+<div class="modal-buttons" style="margin-top:20px;">
+<button class="btn-cancel">Άκυρο</button>
+<button class="btn-confirm" style="background:linear-gradient(135deg,#00ff88,#00cc66);">Add Bet</button>
+</div>
+</div>
+<!-- VERSION RIBBON (v28) -->
 <script>
-(()=>{
-  if (window.__BA_INITED) return;
-  window.__BA_INITED = true;
+(function(){
+  // --- v16 patch: make All Leagues truly mean ALL, and reset filters after seeding ---
+  function qs(sel){return document.querySelector(sel);}
+  function qsa(sel){return Array.from(document.querySelectorAll(sel));}
 
-    const STORAGE_KEY = "ba_proportional_v3_bets";
-    const STORAGE_LEAGUES_KEY = "ba_proportional_v3_leagues_custom";
-    const STORAGE_CALC_HISTORY = "ba_proportional_v3_calc_history";
-    const STORAGE_FILTERS = "ba_proportional_v3_filters";
-
-    const PREDEFINED_LEAGUES = [
-      "Premier League","La Liga","Serie A","Bundesliga","Ligue 1","UCL","Europa League",
-      "NBA","NFL","Euroleague","Tennis ATP","Tennis WTA",
-      "Eredivisie","Primeira Liga","Scottish Premiership","Super Lig","Swiss Super League",
-      "EFL Cup","FA Cup","Copa del Rey","Coppa Italia","Coupe de France","DFB Pokal","Greek Cup","KNVB Beker",
-      "Conference League","World Cup","Euro Championship","Copa America","UEFA Nations League",
-      "Championship","Segunda Division","Serie B","2. Bundesliga","Ligue 2","Super League 2",
-      "MLS","Liga MX","Copa Libertadores","Copa Sudamericana","Copa do Brasil","US Open Cup","Leagues Cup",
-      "Eurocup","Greek Basket League","Spain ACB","Italy Lega A","Germany BBL","France LNB",
-      "Eurobasket","NBA Playoffs","NCAA Football","NFL Playoffs","Super Bowl","MLB","MLB Playoffs","World Series","NHL","NHL Playoffs","Stanley Cup",
-      "Grand Slams","UFC","Boxing",
-      "Volleyball","Handball","Rugby","Cricket","United Cup","Davis Cup","Billie Jean King Cup","ATP Finals","WTA Finals","ATP Masters 1000","ATP 500","ATP 250","WTA 1000","WTA 500","WTA 250","ATP Challenger",
-      "ITF Tennis","Olympics (Tennis)","Africa Cup of Nations","CAF Champions League","CAF Confederation Cup","Asian Cup","AFC Champions League","AFC Cup",
-      "CONCACAF Gold Cup","CONCACAF Champions Cup","WC Qualifiers","International Friendlies",
-      "Other"
-    ];
-
-    const DEFAULT_ODDS_BUCKETS = [
-      { label:"1.00–1.49", min:1.00, max:1.49 },
-      { label:"1.50–1.99", min:1.50, max:1.99 },
-      { label:"2.00–2.49", min:2.00, max:2.49 },
-      { label:"2.50–2.99", min:2.50, max:2.99 },
-      { label:"3.00–3.99", min:3.00, max:3.99 },
-      { label:"4.00–4.99", min:4.00, max:4.99 },
-      { label:"5.00–9.99", min:5.00, max:9.99 },
-      { label:"10.00+", min:10.00, max:Infinity },
-    ];
-
-    const $ = (id)=>document.getElementById(id);
-
-    function uid(){ return "b_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16); }
-    function normalizeLeague(s){ if(!s) return ""; return s.trim().replace(/\s+/g," "); }
-    function parseDec(x){
-      if(x === null || x === undefined) return NaN;
-      const s = String(x).trim().replace(",", ".");
-      if(s === "") return NaN;
-      const n = Number(s);
-      return Number.isFinite(n) ? n : NaN;
-    }
-    function fmt2(n){ if(!Number.isFinite(n)) return "0.00"; return (Math.round(n*100)/100).toFixed(2); }
-    function fmtPct(n){ if(!Number.isFinite(n)) return "0.00%"; const v = Math.round(n*100)/100; return v.toFixed(2) + "%"; }
-    function isValidDateStr(d){ return /^\d{4}-\d{2}-\d{2}$/.test(d); }
-    function todayISO(){
-      const d = new Date(); const z = (v)=>String(v).padStart(2,"0");
-      return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`;
-    }
-    function computePLUnits(b){
-      const u = Number(b.units); const o = Number(b.odds);
-      if(!Number.isFinite(u) || !Number.isFinite(o)) return 0;
-      if(b.result === "WIN") return u*(o-1);
-      if(b.result === "LOSS") return -u;
-      return 0;
-    }
-
-    let bets = [];
-    let customLeagues = [];
-    let filters = {
-      leaguesSelected: ["ALL"],
-      dateFrom: "", dateTo: "",
-      edgeFrom: "", edgeTo: "",
-      oddsFrom: "", oddsTo: ""
-    };
-
-    function loadAll(){
-      try{ bets = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); if(!Array.isArray(bets)) bets = []; }catch{ bets = []; }
-      let changed = false;
-      for(const b of bets){
-        if(!b.id){ b.id = uid(); changed = true; }
-        if(!b.createdAt){
-          b.createdAt = b.date ? (new Date(b.date).getTime() || Date.now()) : Date.now();
-          changed = true;
-        }
-        if(!b.league) b.league = "Other";
-        b.league = normalizeLeague(b.league) || "Other";
-        if(!["WIN","LOSS","PENDING"].includes(b.result)) { b.result = "PENDING"; changed = true; }
-      }
-      if(changed) saveBets();
-
-      try{ customLeagues = JSON.parse(localStorage.getItem(STORAGE_LEAGUES_KEY) || "[]"); if(!Array.isArray(customLeagues)) customLeagues = []; }catch{ customLeagues = []; }
-      try{
-        const f = JSON.parse(localStorage.getItem(STORAGE_FILTERS) || "null");
-        if(f && typeof f === "object"){ filters = { ...filters, ...f }; }
-      }catch{}
-    }
-    function saveBets(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(bets)); }
-    function saveCustomLeagues(){ localStorage.setItem(STORAGE_LEAGUES_KEY, JSON.stringify(customLeagues)); }
-    function saveFilters(){ localStorage.setItem(STORAGE_FILTERS, JSON.stringify(filters)); }
-
-    function getObservedLeagues(){
-      const set = new Set();
-      for(const b of bets){ const L = normalizeLeague(b.league); if(L) set.add(L); }
-      return Array.from(set);
-    }
-    function isPredefinedLeague(L){ return PREDEFINED_LEAGUES.includes(L); }
-
-    function rebuildLeagueUniverse(){
-      const obs = getObservedLeagues();
-      const set = new Set(customLeagues.map(normalizeLeague).filter(Boolean));
-      for(const L of obs){
-        if(L && !isPredefinedLeague(L) && L !== "Other"){ set.add(L); }
-      }
-      customLeagues = Array.from(set).sort((a,b)=>a.localeCompare(b));
-      saveCustomLeagues();
-    }
-    function getAllSelectableLeagues(){
-      const base = PREDEFINED_LEAGUES.filter(x=>x !== "Other");
-      const all = [...base, ...customLeagues];
-      const set = new Set(all.map(normalizeLeague).filter(Boolean));
-      return Array.from(set).sort((a,b)=>a.localeCompare(b));
-    }
-    function refreshDatalist(){
-      const dl = $("leagueList"); dl.innerHTML = "";
-      const all = getAllSelectableLeagues();
-      for(const L of all){ const opt = document.createElement("option"); opt.value = L; dl.appendChild(opt); }
-    }
-
-    function betPassesFilters(b){
-      const bt = $("betType").value;
-      if(bt === "live" && !b.live) return false;
-      if(bt === "prematch" && b.live) return false;
-
-      const sel = filters.leaguesSelected || ["ALL"];
-      const L = normalizeLeague(b.league) || "Other";
-      const inAll = sel.includes("ALL");
-
-      if(!inAll){
-        const wantOther = sel.includes("OTHER");
-        const wantSpecific = sel.filter(x=>x!=="OTHER" && x!=="ALL");
-        const isOther = !isPredefinedLeague(L);
-        let ok = false;
-        if(wantSpecific.length && wantSpecific.includes(L)) ok = true;
-        if(wantOther && isOther) ok = true;
-        if(!ok) return false;
-      }
-
-      if(filters.dateFrom && isValidDateStr(filters.dateFrom)){
-        if(!b.date || b.date < filters.dateFrom) return false;
-      }
-      if(filters.dateTo && isValidDateStr(filters.dateTo)){
-        if(!b.date || b.date > filters.dateTo) return false;
-      }
-
-      const e = Number(b.edge);
-      const ef = parseDec(filters.edgeFrom);
-      const et = parseDec(filters.edgeTo);
-      if(Number.isFinite(ef) && !(e >= ef)) return false;
-      if(Number.isFinite(et) && !(e <= et)) return false;
-
-      const o = Number(b.odds);
-      const of = parseDec(filters.oddsFrom);
-      const ot = parseDec(filters.oddsTo);
-      if(Number.isFinite(of) && !(o >= of)) return false;
-      if(Number.isFinite(ot) && !(o <= ot)) return false;
-
-      return true;
-    }
-    function getFilteredBets(){ return bets.filter(betPassesFilters); }
-
-    function computeStats(arr){
-      const total = arr.length;
-      let wins=0, losses=0, pending=0;
-      let wagered=0; let pl=0;
-      let edgeWeightedSum=0; let edgeUnitsSum=0;
-      for(const b of arr){
-        const u = Number(b.units);
-        const edge = Number(b.edge);
-        const p = computePLUnits(b);
-
-        if(b.result === "WIN") wins++;
-        else if(b.result === "LOSS") losses++;
-        else pending++;
-
-        if(Number.isFinite(u)){
-          wagered += u;
-          if(Number.isFinite(edge)){
-            edgeWeightedSum += edge * u;
-            edgeUnitsSum += u;
-          }
-        }
-        pl += p;
-      }
-      const winPct = (wins + losses) ? (wins/(wins+losses))*100 : 0;
-      const roi = wagered ? (pl/wagered)*100 : 0;
-      const avgEdge = edgeUnitsSum ? (edgeWeightedSum/edgeUnitsSum) : 0;
-      return { total,wins,losses,pending,winPct,wagered,pl,roi,avgEdge };
-    }
-
-    function renderStats(){
-      const arr = getFilteredBets();
-      const s = computeStats(arr);
-      const grid = $("statsGrid");
-      grid.innerHTML = "";
-      const cards = [
-        ["TOTAL BETS", s.total, "cyan"],
-        ["WINS", s.wins, ""],
-        ["LOSSES", s.losses, ""],
-        ["PENDING", s.pending, ""],
-        ["WIN %", fmtPct(s.winPct), ""],
-        ["TOTAL UNITS", fmt2(s.pl), s.pl>=0 ? "good":"bad"],
-        ["TOTAL WAGERED", fmt2(s.wagered), ""],
-        ["ROI %", fmtPct(s.roi), s.roi>=0 ? "good":"bad"],
-        ["AVG EDGE %", fmtPct(s.avgEdge), ""]
-      ];
-      for(const [k,v,cls] of cards){
-        const d = document.createElement("div");
-        d.className = "card";
-        d.innerHTML = `<div class="k">${k}</div><div class="v ${cls||""}">${v}</div>`;
-        grid.appendChild(d);
-      }
-    }
-
-    function escapeHtml(s){
-      return String(s||"").replace(/[&<>"']/g, m=>({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-      }[m]));
-    }
-
-    function renderBetsTable(){
-      const tbody = $("betsTbody");
-      tbody.innerHTML = "";
-      const arr = getFilteredBets().slice().sort((a,b)=> (a.createdAt||0) - (b.createdAt||0));
-      for(const b of arr){
-        const tr = document.createElement("tr");
-        const pl = computePLUnits(b);
-        const resultPill = b.result === "WIN" ? "win" : b.result === "LOSS" ? "loss" : "pending";
-        const plCls = pl >= 0 ? "good" : "bad";
-        tr.innerHTML = `
-          <td class="mono">${b.date || ""}</td>
-          <td>${escapeHtml(b.league)}</td>
-          <td class="mono">${fmt2(Number(b.odds))}</td>
-          <td class="mono">${fmt2(Number(b.units))}</td>
-          <td class="mono">${fmtPct(Number(b.edge))}</td>
-          <td class="mono pl ${plCls}">${pl>=0?"+":""}${fmt2(pl)}</td>
-          <td><span class="pill ${resultPill}">${b.result}</span></td>
-          <td>${b.live ? "✅" : "—"}</td>
-          <td><button class="iconBtn bad" title="Delete" data-del="${b.id}" type="button">🗑</button></td>
-        `;
-        tbody.appendChild(tr);
-      }
-      tbody.querySelectorAll("[data-del]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const id = btn.getAttribute("data-del");
-          deleteBetById(id);
-        });
-      });
-    }
-
-    function deleteBetById(id){
-      const idx = bets.findIndex(x=>x.id === id);
-      if(idx === -1){ alert("Could not find bet to delete (already removed?)"); return; }
-      const b = bets[idx];
-      const ok = confirm(`Delete bet?\n\n${b.date || ""} — ${b.league}\nOdds: ${fmt2(b.odds)} | Units: ${fmt2(b.units)} | Result: ${b.result}`);
-      if(!ok) return;
-      bets.splice(idx,1);
-      saveBets();
-      rebuildLeagueUniverse();
-      refreshDatalist();
-      renderAll();
-    }
-
-    function addBetFromTracker(){
-      const date = $("inDate").value || "";
-      const leagueRaw = $("inLeague").value;
-      const league = normalizeLeague(leagueRaw) || "Other";
-      const odds = parseDec($("inOdds").value);
-      const units = parseDec($("inUnits").value);
-      const edge = parseDec($("inEdge").value);
-      const result = $("inResult").value;
-      const live = $("inLive").value === "1";
-
-      if(!isValidDateStr(date)){ alert("Please fill Date."); return; }
-      if(!Number.isFinite(odds) || odds <= 1){ alert("Please fill valid Odds (> 1.00)."); return; }
-      if(!Number.isFinite(units) || units <= 0){ alert("Please fill valid Units (> 0)."); return; }
-      if(!Number.isFinite(edge)){ alert("Please fill valid Edge % (number)."); return; }
-
-      if(league && !isPredefinedLeague(league) && league !== "Other"){
-        if(!customLeagues.includes(league)){
-          customLeagues.push(league);
-          customLeagues.sort((a,b)=>a.localeCompare(b));
-          saveCustomLeagues();
-          refreshDatalist();
+  function getPowerBets(){
+    try{
+      // try multiple known keys
+      const keys = ["ba_power_bets_v9", "ba_power_bets", "powerBets", "BA_POWER_BETS"];
+      for(const k of keys){
+        const v = localStorage.getItem(k);
+        if(v){
+          const parsed = JSON.parse(v);
+          if(Array.isArray(parsed)) return parsed;
         }
       }
+    }catch(e){}
+    // fall back: global variable some versions use
+    if(Array.isArray(window.powerBets)) return window.powerBets;
+    if(Array.isArray(window.POWER_BETS)) return window.POWER_BETS;
+    return [];
+  }
 
-      const b = { id: uid(), createdAt: Date.now(), date, league, odds:Number(odds), units:Number(units), edge:Number(edge), result, live };
-      bets.push(b);
-      saveBets();
-      rebuildLeagueUniverse();
-      refreshDatalist();
-      clearTrackerInputs();
-      renderAll();
+  function getSelectedLeagues(){
+    // Try to locate league checkboxes in POWER panel
+    const allToggle = qs('input[type="checkbox"][data-role="all-leagues"], input[type="checkbox"]#allLeagues, input[type="checkbox"][name="allLeagues"]');
+    const leagueBoxes = qsa('input[type="checkbox"][data-role="league"], input[type="checkbox"].league-checkbox, input[type="checkbox"][name="league"]');
+    const allChecked = allToggle ? !!allToggle.checked : false;
+
+    if(allChecked || leagueBoxes.length===0){
+      return null; // null => ALL leagues
     }
-    function clearTrackerInputs(){
-      $("inOdds").value = "";
-      $("inUnits").value = "";
-      $("inEdge").value = "";
-      $("inResult").value = "PENDING";
-      $("inLive").value = "0";
-    }
-
-    function openFilters(){
-      buildLeagueChecks();
-      $("fDateFrom").value = filters.dateFrom || "";
-      $("fDateTo").value = filters.dateTo || "";
-      $("fEdgeFrom").value = filters.edgeFrom || "";
-      $("fEdgeTo").value = filters.edgeTo || "";
-      $("fOddsFrom").value = filters.oddsFrom || "";
-      $("fOddsTo").value = filters.oddsTo || "";
-      $("modalFiltersBackdrop").style.display = "flex";
-    }
-    function closeFilters(){ $("modalFiltersBackdrop").style.display = "none"; }
-
-    function buildLeagueChecks(){
-      const box = $("leagueChecks");
-      box.innerHTML = "";
-
-      const make = (label, token)=>{
-        const div = document.createElement("label");
-        div.className = "chk";
-        div.innerHTML = `<input type="checkbox" data-l="${token}"><span>${escapeHtml(label)}</span>`;
-        const input = div.querySelector("input");
-        input.checked = (filters.leaguesSelected||[]).includes(token);
-        input.addEventListener("change", ()=>{ onLeagueToggle(token, input.checked); });
-        box.appendChild(div);
-      };
-
-      make("ALL LEAGUES", "ALL");
-
-      const leagues = getAllSelectableLeagues();
-      for(const L of leagues){ make(L, L); }
-
-      make("OTHER", "OTHER");
-    }
-
-    function onLeagueToggle(token, checked){
-      let sel = new Set(filters.leaguesSelected || ["ALL"]);
-      if(token === "ALL"){
-        sel = new Set(["ALL"]);
-      }else{
-        sel.delete("ALL");
-        if(checked) sel.add(token);
-        else sel.delete(token);
-        if(sel.size === 0) sel.add("ALL");
-      }
-      filters.leaguesSelected = Array.from(sel);
-      buildLeagueChecks();
-    }
-
-    function applyFilters(){
-      filters.dateFrom = $("fDateFrom").value || "";
-      filters.dateTo = $("fDateTo").value || "";
-      filters.edgeFrom = $("fEdgeFrom").value || "";
-      filters.edgeTo = $("fEdgeTo").value || "";
-      filters.oddsFrom = $("fOddsFrom").value || "";
-      filters.oddsTo = $("fOddsTo").value || "";
-      saveFilters();
-      closeFilters();
-      renderAll();
-    }
-
-    function resetFilters(){
-      filters = { leaguesSelected:["ALL"], dateFrom:"", dateTo:"", edgeFrom:"", edgeTo:"", oddsFrom:"", oddsTo:"" };
-      saveFilters();
-      buildLeagueChecks();
-      $("fDateFrom").value = "";
-      $("fDateTo").value = "";
-      $("fEdgeFrom").value = "";
-      $("fEdgeTo").value = "";
-      $("fOddsFrom").value = "";
-      $("fOddsTo").value = "";
-      renderAll();
-    }
-
-    function openOddsBuckets(){ buildOddsBucketsTable(); $("modalOddsBackdrop").style.display = "flex"; }
-    function closeOddsBuckets(){ $("modalOddsBackdrop").style.display = "none"; }
-
-    function buildOddsBucketsTable(){
-      const tbody = $("oddsBucketsTbody");
-      tbody.innerHTML = "";
-      const arr = getFilteredBets();
-      for(const bucket of DEFAULT_ODDS_BUCKETS){
-        const inB = arr.filter(b=>{
-          const o = Number(b.odds);
-          return Number.isFinite(o) && o >= bucket.min && o <= bucket.max;
-        });
-        const s = computeStats(inB);
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${bucket.label}</td>
-          <td class="mono">${s.total}</td>
-          <td class="mono">${s.wins}</td>
-          <td class="mono">${s.losses}</td>
-          <td class="mono">${s.pending}</td>
-          <td class="mono">${fmt2(s.wagered)}</td>
-          <td class="mono ${s.pl>=0?"pl good":"pl bad"}">${s.pl>=0?"+":""}${fmt2(s.pl)}</td>
-          <td class="mono ${s.roi>=0?"pl good":"pl bad"}">${fmtPct(s.roi)}</td>
-          <td class="mono">${fmtPct(s.avgEdge)}</td>
-        `;
-        tbody.appendChild(tr);
+    const selected = new Set();
+    for(const cb of leagueBoxes){
+      if(cb.checked){
+        const v = (cb.value || cb.getAttribute("data-league") || cb.getAttribute("aria-label") || "").trim();
+        if(v) selected.add(v);
       }
     }
+    // If nothing selected, treat as ALL (more user-friendly)
+    if(selected.size===0) return null;
+    return selected;
+  }
 
-    function dangerReset(){
-      const ok = confirm("Reset options:\n\nOK = Reset FILTERS ONLY (safe)\nCancel = do nothing.\n\nIf you want to WIPE ALL DATA, use Export first, then type WIPE in the next prompt.");
-      if(!ok) return;
-      resetFilters();
-      const wipe = prompt("If you REALLY want to delete ALL bets & history, type WIPE and press OK.\n(Leave blank to keep data.)");
-      if(wipe === "WIPE"){
-        localStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem(STORAGE_LEAGUES_KEY);
-        localStorage.removeItem(STORAGE_CALC_HISTORY);
-        localStorage.removeItem(STORAGE_FILTERS);
-        bets = [];
-        customLeagues = [];
-        filters.leaguesSelected = ["ALL"];
-        refreshDatalist();
-        renderAll();
-        renderCalcHistory();
-        alert("All data wiped.");
-      }else{
-        alert("Filters reset. Data kept.");
-      }
+  function applyLeagueFilter(bets){
+    const sel = getSelectedLeagues();
+    if(sel===null) return bets;
+    return bets.filter(b => sel.has(String(b.league||"").trim()));
+  }
+
+  function updateRibbon(){
+    const allBets = getPowerBets();
+    const filtered = applyLeagueFilter(allBets);
+    const seedEl = qs("#ba-seed-count");
+    const filtEl = qs("#ba-filter-count");
+    if(seedEl) seedEl.textContent = allBets.length;
+    if(filtEl) filtEl.textContent = filtered.length;
+  }
+
+  function forceAllLeaguesUI(){
+    // Ensure "All Leagues" toggles all league checkboxes, and when any league is unchecked, All Leagues turns off.
+    const allToggle = qs('input[type="checkbox"][data-role="all-leagues"], input[type="checkbox"]#allLeagues, input[type="checkbox"][name="allLeagues"]');
+    const leagueBoxes = qsa('input[type="checkbox"][data-role="league"], input[type="checkbox"].league-checkbox, input[type="checkbox"][name="league"]');
+    if(!allToggle || leagueBoxes.length===0) return;
+
+    function setAll(on){
+      for(const cb of leagueBoxes){ cb.checked = !!on; }
     }
 
-    function downloadText(filename, text){
-      const blob = new Blob([text], {type:"text/csv;charset=utf-8"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
+    // initialize: if All Leagues checked, enforce all on
+    if(allToggle.checked) setAll(true);
 
-    function exportCSV(){
-      const cols = ["id","createdAt","date","league","odds","units","edge","result","live"];
-      const lines = [cols.join(",")];
-      for(const b of bets.slice().sort((a,b)=> (a.createdAt||0)-(b.createdAt||0))){
-        const row = cols.map(c=>{
-          let v = b[c];
-          if(v === undefined || v === null) v = "";
-          if(c === "live") v = b.live ? "1" : "0";
-          const s = String(v);
-          if(/[",\n]/.test(s)) return `"${s.replace(/"/g,'""')}"`;
-          return s;
-        });
-        lines.push(row.join(","));
-      }
-      downloadText("proportional_bets.csv", lines.join("\n"));
-    }
+    allToggle.addEventListener("change", () => {
+      if(allToggle.checked) setAll(true);
+      updateRibbon();
+      // trigger any existing app refresh hooks
+      document.dispatchEvent(new CustomEvent("ba:filters-changed"));
+    });
 
-    function parseCSV(text){
-      const rows = [];
-      let row = [];
-      let cur = "";
-      let inQ = false;
-      for(let i=0;i<text.length;i++){
-        const ch = text[i];
-        const next = text[i+1];
-        if(inQ){
-          if(ch === '"' && next === '"'){ cur += '"'; i++; }
-          else if(ch === '"'){ inQ = false; }
-          else cur += ch;
-        }else{
-          if(ch === '"'){ inQ = true; }
-          else if(ch === ","){ row.push(cur); cur=""; }
-          else if(ch === "\n"){
-            row.push(cur); cur="";
-            if(row.length>1 || row[0].trim()!=="") rows.push(row);
-            row = [];
-          }else if(ch === "\r"){ }
-          else cur += ch;
-        }
-      }
-      if(cur.length || row.length){
-        row.push(cur);
-        if(row.length>1 || row[0].trim()!=="") rows.push(row);
-      }
-      return rows;
-    }
-
-    function importCSVFile(file){
-      const reader = new FileReader();
-      reader.onload = ()=>{
-        const text = String(reader.result || "");
-        const imported = parseCSV(text);
-        if(!imported.length){ alert("No rows found in CSV."); return; }
-
-        const headers = imported[0].map(h=>String(h).trim());
-        const rows = imported.slice(1);
-        const idx = (name)=> headers.findIndex(h=>h.toLowerCase()===name.toLowerCase());
-
-        const map = {
-          id: idx("id"), createdAt: idx("createdAt"),
-          date: idx("date"), league: idx("league"),
-          odds: idx("odds"), units: idx("units"), edge: idx("edge"),
-          result: idx("result"), live: idx("live")
-        };
-
-        let added=0, updated=0;
-        const byId = new Map(bets.map(b=>[b.id,b]));
-
-        for(const r of rows){
-          const b = {};
-          b.id = map.id>=0 ? String(r[map.id]||"").trim() : "";
-          if(!b.id) b.id = uid();
-
-          b.createdAt = map.createdAt>=0 ? Number(r[map.createdAt]) : NaN;
-          if(!Number.isFinite(b.createdAt)) b.createdAt = Date.now();
-
-          b.date = map.date>=0 ? String(r[map.date]||"").trim() : "";
-          b.league = normalizeLeague(map.league>=0 ? String(r[map.league]||"") : "Other") || "Other";
-
-          b.odds = parseDec(map.odds>=0 ? r[map.odds] : "");
-          b.units = parseDec(map.units>=0 ? r[map.units] : "");
-          b.edge = parseDec(map.edge>=0 ? r[map.edge] : "");
-
-          b.result = map.result>=0 ? String(r[map.result]||"PENDING").trim().toUpperCase() : "PENDING";
-          if(!["WIN","LOSS","PENDING"].includes(b.result)) b.result="PENDING";
-
-          const lv = map.live>=0 ? String(r[map.live]||"0").trim() : "0";
-          b.live = (lv === "1" || lv.toLowerCase()==="true" || lv.toLowerCase()==="yes");
-
-          if(!isValidDateStr(b.date)) continue;
-          if(!Number.isFinite(b.odds) || b.odds <= 1) continue;
-          if(!Number.isFinite(b.units) || b.units <= 0) continue;
-          if(!Number.isFinite(b.edge)) b.edge = 0;
-
-          if(byId.has(b.id)){
-            Object.assign(byId.get(b.id), b);
-            updated++;
-          }else{
-            bets.push(b);
-            byId.set(b.id,b);
-            added++;
-          }
-        }
-
-        const seen = new Set();
-        const cleaned = [];
-        for(const b of bets.slice().sort((a,b)=> (a.createdAt||0)-(b.createdAt||0))){
-          const key = [
-            b.date, normalizeLeague(b.league),
-            fmt2(Number(b.odds)), fmt2(Number(b.units)), fmt2(Number(b.edge)),
-            b.result, b.live ? "1":"0"
-          ].join("|");
-          if(seen.has(key)) continue;
-          seen.add(key);
-          cleaned.push(b);
-        }
-        bets = cleaned;
-
-        saveBets();
-        rebuildLeagueUniverse();
-        refreshDatalist();
-        renderAll();
-        alert(`Import done.\nAdded: ${added}\nUpdated: ${updated}\nTotal bets now: ${bets.length}`);
-      };
-      reader.readAsText(file);
-    }
-
-    function setMarketUI(){
-      const m = $("marketType").value;
-      $("wrapPDraw").style.display = (m==="3") ? "block" : "none";
-      $("wrapYDraw").style.display = (m==="3") ? "block" : "none";
-    }
-
-    function proportionalFairOdds(pOddsArr){
-      const probs = pOddsArr.map(o => 1/ o);
-      const sum = probs.reduce((a,b)=>a+b,0);
-      const fairProbs = probs.map(p => p/sum);
-      const fairOdds = fairProbs.map(p => 1/p);
-      return { fairProbs, fairOdds };
-    }
-    function evPercent(userOdds, fairProb){ return (userOdds * fairProb - 1) * 100; }
-
-    function renderCalcResult(result){
-      const out = $("calcOut");
-      out.style.display = "block";
-      const m = $("marketType").value;
-      const ts = new Date().toLocaleString();
-      let html = `<h4>${m==="2" ? "2-WAY" : "3-WAY"} <span style="float:right; color:rgba(137,168,199,.95); font-weight:700;">${ts}</span></h4>`;
-      const blocks = [];
-      for(const item of result.items){
-        blocks.push(`
-          <div class="calcResult" style="margin-top:10px;">
-            <h4>${item.name.toUpperCase()}</h4>
-            <div class="kv">
-              <div class="k">Pinn:</div><div class="v mono">${fmt2(item.pinn)}</div>
-              <div class="k">Your:</div><div class="v mono">${fmt2(item.your)}</div>
-              <div class="k">Fair (Prop):</div><div class="v mono">${fmt2(item.fair)}</div>
-              <div class="k">EV% (Prop):</div><div class="v mono" style="color:${item.ev>=0?'var(--green)':'var(--red)'};">${item.ev>=0?"+":""}${fmtPct(item.ev)}</div>
-            </div>
-            <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="btn good" data-addcalc="${item.key}" type="button">ADD BET</button>
-            </div>
-          </div>
-        `);
-      }
-      out.innerHTML = html + blocks.join("");
-
-      out.querySelectorAll("[data-addcalc]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const key = btn.getAttribute("data-addcalc");
-          openAddFromCalc(result, key);
-        });
-      });
-
-      pushCalcHistory(result);
-      renderCalcHistory();
-    }
-
-    function calcNow(){
-      const m = $("marketType").value;
-      const pH = parseDec($("pHome").value);
-      const pA = parseDec($("pAway").value);
-      const yH = parseDec($("yHome").value);
-      const yA = parseDec($("yAway").value);
-
-      if(!Number.isFinite(pH) || !Number.isFinite(pA) || pH<=1 || pA<=1){
-        alert("Fill valid Pinnacle Home/Away odds (>1.00)."); return;
-      }
-      if(!Number.isFinite(yH) || !Number.isFinite(yA) || yH<=1 || yA<=1){
-        alert("Fill valid Your Home/Away odds (>1.00)."); return;
-      }
-
-      let pOdds = [pH], yOdds = [yH], keys = ["HOME"], names = ["Home"];
-      if(m==="3"){
-        const pD = parseDec($("pDraw").value);
-        const yD = parseDec($("yDraw").value);
-        if(!Number.isFinite(pD) || pD<=1){ alert("Fill valid Pinnacle Draw odds (>1.00)."); return; }
-        if(!Number.isFinite(yD) || yD<=1){ alert("Fill valid Your Draw odds (>1.00)."); return; }
-        pOdds = [pH, pD, pA]; yOdds = [yH, yD, yA];
-        keys = ["HOME","DRAW","AWAY"]; names = ["Home","Draw","Away"];
-      }else{
-        pOdds = [pH, pA]; yOdds = [yH, yA];
-        keys = ["HOME","AWAY"]; names = ["Home","Away"];
-      }
-
-      const { fairProbs, fairOdds } = proportionalFairOdds(pOdds);
-
-      const items = keys.map((k,i)=>({
-        key: k, name: names[i],
-        pinn: pOdds[i], your: yOdds[i],
-        fair: fairOdds[i],
-        ev: evPercent(yOdds[i], fairProbs[i])
-      }));
-
-      const result = {
-        id: "c_" + uid(),
-        ts: Date.now(),
-        market: m==="3" ? "3-WAY" : "2-WAY",
-        league: normalizeLeague($("calcLeague").value) || "",
-        date: $("calcDate").value || "",
-        items
-      };
-
-      renderCalcResult(result);
-    }
-
-    function loadCalcHistory(){
-      try{ const h = JSON.parse(localStorage.getItem(STORAGE_CALC_HISTORY) || "[]"); return Array.isArray(h) ? h : []; }catch{ return []; }
-    }
-    function saveCalcHistory(h){ localStorage.setItem(STORAGE_CALC_HISTORY, JSON.stringify(h)); }
-    function pushCalcHistory(result){
-      const h = loadCalcHistory();
-      h.unshift(result);
-      while(h.length>50) h.pop();
-      saveCalcHistory(h);
-    }
-
-    function renderCalcHistory(){
-      const host = $("history");
-      host.innerHTML = "";
-      const h = loadCalcHistory();
-      if(!h.length){ host.innerHTML = `<div class="note" style="margin-top:10px;">No history yet.</div>`; return; }
-      for(const r of h){
-        const div = document.createElement("div");
-        div.className = "historyItem";
-        const dt = new Date(r.ts||Date.now()).toLocaleString();
-        const league = r.league ? ` • ${escapeHtml(r.league)}` : "";
-        const date = r.date ? ` • ${escapeHtml(r.date)}` : "";
-        div.innerHTML = `
-          <div class="historyTop">
-            <div><b>${escapeHtml(r.market||"")}</b>${league}${date}</div>
-            <div>${dt}</div>
-          </div>
-          ${r.items.map(it=>`
-            <div class="calcResult" style="margin-top:8px;">
-              <h4>${it.name.toUpperCase()}</h4>
-              <div class="kv">
-                <div class="k">Pinn:</div><div class="v mono">${fmt2(it.pinn)}</div>
-                <div class="k">Your:</div><div class="v mono">${fmt2(it.your)}</div>
-                <div class="k">Fair (Prop):</div><div class="v mono">${fmt2(it.fair)}</div>
-                <div class="k">EV% (Prop):</div><div class="v mono" style="color:${it.ev>=0?'var(--green)':'var(--red)'};">${it.ev>=0?"+":""}${fmtPct(it.ev)}</div>
-              </div>
-              <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="btn good" style="padding:8px 10px; font-size:11px;" data-addhist="${r.id}|${it.key}" type="button">ADD BET</button>
-              </div>
-            </div>
-          `).join("")}
-          <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="btn" data-reload="${r.id}" type="button">RELOAD</button>
-            <button class="btn bad" data-remove="${r.id}" type="button">REMOVE</button>
-          </div>
-        `;
-        host.appendChild(div);
-      }
-
-      host.querySelectorAll("[data-reload]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const id = btn.getAttribute("data-reload");
-          const h = loadCalcHistory();
-          const r = h.find(x=>x.id===id);
-          if(!r) return;
-          $("marketType").value = (r.market==="3-WAY") ? "3" : "2";
-          setMarketUI();
-          $("calcLeague").value = r.league || "";
-          $("calcDate").value = r.date || "";
-          if(r.market==="2-WAY"){
-            const home = r.items.find(x=>x.key==="HOME") || r.items[0];
-            const away = r.items.find(x=>x.key==="AWAY") || r.items[1];
-            $("pHome").value = fmt2(home.pinn);
-            $("pAway").value = fmt2(away.pinn);
-            $("yHome").value = fmt2(home.your);
-            $("yAway").value = fmt2(away.your);
-          }else{
-            const home = r.items.find(x=>x.key==="HOME") || r.items[0];
-            const draw = r.items.find(x=>x.key==="DRAW") || r.items[1];
-            const away = r.items.find(x=>x.key==="AWAY") || r.items[2];
-            $("pHome").value = fmt2(home.pinn);
-            $("pDraw").value = fmt2(draw.pinn);
-            $("pAway").value = fmt2(away.pinn);
-            $("yHome").value = fmt2(home.your);
-            $("yDraw").value = fmt2(draw.your);
-            $("yAway").value = fmt2(away.your);
-          }
-          window.scrollTo({top:0, behavior:"smooth"});
-        });
-      });
-
-      host.querySelectorAll("[data-remove]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const id = btn.getAttribute("data-remove");
-          const ok = confirm("Remove this history entry?");
-          if(!ok) return;
-          const h = loadCalcHistory().filter(x=>x.id!==id);
-          saveCalcHistory(h);
-          renderCalcHistory();
-        });
-      });
-
-      host.querySelectorAll("[data-addhist]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const v = btn.getAttribute("data-addhist") || "";
-          const [id,key] = v.split("|");
-          const h = loadCalcHistory().find(x=>x.id===id);
-          if(!h) return;
-          // open add-bet flow using stored calc result
-          openAddFromCalc(h, key);
-        });
+    for(const cb of leagueBoxes){
+      cb.addEventListener("change", () => {
+        const allOn = leagueBoxes.every(x => x.checked);
+        allToggle.checked = allOn;
+        updateRibbon();
+        document.dispatchEvent(new CustomEvent("ba:filters-changed"));
       });
     }
+  }
 
-    function clearCalcInputs(){
-      $("pHome").value = ""; $("pAway").value = "";
-      $("yHome").value = ""; $("yAway").value = "";
-      $("pDraw").value = ""; $("yDraw").value = "";
-      $("calcOut").style.display = "none";
-      $("calcOut").innerHTML = "";
+  function hardResetPowerFilters(){
+    // Set bet type to "All bets" if a select exists
+    const sel = qs('select#powerBetType, select[name="powerBetType"], select[data-role="bet-type"]');
+    if(sel){
+      // pick option containing "All"
+      const opt = Array.from(sel.options).find(o => /all/i.test(o.textContent||""));
+      if(opt) sel.value = opt.value;
     }
+    // Edge range inputs
+    const edgeFrom = qs('input#powerEdgeFrom, input[name="powerEdgeFrom"], input[data-role="edge-from"]');
+    const edgeTo   = qs('input#powerEdgeTo, input[name="powerEdgeTo"], input[data-role="edge-to"]');
+    if(edgeFrom) edgeFrom.value = "";
+    if(edgeTo) edgeTo.value = "";
 
-    let lastCalcResult = null;
-    function openAddFromCalc(result, key){
-      lastCalcResult = result;
-      const item = result.items.find(x=>x.key===key) || result.items[0];
-      $("afcDate").value = result.date || todayISO();
-      $("afcLeague").value = normalizeLeague(result.league) || "Other";
-      $("afcOutcome").value = item.name;
-      $("afcOdds").value = fmt2(item.your);
-      $("afcEdge").value = (Math.round(item.ev*100)/100).toFixed(2);
-      $("afcUnits").value = "1";
-      $("afcResult").value = "PENDING";
-      $("afcLive").value = "0";
-      $("modalAddFromCalcBackdrop").style.display = "flex";
-    }
-    function closeAddFromCalc(){ $("modalAddFromCalcBackdrop").style.display = "none"; }
+    // leagues: turn on All Leagues
+    const allToggle = qs('input[type="checkbox"][data-role="all-leagues"], input[type="checkbox"]#allLeagues, input[type="checkbox"][name="allLeagues"]');
+    if(allToggle){ allToggle.checked = true; allToggle.dispatchEvent(new Event("change", {bubbles:true})); }
+    updateRibbon();
+  }
 
-    function addBetFromCalcConfirm(){
-      if(!lastCalcResult){ alert("No calculation selected."); return; }
-      const date = $("afcDate").value || "";
-      const league = normalizeLeague($("afcLeague").value) || "Other";
-      const odds = parseDec($("afcOdds").value);
-      const edge = parseDec($("afcEdge").value);
-      const units = parseDec($("afcUnits").value);
-      const result = $("afcResult").value;
-      const live = $("afcLive").value === "1";
-
-      if(!isValidDateStr(date)){ alert("Please fill Date."); return; }
-      if(!Number.isFinite(odds) || odds<=1){ alert("Invalid odds."); return; }
-      if(!Number.isFinite(edge)){ alert("Invalid edge."); return; }
-      if(!Number.isFinite(units) || units<=0){ alert("Invalid units (>0)."); return; }
-
-      if(league && !isPredefinedLeague(league) && league !== "Other"){
-        if(!customLeagues.includes(league)){
-          customLeagues.push(league);
-          customLeagues.sort((a,b)=>a.localeCompare(b));
-          saveCustomLeagues();
-          refreshDatalist();
-        }
+  document.addEventListener("DOMContentLoaded", () => {
+    // Wait a tick for app to seed/load
+    setTimeout(() => {
+      forceAllLeaguesUI();
+      // hard reset ONLY once per new file open (avoid fighting user)
+      if(!sessionStorage.getItem("ba_v16_reset_done")){
+        sessionStorage.setItem("ba_v16_reset_done","1");
+        hardResetPowerFilters();
       }
+      updateRibbon();
+    }, 60);
 
-      const b = { id: uid(), createdAt: Date.now(), date, league, odds:Number(odds), units:Number(units), edge:Number(edge), result, live };
-      bets.push(b);
-      saveBets();
-      rebuildLeagueUniverse();
-      refreshDatalist();
-      closeAddFromCalc();
-      switchTab("tracker");
-      renderAll();
-    }
+    // if app triggers re-render on custom event, keep ribbon in sync
+    document.addEventListener("ba:filters-changed", () => setTimeout(updateRibbon, 0));
+  });
 
-    function switchTab(which){
-      if(which==="tracker"){
-        $("tabTracker").classList.add("active");
-        $("tabCalc").classList.remove("active");
-        $("screenTracker").style.display = "block";
-        $("screenCalc").style.display = "none";
-      }else{
-        $("tabCalc").classList.add("active");
-        $("tabTracker").classList.remove("active");
-        $("screenCalc").style.display = "block";
-        $("screenTracker").style.display = "none";
-      }
-    }
-
-    function renderAll(){
-      renderStats();
-      renderBetsTable();
-      if($("modalOddsBackdrop").style.display === "flex"){ buildOddsBucketsTable(); }
-    }
-
-    function init(){
-      loadAll();
-      rebuildLeagueUniverse();
-      refreshDatalist();
-
-      $("inDate").value = todayISO();
-      $("calcDate").value = todayISO();
-      $("betType").value = "all";
-      setMarketUI();
-
-      $("tabTracker").addEventListener("click", ()=>switchTab("tracker"));
-      $("tabCalc").addEventListener("click", ()=>{ switchTab("calc"); renderCalcHistory(); });
-
-      $("btnAddBet").addEventListener("click", addBetFromTracker);
-
-      const order = ["inOdds","inUnits","inEdge"];
-      order.forEach((id, idx)=>{
-        $(id).addEventListener("keydown", (e)=>{
-          if(e.key==="Enter"){
-            e.preventDefault();
-            if(idx < order.length-1) $(order[idx+1]).focus();
-            else $("btnAddBet").click();
-          }
-        });
-      });
-
-      $("btnFilters").addEventListener("click", openFilters);
-      $("btnCloseFilters").addEventListener("click", closeFilters);
-      $("btnApplyFilters").addEventListener("click", applyFilters);
-      $("btnResetFilters").addEventListener("click", resetFilters);
-
-      $("btnOddsStats").addEventListener("click", openOddsBuckets);
-      $("btnCloseOdds").addEventListener("click", closeOddsBuckets);
-
-      $("betType").addEventListener("change", renderAll);
-
-      $("btnDangerZone").addEventListener("click", dangerReset);
-
-      $("btnExport").addEventListener("click", exportCSV);
-      $("btnImport").addEventListener("click", ()=>$("fileImport").click());
-      $("fileImport").addEventListener("change", ()=>{
-        const f = $("fileImport").files && $("fileImport").files[0];
-        if(!f) return;
-        importCSVFile(f);
-        $("fileImport").value = "";
-      });
-
-      $("marketType").addEventListener("change", setMarketUI);
-      $("btnCalc").addEventListener("click", calcNow);
-      $("btnReloadCalc").addEventListener("click", clearCalcInputs);
-
-      $("btnClearHistory").addEventListener("click", ()=>{
-        const ok = confirm("Clear calculation history?");
-        if(!ok) return;
-        localStorage.removeItem(STORAGE_CALC_HISTORY);
-        renderCalcHistory();
-      });
-
-      $("btnCloseAddFromCalc").addEventListener("click", closeAddFromCalc);
-      $("afcCancel").addEventListener("click", closeAddFromCalc);
-      $("afcAdd").addEventListener("click", addBetFromCalcConfirm);
-
-      ["modalFiltersBackdrop","modalOddsBackdrop","modalAddFromCalcBackdrop"].forEach(id=>{
-        const el = $(id);
-        if(!el) return;
-        el.addEventListener("click", (e)=>{
-          if(e.target === el){ el.style.display = "none"; }
-        });
-      });
-
-      // Inline panel buttons
-      const hideFilters = document.getElementById("btnHideFiltersPanel");
-      if(hideFilters){ hideFilters.addEventListener("click", ()=>{ const fp=document.getElementById("filtersPanel"); if(fp) fp.style.display="none"; }); }
-      const hideOdds = document.getElementById("btnHideOddsPanel");
-      if(hideOdds){ hideOdds.addEventListener("click", ()=>{ const op=document.getElementById("oddsPanel"); if(op) op.style.display="none"; }); }
-
-      const btnAll = document.getElementById("btnSelectAllLeagues");
-      if(btnAll){
-        btnAll.addEventListener("click", ()=>{
-          document.querySelectorAll('#leagueList input[type="checkbox"]').forEach(cb=>{ cb.checked=true; });
-          if(typeof applyFilters === "function"){ applyFilters(); }
-        });
-      }
-      const btnNone = document.getElementById("btnClearAllLeagues");
-      if(btnNone){
-        btnNone.addEventListener("click", ()=>{
-          document.querySelectorAll('#leagueList input[type="checkbox"]').forEach(cb=>{ cb.checked=false; });
-          if(typeof applyFilters === "function"){ applyFilters(); }
-        });
-      }
-
-      renderAll();
-      renderCalcHistory();
-    }
-
-    init();
-  
+  // periodically sync ribbon in case the app updates from other actions
+  setInterval(updateRibbon, 1000);
 })();
 </script>
+<script>
+(function(){
+  function el(id){return document.getElementById(id);}
+  function syncAllLeagues(){
+    const all = el('allLeaguesPower');
+    const grid = el('leagueGridPower');
+    if(!all || !grid) return;
+    const boxes = Array.from(grid.querySelectorAll('input[type="checkbox"]'));
+    // ensure values
+    boxes.forEach(b=>{
+      if(!b.value || b.value==='on'){
+        const lab = grid.querySelector(`label[for="${b.id}"]`);
+        if(lab) b.value = (lab.textContent||'').trim();
+      }
+    });
+    if(all.checked){
+      boxes.forEach(b=>{b.checked = true;});
+    }else{
+      // if user manually checks all boxes, keep All Leagues ON
+      const checkedCount = boxes.filter(b=>b.checked).length;
+      if(boxes.length>0 && checkedCount===boxes.length){
+        all.checked = true;
+      }
+    }
+    if(typeof render === 'function'){ render('power'); }
+  }
+  document.addEventListener('change', (e)=>{
+    if(e.target && (e.target.id==='allLeaguesPower' || (e.target.closest && e.target.closest('#leagueGridPower')))){
+      // If any league checkbox changed, keep All Leagues in sync
+      if(e.target.id!=='allLeaguesPower'){
+        const all = el('allLeaguesPower');
+        const grid = el('leagueGridPower');
+        const boxes = grid ? Array.from(grid.querySelectorAll('input[type="checkbox"]')) : [];
+        const checkedCount = boxes.filter(b=>b.checked).length;
+        if(all){
+          all.checked = (boxes.length>0 && checkedCount===boxes.length);
+        }
+      }
+      syncAllLeagues();
+    }
+  }, true);
+  // Run once after load
+  window.addEventListener('load', ()=>{ syncAllLeagues(); });
+})();
+</script>
+<script>
+(function(){
+  const EXTRA_LEAGUES = ['United Cup', 'Davis Cup', 'Billie Jean King Cup', 'ATP Finals', 'WTA Finals', 'ATP Masters 1000', 'ATP 500', 'ATP 250', 'WTA 1000', 'WTA 500', 'WTA 250', 'ATP Challenger', 'ITF Tennis', 'Olympics (Tennis)', 'Africa Cup of Nations', 'CAF Champions League', 'CAF Confederation Cup', 'Asian Cup', 'AFC Champions League', 'AFC Cup', 'CONCACAF Gold Cup', 'CONCACAF Champions Cup', 'Copa America', 'WC Qualifiers', 'International Friendlies', 'Nations League', 'ATP/WTA Exhibitions'];
+
+  function uniqPush(arr, item){
+    if(!arr.includes(item)) arr.push(item);
+  }
+
+  function ensureOption(selectEl, league){
+    if(!selectEl) return;
+    const exists = Array.from(selectEl.options).some(o => (o.value || o.textContent).trim() === league);
+    if(exists) return;
+    const opt = document.createElement('option');
+    opt.value = league;
+    opt.textContent = league;
+    // Insert before "Other" if present
+    const other = Array.from(selectEl.options).find(o => (o.value || o.textContent).trim() === 'Other');
+    if(other) selectEl.insertBefore(opt, other);
+    else selectEl.appendChild(opt);
+  }
+
+  function ensureCheckbox(gridEl, idPrefix, league){
+    if(!gridEl) return;
+    const labels = Array.from(gridEl.querySelectorAll('label')).map(l => (l.textContent||'').trim());
+    if(labels.includes(league)) return;
+
+    const boxes = Array.from(gridEl.querySelectorAll('input[type="checkbox"]'));
+    let nextIdx = 0;
+    for(const b of boxes){
+      const m = (b.id || '').match(new RegExp('^' + idPrefix + '_([0-9]+)$'));
+      if(m) nextIdx = Math.max(nextIdx, parseInt(m[1],10)+1);
+    }
+    const id = idPrefix + '_' + nextIdx;
+
+    const item = document.createElement('div');
+    item.className = 'league-item';
+
+    const inp = document.createElement('input');
+    inp.type = 'checkbox';
+    inp.id = id;
+    inp.value = league;
+
+    const lab = document.createElement('label');
+    lab.setAttribute('for', id);
+    lab.textContent = league;
+
+    item.appendChild(inp);
+    item.appendChild(lab);
+
+    // insert before Other league item if present
+    let inserted = false;
+    const otherLabel = Array.from(gridEl.querySelectorAll('label')).find(l => (l.textContent||'').trim() === 'Other');
+    if(otherLabel){
+      const otherItem = otherLabel.closest('.league-item');
+      if(otherItem && otherItem.parentNode === gridEl){
+        gridEl.insertBefore(item, otherItem);
+        inserted = true;
+      }
+    }
+    if(!inserted) gridEl.appendChild(item);
+  }
+
+  function syncAllLeagues(allId, gridId){
+    const all = document.getElementById(allId);
+    const grid = document.getElementById(gridId);
+    if(!all || !grid) return;
+    if(all.checked){
+      grid.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = true);
+    }else{
+      // if all boxes are checked, flip All Leagues to checked
+      const boxes = Array.from(grid.querySelectorAll('input[type="checkbox"]'));
+      if(boxes.length && boxes.every(b=>b.checked)) all.checked = true;
+    }
+    // Trigger re-render via the grid change handler in the app
+    grid.dispatchEvent(new Event('change', {bubbles:true}));
+  }
+
+  
+  function attachCustomLeague(selectId){
+    const sel = document.getElementById(selectId);
+    if(!sel) return;
+    sel.addEventListener('change', ()=>{
+      const val = (sel.value || '').trim();
+      if(val !== 'Other') return;
+      const name = (prompt('League name (custom):') || '').trim();
+      if(!name){
+        // fallback to first option
+        if(sel.options.length) sel.selectedIndex = 0;
+        return;
+      }
+      // add everywhere and select it
+      const grids = [
+        {grid:'leagueGridProp', prefix:'lg_Prop', all:'allLeaguesProp'},
+        {grid:'leagueGridPower', prefix:'lg_Power', all:'allLeaguesPower'},
+      ];
+      const selects = ['betLeagueProp','betLeaguePower','histLeague'];
+      for(const sid of selects) ensureOption(document.getElementById(sid), name);
+      for(const g of grids) ensureCheckbox(document.getElementById(g.grid), g.prefix, name);
+
+      sel.value = name;
+
+      // if All Leagues is checked in either tab, include the new league too
+      for(const g of grids){
+        const all = document.getElementById(g.all);
+        const gridEl = document.getElementById(g.grid);
+        if(all && all.checked && gridEl){
+          gridEl.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = true);
+          gridEl.dispatchEvent(new Event('change', {bubbles:true}));
+        }
+      }
+    });
+  }
+
+  function run(){
+
+    const grids = [
+      {grid:'leagueGridProp', prefix:'lg_Prop'},
+      {grid:'leagueGridPower', prefix:'lg_Power'},
+    ];
+    const selects = ['betLeagueProp','betLeaguePower','histLeague'];
+
+    for(const league of EXTRA_LEAGUES){
+      for(const sid of selects) ensureOption(document.getElementById(sid), league);
+      for(const g of grids) ensureCheckbox(document.getElementById(g.grid), g.prefix, league);
+    }
+
+
+    // Custom league via "Other" option (no UI change; prompt only)
+    attachCustomLeague('betLeagueProp');
+    attachCustomLeague('betLeaguePower');
+    attachCustomLeague('histLeague');
+
+    // Keep the two tabs in sync re: All Leagues
+    syncAllLeagues('allLeaguesProp','leagueGridProp');
+    syncAllLeagues('allLeaguesPower','leagueGridPower');
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', run);
+  }else{
+    run();
+  }
+})();
+</script>
+<script>
+// PATCH: ensure any stray modal/overlay is hidden on load (prevents blocking clicks)
+window.addEventListener('load', () => {
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    if (getComputedStyle(o).display !== 'none') o.style.display = 'none';
+    o.classList.remove('show');
+  });
+  document.querySelectorAll('.modal').forEach(m => {
+    if (getComputedStyle(m).display !== 'none') m.style.display = 'none';
+  });
+});
+</script>
 </body>
+<script>
+(function(){
+  'use strict';
+
+  const STORAGE_KEYS = {
+    prop: 'ba_dual_bets_prop_v1',
+    power: 'ba_dual_bets_power_191seed_v2',
+    history: 'ba_dual_calc_history_v1'
+  };
+
+  // --- Auto-seeded POWER bets (from uploaded CSV) ---
+  // Loaded only if your browser has no existing POWER data yet.
+  const SEED_POWER_BETS = [];
+  (function resetStoredDataOnce(){
+  // Start fresh: clear any previously saved bets/history from older versions.
+  // This runs only once per browser/profile.
+  const flag = 'ba_dual_reset_done_v18';
+  try{
+    if(localStorage.getItem(flag)) return;
+
+    const keysToClear = [
+      // current keys
+      (typeof STORAGE_KEYS !== 'undefined' ? STORAGE_KEYS.prop : null),
+      (typeof STORAGE_KEYS !== 'undefined' ? STORAGE_KEYS.power : null),
+      (typeof STORAGE_KEYS !== 'undefined' ? STORAGE_KEYS.history : null),
+
+      // older/alternate keys we may have used
+      'ba_power_bets_v9','ba_power_bets','powerBets','BA_POWER_BETS',
+      'ba_dual_bets_prop_v1','ba_dual_bets_power_191seed_v2','ba_dual_calc_history_v1',
+      'ba_dual_bets_power_v1','ba_dual_bets_power_v2','ba_dual_bets_prop_v2'
+    ].filter(Boolean);
+
+    for(const k of keysToClear){
+      localStorage.removeItem(k);
+      // also remove any timestamped backups
+      for(let i=localStorage.length-1;i>=0;i--){
+        const kk = localStorage.key(i);
+        if(kk && kk.startsWith(k + '_backup_')) localStorage.removeItem(kk);
+      }
+    }
+    try{ sessionStorage.clear(); }catch(e){}
+    localStorage.setItem(flag,'1');
+  }catch(e){}
+})();
+
+const el = (id) => document.getElementById(id);
+
+  function safeNum(v){
+    if(v === null || v === undefined) return null;
+    const s = String(v).trim().replace('%','').replace(',', '.');
+    if(!s) return null;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function formatNum(n, decimals=2){
+    if(!Number.isFinite(n)) return '-';
+    return n.toFixed(decimals);
+  }
+
+  function formatPct(n, decimals=2){
+    if(!Number.isFinite(n)) return '-';
+    const sign = n > 0 ? '+' : '';
+    return sign + n.toFixed(decimals) + '%';
+  }
+
+  function loadArray(key){
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) return [];
+      const data = JSON.parse(raw);
+      return Array.isArray(data) ? data : [];
+    }catch(e){ return []; }
+  }
+
+  function saveArray(key, arr){
+    try{ localStorage.setItem(key, JSON.stringify(arr)); }catch(e){}
+  }
+
+  function uid(){
+    return Math.random().toString(16).slice(2) + Date.now().toString(16);
+  }
+
+  function computePL(odds, units, result){
+    if(!Number.isFinite(odds) || !Number.isFinite(units)) return 0;
+    switch(result){
+      case 'win': return units * (odds - 1);
+      case 'loss': return -units;
+      case 'push': return 0;
+      case 'pending': default: return 0;
+    }
+  }
+
+  function parseDateStr(s){
+    // Expect YYYY-MM-DD
+    if(!s) return null;
+    const t = Date.parse(s + 'T00:00:00');
+    return Number.isFinite(t) ? t : null;
+  }
+
+  function csvEscape(v){
+    const s = String(v ?? '');
+    if(/[",\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+    return s;
+  }
+
+  // ---------------- Tabs ----------------
+  const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+  const tabContents = Array.from(document.querySelectorAll('.tab-content'));
+
+  function activateTab(targetId, button){
+    tabButtons.forEach(b => b.classList.toggle('active', b === button));
+    tabContents.forEach(c => c.classList.toggle('active', c.id === targetId));
+    // Re-render visible tables for safety
+    render('prop');
+    render('power');
+    renderHistory();
+  }
+
+  // Heuristic mapping:
+  // - proportional button has class proportional-tab
+  // - power button has class power-tab
+  // - calculator is the third button
+  const btnProp = document.querySelector('.tab-btn.proportional-tab');
+  const btnPower = document.querySelector('.tab-btn.power-tab');
+  const btnCalc = tabButtons.find(b => b !== btnProp && b !== btnPower);
+
+  if(btnProp) btnProp.addEventListener('click', () => activateTab('proportionalTab', btnProp));
+  if(btnPower) btnPower.addEventListener('click', () => activateTab('powerTab', btnPower));
+  if(btnCalc) btnCalc.addEventListener('click', () => activateTab('calculatorTab', btnCalc));
+
+  // ---------------- Data ----------------
+  let bets = {
+    prop: loadArray(STORAGE_KEYS.prop),
+    power: loadArray(STORAGE_KEYS.power)
+  };
+  
+  // --- v13 diagnostics badge ---
+  try{
+    const sc = document.getElementById('__seedCount');
+    if(sc) sc.textContent = (Array.isArray(SEED_POWER_BETS)? SEED_POWER_BETS.length : '0');
+  }catch(e){}
+
+  // --- Seed handling (do NOT wipe existing POWER data when no seed is present) ---
+// Older versions used a "force seed" block that overwrote stored POWER bets on every load.
+// That caused POWER bets to disappear after refresh when SEED_POWER_BETS was empty.
+// We only seed if we actually have embedded seed data AND there is no existing POWER data.
+try{
+  const hasSeed = Array.isArray(SEED_POWER_BETS) && SEED_POWER_BETS.length > 0;
+  if(hasSeed && (!Array.isArray(bets.power) || bets.power.length === 0)){
+    bets.power = SEED_POWER_BETS.slice();
+    saveArray(STORAGE_KEYS.power, bets.power);
+    try{ const lc=document.getElementById('__loadedCount'); if(lc) lc.textContent = bets.power.length; }catch(e){}
+  }
+}catch(e){}
+// --- v13 fix: ensure league checkbox values & All Leagues synchronization on load ---
+function initLeagueGrid(method){
+  const cfg = CFG[method];
+  const all = el(cfg.allLeaguesId);
+  const grid = el(cfg.leagueGridId);
+  if(!grid) return;
+  // Ensure each checkbox has a meaningful value (league name) so filtering works.
+  // The original snapshot often misses the 'value' attribute in the inputs.
+  const items = Array.from(grid.querySelectorAll('.league-item'));
+  for(const item of items){
+    const input = item.querySelector('input[type="checkbox"]');
+    const label = item.querySelector('label');
+    if(input && (!input.value || input.value === 'on') && label){
+      const name = (label.textContent || '').trim();
+      if(name) input.value = name;
+    }
+  }
+  // If "All Leagues" is checked, make sure ALL league checkboxes are actually checked too.
+  if(all && all.checked){
+    grid.querySelectorAll('input[type="checkbox"]').forEach(c => { c.checked = true; });
+  }
+  // If none are checked (can happen after weird restores), treat as All.
+  const boxes = Array.from(grid.querySelectorAll('input[type="checkbox"]'));
+  const anyChecked = boxes.some(b=>b.checked);
+  if(!anyChecked){
+    boxes.forEach(b=>b.checked=true);
+    if(all) all.checked = true;
+  }
+}
+
+try{ initLeagueGrid('prop'); }catch(e){}
+try{ initLeagueGrid('power'); }catch(e){}
+
+// Also reset POWER filters to "All" after seeding to avoid showing a subset (e.g., 34) by accident.
+try{
+  const cfg = CFG.power;
+  if(el(cfg.typeFilterId)) el(cfg.typeFilterId).value = 'all';
+  if(el(cfg.fromDateId)) el(cfg.fromDateId).value = '';
+  if(el(cfg.toDateId)) el(cfg.toDateId).value = '';
+  if(el(cfg.edgeFromId)) el(cfg.edgeFromId).value = '';
+  if(el(cfg.edgeToId)) el(cfg.edgeToId).value = '';
+  const all = el(cfg.allLeaguesId);
+  if(all) all.checked = true;
+  const grid = el(cfg.leagueGridId);
+  if(grid) grid.querySelectorAll('input[type="checkbox"]').forEach(c=>c.checked=true);
+}catch(e){}
+
+// Normalize old data if any
+  ['prop','power'].forEach(method=>{
+    bets[method] = bets[method].map(b => ({
+      id: b.id || uid(),
+      date: b.date || '',
+      league: b.league || '',
+      odds: Number(b.odds) || 0,
+      units: Number(b.units) || 0,
+      edge: Number(b.edge) || 0,
+      live: !!b.live,
+      result: (b.result || 'pending')
+    }));
+    saveArray(STORAGE_KEYS[method], bets[method]);
+  });
+
+  // ---------------- Filters & UI mapping ----------------
+  const CFG = {
+    prop: {
+      tableBodyId: 'betsTableProp',
+      addBtnId: 'addBetProp',
+      resetBtnId: 'resetFiltersProp',
+      exportBtnId: 'exportCsvProp',
+      clearAllBtnId: 'clearAllProp',
+      allLeaguesId: 'allLeaguesProp',
+      leagueGridId: 'leagueGridProp',
+      typeFilterId: 'betTypeFilterProp',
+      fromDateId: 'fromDateProp',
+      toDateId: 'toDateProp',
+      edgeFromId: 'edgeFromProp',
+      edgeToId: 'edgeToProp',
+      inputs: {
+        date: 'betDateProp',
+        league: 'betLeagueProp',
+        odds: 'betOddsProp',
+        units: 'betUnitsProp',
+        edge: 'betEdgeProp',
+        live: 'betLiveProp',
+        result: 'betResultProp'
+      },
+      stats: {
+        total: 'statTotalBetsProp',
+        wins: 'statWinsProp',
+        losses: 'statLossesProp',
+        pending: 'statPendingProp',
+        winRate: 'statWinRateProp',
+        totalUnits: 'statTotalUnitsProp',
+        totalWagered: 'statTotalWageredProp',
+        roi: 'statRoiProp',
+        avgEdge: 'statAvgEdgeProp'
+      },
+      modals: {
+        delete: 'deleteModalProp',
+        clearAll: 'clearAllModalProp'
+      }
+    },
+    power: {
+      tableBodyId: 'betsTablePower',
+      addBtnId: 'addBetPower',
+      resetBtnId: 'resetFiltersPower',
+      exportBtnId: 'exportCsvPower',
+      clearAllBtnId: 'clearAllPower',
+      allLeaguesId: 'allLeaguesPower',
+      leagueGridId: 'leagueGridPower',
+      typeFilterId: 'betTypeFilterPower',
+      fromDateId: 'fromDatePower',
+      toDateId: 'toDatePower',
+      edgeFromId: 'edgeFromPower',
+      edgeToId: 'edgeToPower',
+      inputs: {
+        date: 'betDatePower',
+        league: 'betLeaguePower',
+        odds: 'betOddsPower',
+        units: 'betUnitsPower',
+        edge: 'betEdgePower',
+        live: 'betLivePower',
+        result: 'betResultPower'
+      },
+      stats: {
+        total: 'statTotalBetsPower',
+        wins: 'statWinsPower',
+        losses: 'statLossesPower',
+        pending: 'statPendingPower',
+        winRate: 'statWinRatePower',
+        totalUnits: 'statTotalUnitsPower',
+        totalWagered: 'statTotalWageredPower',
+        roi: 'statRoiPower',
+        avgEdge: 'statAvgEdgePower'
+      },
+      modals: {
+        delete: 'deleteModalPower',
+        clearAll: 'clearAllModalPower'
+      }
+    }
+  };
+
+  function getSelectedLeagues(method){
+    const cfg = CFG[method];
+    const all = el(cfg.allLeaguesId);
+    const grid = el(cfg.leagueGridId);
+    if(!grid) return null;
+
+    const boxes = Array.from(grid.querySelectorAll('input[type="checkbox"]'));
+
+    // Ensure each checkbox value matches its label text (important for correct filtering)
+    for(const b of boxes){
+      if(!b.value || b.value === 'on'){
+        const lab = grid.querySelector(`label[for="${b.id}"]`);
+        if(lab) b.value = (lab.textContent || '').trim();
+      }
+    }
+
+    const checked = boxes.filter(b => b.checked);
+
+    // Treat "all checked" as ALL leagues even if the All Leagues toggle is out of sync
+    const allCheckedByBoxes = (boxes.length > 0 && checked.length === boxes.length);
+
+    if((all && all.checked) || allCheckedByBoxes) return null; // null => ALL leagues
+    return checked.map(b => b.value).filter(Boolean);
+  }
+
+  function applyFilters(method, list){
+    const cfg = CFG[method];
+    const type = (el(cfg.typeFilterId)?.value) || 'all';
+
+    const from = parseDateStr(el(cfg.fromDateId)?.value);
+    const to = parseDateStr(el(cfg.toDateId)?.value);
+    const edgeFrom = safeNum(el(cfg.edgeFromId)?.value);
+    const edgeTo = safeNum(el(cfg.edgeToId)?.value);
+
+    const leagues = getSelectedLeagues(method);
+
+    return list.filter(b=>{
+      if(type === 'live' && !b.live) return false;
+      if(type === 'pregame' && b.live) return false;
+
+      const d = parseDateStr(b.date);
+      if(from !== null && d !== null && d < from) return false;
+      if(to !== null && d !== null && d > to) return false;
+
+      if(edgeFrom !== null && Number(b.edge) < edgeFrom) return false;
+      if(edgeTo !== null && Number(b.edge) > edgeTo) return false;
+
+      if(leagues && leagues.length){
+        if(!leagues.includes(b.league)) return false;
+      }
+      return true;
+    });
+  }
+
+  function updateStats(method, filtered){
+    const cfg = CFG[method];
+    const total = filtered.length;
+    const wins = filtered.filter(b=>b.result==='win').length;
+    const losses = filtered.filter(b=>b.result==='loss').length;
+    const pending = filtered.filter(b=>b.result==='pending').length;
+
+    const totalUnits = filtered.reduce((acc,b)=>acc + computePL(Number(b.odds), Number(b.units), b.result), 0);
+    const totalWagered = filtered.reduce((acc,b)=>acc + (Number.isFinite(Number(b.units)) ? Number(b.units) : 0), 0);
+    const roi = totalWagered > 0 ? (totalUnits / totalWagered) * 100 : 0;
+
+    const winDen = (wins + losses);
+    const winRate = winDen > 0 ? (wins / winDen) * 100 : 0;
+    const edgeVals = filtered.map(b=>Number(b.edge)).filter(v=>Number.isFinite(v));
+    const avgEdge = edgeVals.length ? (edgeVals.reduce((a,v)=>a+v,0) / edgeVals.length) : null;
+const set = (id, val) => { const node = el(id); if(node) node.textContent = val; };
+
+    set(cfg.stats.total, String(total));
+    set(cfg.stats.wins, String(wins));
+    set(cfg.stats.losses, String(losses));
+    set(cfg.stats.pending, String(pending));
+    set(cfg.stats.winRate, formatNum(winRate, 1) + '%');
+    set(cfg.stats.totalUnits, formatNum(totalUnits, 2));
+    set(cfg.stats.totalWagered, formatNum(totalWagered, 2));
+    set(cfg.stats.roi, formatNum(roi, 2) + '%');
+    set(cfg.stats.avgEdge, avgEdge===null ? '-' : (formatNum(avgEdge, 2) + '%'));
+  }
+
+  function render(method){
+    const cfg = CFG[method];
+    const tbody = el(cfg.tableBodyId);
+    if(!tbody) return;
+
+    const list = [...bets[method]];
+    // Sort newest first (by date)
+    list.sort((a,b)=>{
+      const da = parseDateStr(a.date) ?? 0;
+      const db = parseDateStr(b.date) ?? 0;
+      return db - da;
+    });
+
+    const filtered = applyFilters(method, list);
+    updateStats(method, filtered);
+
+    tbody.innerHTML = '';
+
+    if(filtered.length === 0){
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 8;
+      td.style.textAlign = 'center';
+      td.style.padding = '30px';
+      td.style.color = '#7a8fa6';
+      td.textContent = 'No bets match your filters 📭';
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      return;
+    }
+
+    for(const b of filtered){
+      const tr = document.createElement('tr');
+
+      const tdDate = document.createElement('td');
+      tdDate.textContent = b.date || '';
+      tr.appendChild(tdDate);
+
+      const tdLeague = document.createElement('td');
+      tdLeague.textContent = b.league || '';
+      tr.appendChild(tdLeague);
+
+      const tdOdds = document.createElement('td');
+      tdOdds.textContent = formatNum(Number(b.odds), 2);
+      tr.appendChild(tdOdds);
+
+      const tdUnits = document.createElement('td');
+      tdUnits.textContent = formatNum(Number(b.units), 2);
+      tr.appendChild(tdUnits);
+
+      const tdEdge = document.createElement('td');
+      const edgeNum = Number(b.edge);
+      tdEdge.textContent = Number.isFinite(edgeNum) ? (formatNum(edgeNum, 2) + '%') : '-';
+      tr.appendChild(tdEdge);
+
+      const pl = computePL(Number(b.odds), Number(b.units), b.result);
+      const tdPL = document.createElement('td');
+      tdPL.textContent = formatNum(pl, 2);
+      tdPL.style.color = pl > 0 ? '#00ff88' : (pl < 0 ? '#ff3366' : '#7a8fa6');
+      tr.appendChild(tdPL);
+
+      const tdRes = document.createElement('td');
+      tdRes.textContent = (b.result || 'pending').toUpperCase();
+      tr.appendChild(tdRes);
+
+      const tdAct = document.createElement('td');
+      tdAct.className = 'action-buttons';
+
+      const btnEdit = document.createElement('button');
+      btnEdit.className = 'action-btn edit-btn';
+      btnEdit.textContent = '✏️';
+      btnEdit.title = 'Edit';
+      btnEdit.dataset.action = 'edit';
+      btnEdit.dataset.id = b.id;
+      btnEdit.dataset.method = method;
+
+      const btnDel = document.createElement('button');
+      btnDel.className = 'action-btn delete-btn';
+      btnDel.textContent = '🗑';
+      btnDel.title = 'Delete';
+      btnDel.dataset.action = 'delete';
+      btnDel.dataset.id = b.id;
+      btnDel.dataset.method = method;
+
+      tdAct.appendChild(btnEdit);
+      tdAct.appendChild(btnDel);
+      tr.appendChild(tdAct);
+
+      tbody.appendChild(tr);
+    }
+  }
+
+  function readInputs(method){
+    const cfg = CFG[method];
+    const inp = cfg.inputs;
+
+    // Defaults to avoid "dead buttons" in browsers that block alert()
+    let date = el(inp.date)?.value || '';
+    if(!date){
+      const t = new Date();
+      const yyyy = t.getFullYear();
+      const mm = String(t.getMonth()+1).padStart(2,'0');
+      const dd = String(t.getDate()).padStart(2,'0');
+      date = `${yyyy}-${mm}-${dd}`;
+    }
+
+    let league = el(inp.league)?.value || '';
+    if(!league) league = 'Unknown';
+
+    const odds = normalizeOdds(el(inp.odds)?.value);
+    const units = safeNum(el(inp.units)?.value) ?? 1;
+    const edge = safeNum(el(inp.edge)?.value) ?? 0;
+    const live = !!el(inp.live)?.checked;
+    const result = el(inp.result)?.value || 'pending';
+
+    const errors = [];
+    if(odds === null) errors.push('Odds');
+    if(!(Number.isFinite(units) && units > 0)) errors.push('Units');
+
+    return {date, league, odds, units, edge, live, result, errors};
+  }
+
+  function clearInputs(method){
+    const cfg = CFG[method];
+    const inp = cfg.inputs;
+    if(el(inp.date)) el(inp.date).value = '';
+    // keep league selection
+    if(el(inp.odds)) el(inp.odds).value = '';
+    if(el(inp.units)) el(inp.units).value = '';
+    if(el(inp.edge)) el(inp.edge).value = '';
+    if(el(inp.live)) el(inp.live).checked = false;
+    if(el(inp.result)) el(inp.result).value = 'pending';
+  }
+
+  function setEditing(method, bet){
+    const cfg = CFG[method];
+    const inp = cfg.inputs;
+    if(el(inp.date)) el(inp.date).value = bet.date || '';
+    if(el(inp.league)) el(inp.league).value = bet.league || '';
+    if(el(inp.odds)) el(inp.odds).value = bet.odds;
+    if(el(inp.units)) el(inp.units).value = bet.units;
+    if(el(inp.edge)) el(inp.edge).value = bet.edge;
+    if(el(inp.live)) el(inp.live).checked = !!bet.live;
+    if(el(inp.result)) el(inp.result).value = bet.result || 'pending';
+
+    const addBtn = el(cfg.addBtnId);
+    if(addBtn){
+      addBtn.dataset.editingId = bet.id;
+      addBtn.textContent = (method === 'prop') ? 'Save Proportional Bet' : 'Save Power Bet';
+    }
+  }
+
+  function clearEditing(method){
+    const cfg = CFG[method];
+    const addBtn = el(cfg.addBtnId);
+    if(addBtn){
+      delete addBtn.dataset.editingId;
+      addBtn.textContent = (method === 'prop') ? 'Add Proportional Bet' : 'Add Power Bet';
+    }
+  }
+
+  // ---------------- Modals ----------------
+  const overlay = el('modalOverlay');
+
+  function showModal(modalId){
+    const modal = el(modalId);
+    if(!modal || !overlay) return;
+    overlay.style.display = 'block';
+    modal.style.display = 'block';
+  }
+  function hideModal(modalId){
+    const modal = el(modalId);
+    if(!modal || !overlay) return;
+    modal.style.display = 'none';
+    // If no other modals visible, hide overlay
+    const anyVisible = Array.from(document.querySelectorAll('.modal')).some(m => m.style.display === 'block');
+    if(!anyVisible) overlay.style.display = 'none';
+  }
+  function hideAllModals(){
+    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+    if(overlay) overlay.style.display = 'none';
+  }
+  if(overlay){
+    overlay.addEventListener('click', hideAllModals);
+  }
+
+  function wireModalCancel(modalId){
+    const modal = el(modalId);
+    if(!modal) return;
+    const cancel = modal.querySelector('.btn-cancel');
+    if(cancel) cancel.addEventListener('click', ()=> hideModal(modalId));
+  }
+
+  // ---------------- Delete / Clear All handling ----------------
+  let pendingDelete = {method:null, id:null};
+
+  function wireDeleteModal(method){
+    const modalId = CFG[method].modals.delete;
+    wireModalCancel(modalId);
+    const modal = el(modalId);
+    if(!modal) return;
+    const confirm = modal.querySelector('.btn-confirm');
+    if(confirm){
+      confirm.addEventListener('click', ()=>{ 
+        const date = el('histDate')?.value || '';
+        const league = el('histLeague')?.value || '';
+        const units = safeNum(el('histUnits')?.value);
+        const live = !!el('histLive')?.checked;
+
+        const errors = [];
+        if(!date) errors.push('Date');
+        if(!league) errors.push('League');
+        if(units === null || units<=0) errors.push('Units');
+        if(errors.length){
+          alert('Please fill: ' + errors.join(', '));
+          return;
+        }
+
+        // Always add the SAME pick (chosen by Proportional) to BOTH methods.
+        // Edges are computed per-method for that same pick.
+        const modal = el(addFromHistoryModalId);
+        const hid = modal?.dataset?.historyId;
+        const ok = modal?.dataset?.outcomeKey;
+        const item = history.find(h=>h.id===hid);
+        const o = item?.outcomes?.find(x=>x.key===ok);
+        if(!o){
+          alert('Could not find calculation outcome to add.');
+          return;
+        }
+
+        const baseBet = {
+          date,
+          league,
+          odds: normalizeOdds(o.your),
+          units,
+          live,
+          result: 'pending'
+        };
+        if(baseBet.odds === null){
+          alert('Invalid odds for selected outcome.');
+          return;
+        }
+
+        bets.prop.push({ id: uid(), ...baseBet, edge: safeNum(o.edgeProp) });
+        bets.power.push({ id: uid(), ...baseBet, edge: safeNum(o.edgePow) });
+
+        saveArray(STORAGE_KEYS.prop, bets.prop);
+        saveArray(STORAGE_KEYS.power, bets.power);
+
+        hideModal(addFromHistoryModalId);
+        render('prop');
+        render('power');
+        // Switch to proportional tab by default after adding
+        if(btnProp) activateTab('proportionalTab', btnProp);
+      });
+    }
+  }
+
+  function wireClearAllModal(method){
+    const modalId = CFG[method].modals.clearAll;
+    wireModalCancel(modalId);
+    const modal = el(modalId);
+    if(!modal) return;
+    const confirm = modal.querySelector('.btn-confirm');
+    if(confirm){
+      confirm.addEventListener('click', ()=>{
+        bets[method] = [];
+        saveArray(STORAGE_KEYS[method], bets[method]);
+        hideModal(modalId);
+        clearEditing(method);
+        render(method);
+      });
+    }
+  }
+
+  // ---------------- Buttons: Add / Reset / Export / Clear ----------------
+  function wireMethod(method){
+    const cfg = CFG[method];
+
+    // Add / Save
+    const addBtn = el(cfg.addBtnId);
+    if(addBtn){
+      addBtn.addEventListener('click', ()=>{
+        const data = readInputs(method);
+        if(data.errors.length){
+          alert('Please fill: ' + data.errors.join(', '));
+          return;
+        }
+        const editingId = addBtn.dataset.editingId;
+        if(editingId){
+          const idx = bets[method].findIndex(b=>b.id===editingId);
+          if(idx >= 0){
+            bets[method][idx] = {...bets[method][idx], ...data};
+          }
+          clearEditing(method);
+        }else{
+          bets[method].push({id: uid(), ...data});
+        }
+        saveArray(STORAGE_KEYS[method], bets[method]);
+        clearInputs(method);
+        render(method);
+      });
+    }
+
+    // Reset Filters
+    const resetBtn = el(cfg.resetBtnId);
+    if(resetBtn){
+      resetBtn.addEventListener('click', ()=>{
+        if(el(cfg.typeFilterId)) el(cfg.typeFilterId).value = 'all';
+        if(el(cfg.fromDateId)) el(cfg.fromDateId).value = '';
+        if(el(cfg.toDateId)) el(cfg.toDateId).value = '';
+        if(el(cfg.edgeFromId)) el(cfg.edgeFromId).value = '';
+        if(el(cfg.edgeToId)) el(cfg.edgeToId).value = '';
+
+        const all = el(cfg.allLeaguesId);
+        if(all) all.checked = true;
+
+        const grid = el(cfg.leagueGridId);
+        if(grid){
+          grid.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = true);
+        }
+        render(method);
+      });
+    }
+
+    // Export CSV
+    const exportBtn = el(cfg.exportBtnId);
+    if(exportBtn){
+      exportBtn.addEventListener('click', ()=>{
+        const rows = bets[method].slice().sort((a,b)=>(parseDateStr(b.date)||0)-(parseDateStr(a.date)||0));
+        const header = ['Date','League','Odds','Units','Edge%','Live','Result','P/L'];
+        const lines = [header.join(',')];
+        for(const b of rows){
+          const pl = computePL(Number(b.odds), Number(b.units), b.result);
+          lines.push([
+            csvEscape(b.date),
+            csvEscape(b.league),
+            csvEscape(formatNum(Number(b.odds),2)),
+            csvEscape(formatNum(Number(b.units),2)),
+            csvEscape(formatNum(Number(b.edge),2)),
+            csvEscape(b.live ? 'Live' : 'Pregame'),
+            csvEscape(b.result),
+            csvEscape(formatNum(pl,2))
+          ].join(','));
+        }
+        const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = (method === 'prop' ? 'proportional_bets.csv' : 'power_bets.csv');
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(()=>URL.revokeObjectURL(a.href), 1500);
+      });
+    }
+
+    // Clear All
+    const clearBtn = el(cfg.clearAllBtnId);
+    if(clearBtn){
+      clearBtn.addEventListener('click', ()=> showModal(cfg.modals.clearAll));
+    }
+
+    // League all toggle
+    const all = el(cfg.allLeaguesId);
+    const grid = el(cfg.leagueGridId);
+
+    if(all && grid){
+      all.addEventListener('change', ()=>{
+        const checked = all.checked;
+        grid.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = checked);
+        render(method);
+      });
+      grid.addEventListener('change', ()=>{
+        const boxes = Array.from(grid.querySelectorAll('input[type="checkbox"]'));
+        const allChecked = boxes.every(c=>c.checked);
+        all.checked = allChecked;
+        render(method);
+      });
+    }
+
+    // Filters change
+    [cfg.typeFilterId,cfg.fromDateId,cfg.toDateId,cfg.edgeFromId,cfg.edgeToId].forEach(fid=>{
+      const node = el(fid);
+      if(node) node.addEventListener('input', ()=> render(method));
+      if(node) node.addEventListener('change', ()=> render(method));
+    });
+
+    // Table actions (delegation)
+    const tbody = el(cfg.tableBodyId);
+    if(tbody){
+      tbody.addEventListener('click', (e)=>{
+        const btn = e.target.closest('button');
+        if(!btn) return;
+        const action = btn.dataset.action;
+        const id = btn.dataset.id;
+        if(!action || !id) return;
+
+        const bet = bets[method].find(b=>b.id===id);
+        if(!bet) return;
+
+        if(action === 'edit'){
+          setEditing(method, bet);
+          // Switch to correct tab automatically
+          if(method==='prop' && btnProp) activateTab('proportionalTab', btnProp);
+          if(method==='power' && btnPower) activateTab('powerTab', btnPower);
+        }else if(action === 'delete'){
+          pendingDelete = {method, id};
+          showModal(cfg.modals.delete);
+        }
+      });
+    }
+
+    // If user edits inputs manually, allow cancel edit by hitting Escape
+    document.addEventListener('keydown', (ev)=>{
+      if(ev.key === 'Escape'){
+        hideAllModals();
+        clearEditing(method);
+      }
+    });
+  }
+
+  // Wire modals and methods
+  wireDeleteModal('prop');
+  wireDeleteModal('power');
+  wireClearAllModal('prop');
+  wireClearAllModal('power');
+  wireMethod('prop');
+  wireMethod('power');
+
+
+  // ---------------- Import POWER ----------------
+  const importBtnPower = el('importPower');
+  const importTextPower = el('importTextPower');
+  const importReplacePower = el('importReplacePower');
+  const importDoPower = el('doImportPower');
+  const importClosePower = el('closeImportPower');
+
+  function pad2(n){ return String(n).padStart(2,'0'); }
+
+  function normalizeDateAny(v){
+    if(v === null || v === undefined) return '';
+    const s = String(v).trim();
+    if(!s) return '';
+    if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+    const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+    if(m){
+      const mm = Number(m[1]), dd = Number(m[2]);
+      let yy = Number(m[3]);
+      if(yy < 100) yy = 2000 + yy;
+      if(mm>=1 && mm<=12 && dd>=1 && dd<=31) return `${yy}-${pad2(mm)}-${pad2(dd)}`;
+    }
+
+    const d = new Date(s);
+    if(!Number.isNaN(d.getTime())){
+      return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+    }
+    return s;
+  }
+
+  function toDecimalOdds(v){
+    if(v === null || v === undefined) return null;
+    const s = String(v).trim();
+    if(!s) return null;
+    const n = Number(s);
+    if(!Number.isFinite(n)) return null;
+
+    // American odds support
+    const looksAmerican = (s.startsWith('+') || s.startsWith('-')) && Math.abs(n) >= 100;
+    const maybeAmericanNoSign = !s.includes('.') && Math.abs(n) >= 100 && Math.abs(n) <= 1000;
+
+    if(looksAmerican || maybeAmericanNoSign){
+      if(n > 0) return 1 + (n/100);
+      return 1 + (100/Math.abs(n));
+    }
+    return n;
+  }
+
+  function toNumberLoose(v){
+    if(v === null || v === undefined) return null;
+    const s = String(v).trim().replace('%','');
+    if(!s) return null;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function normalizeResult(v){
+    const s = (v ?? '').toString().trim().toLowerCase();
+    if(!s) return 'pending';
+    if(['w','win','won','✅','green','hit','winner'].includes(s)) return 'win';
+    if(['l','loss','lost','❌','red','miss','loser'].includes(s)) return 'loss';
+    if(['p','push','void','refund','tie','draw'].includes(s)) return 'push';
+    if(['pending','open','live','running','-'].includes(s)) return 'pending';
+    // try partial matches
+    if(s.includes('win')) return 'win';
+    if(s.includes('loss')) return 'loss';
+    if(s.includes('push') || s.includes('void') || s.includes('refund')) return 'push';
+    return 'pending';
+  }
+
+  function normalizeBool(v){
+    const s = (v ?? '').toString().trim().toLowerCase();
+    if(!s) return false;
+    return ['1','true','yes','y','on','live'].includes(s);
+  }
+
+  function computePL(odds, units, result){
+    if(!(Number.isFinite(odds) && odds > 1 && Number.isFinite(units) && units > 0)) return 0;
+    if(result === 'win') return units * (odds - 1);
+    if(result === 'loss') return -units;
+    if(result === 'push') return 0;
+    return 0;
+  }
+
+  function splitCsvLine(line, delim){
+    // Quote-aware only for comma
+    if(delim !== ',') return line.split(delim).map(s=>s.trim());
+    const out = [];
+    let cur = '';
+    let inQ = false;
+    for(let i=0;i<line.length;i++){
+      const ch = line[i];
+      if(ch === '"'){
+        if(inQ && line[i+1] === '"'){ cur += '"'; i++; }
+        else { inQ = !inQ; }
+        continue;
+      }
+      if(ch === delim && !inQ){
+        out.push(cur.trim());
+        cur = '';
+        continue;
+      }
+      cur += ch;
+    }
+    out.push(cur.trim());
+    return out;
+  }
+
+  function detectDelim(line){
+    const c = (line.match(/,/g) || []).length;
+    const t = (line.match(/\t/g) || []).length;
+    const s = (line.match(/;/g) || []).length;
+    if(t >= c && t >= s && t > 0) return '\t';
+    if(s >= c && s > 0) return ';';
+    return ',';
+  }
+
+  function parseImportPower(text){
+    const raw = (text || '').trim();
+    if(!raw) return [];
+
+    // JSON
+    if(raw.startsWith('[') || raw.startsWith('{')){
+      try{
+        const parsed = JSON.parse(raw);
+        const arr = Array.isArray(parsed) ? parsed
+          : Array.isArray(parsed.power) ? parsed.power
+          : Array.isArray(parsed.bets) ? parsed.bets
+          : [];
+        return arr.map(obj => normalizeImportedBet(obj)).filter(Boolean);
+      }catch(e){
+        // fall through to CSV
+      }
+    }
+
+    // CSV / TSV / ; separated
+    const lines = raw.split(/\r?\n/).map(l=>l.trim()).filter(l=>l && !l.startsWith('#'));
+    if(lines.length === 0) return [];
+    const delim = detectDelim(lines[0]);
+    const header = splitCsvLine(lines[0], delim).map(h=>h.toLowerCase().trim());
+    const hasHeader = header.some(h => ['date','league','odds','units','edge','result','live','status'].includes(h));
+    let startIdx = 0;
+    let keys = header;
+    if(!hasHeader){
+      // Assume fixed order: date, league, odds, units, edge, result, live
+      keys = ['date','league','odds','units','edge','result','live'];
+      startIdx = 0;
+    }else{
+      startIdx = 1;
+    }
+
+    const out = [];
+    for(let i=startIdx;i<lines.length;i++){
+      const cols = splitCsvLine(lines[i], delim);
+      if(cols.length === 0) continue;
+      const obj = {};
+      for(let j=0;j<keys.length && j<cols.length;j++){
+        obj[keys[j]] = cols[j];
+      }
+      const bet = normalizeImportedBet(obj);
+      if(bet) out.push(bet);
+    }
+    return out;
+  }
+
+  function normalizeImportedBet(obj){
+    if(!obj || typeof obj !== 'object') return null;
+
+    const date = normalizeDateAny(obj.date ?? obj.betdate ?? obj.bet_date ?? obj.day ?? obj['bet date']);
+    const league = (obj.league ?? obj.competition ?? obj.tournament ?? obj.sport ?? obj['leagues'] ?? '').toString().trim() || 'Unknown';
+    const odds = toDecimalOdds(obj.odds ?? obj.price ?? obj['book odds'] ?? obj.bookodds ?? obj.book_odds);
+    const units = toNumberLoose(obj.units ?? obj.stake ?? obj['stake units'] ?? obj.wager ?? obj.size);
+    const edge = toNumberLoose(obj.edge ?? obj.edgepct ?? obj.edge_percent ?? obj['edge %'] ?? obj['edge']);
+    const result = normalizeResult(obj.result ?? obj.status ?? obj.outcome);
+    const live = normalizeBool(obj.live ?? obj.islive ?? obj.inplay);
+
+    if(!date) return null;
+    if(!(Number.isFinite(odds) && odds > 1)) return null;
+    if(!(Number.isFinite(units) && units > 0)) return null;
+
+    const pl = computePL(odds, units, result);
+
+    return {
+      id: uid(),
+      date,
+      league,
+      odds,
+      units,
+      edge: Number.isFinite(edge) ? edge : 0,
+      live,
+      result,
+      pl
+    };
+  }
+
+  if(importBtnPower && importDoPower && importClosePower){
+    importBtnPower.addEventListener('click', ()=>{
+      if(importTextPower) importTextPower.value = '';
+      if(importReplacePower) importReplacePower.checked = true;
+      showModal('importModalPower');
+      setTimeout(()=>importTextPower && importTextPower.focus(), 50);
+    });
+
+    importClosePower.addEventListener('click', ()=> hideModal('importModalPower'));
+
+    importDoPower.addEventListener('click', ()=>{
+      const parsed = parseImportPower(importTextPower ? importTextPower.value : '');
+      if(parsed.length === 0){
+        alert('No valid POWER bets found. Tip: include date, league, odds, units.');
+        return;
+      }
+      const replace = !!importReplacePower?.checked;
+      bets.power = replace ? parsed : [...parsed, ...bets.power];
+      saveArray(STORAGE_KEYS.power, bets.power);
+      hideModal('importModalPower');
+      render('power');
+      alert(`Imported ${parsed.length} POWER bet(s).`);
+    });
+  }
+
+  // ---------------- Calculator ----------------
+  let history = loadArray(STORAGE_KEYS.history);
+
+  function normalizeOdds(x){
+    const n = toDecimalOdds(x);
+    if(n === null) return null;
+    if(n < 1.01) return null;
+    return n;
+  }
+
+  function calcFairOdds(pinn){
+    // Returns both Proportional (simple normalization) and Power/Exponent (OddsNotifier) fair odds.
+    const q = pinn.map(o => 1/o); // implied probs
+    const overround = q.reduce((a,b)=>a+b,0);
+
+    // proportional
+    const pProp = q.map(x => x / overround);
+    const fairProp = pProp.map(p => 1/p);
+
+    // power / exponent: find a>1 such that sum(q_i^a)=1
+    function sumPow(a){
+      let s = 0;
+      for(const x of q) s += Math.pow(x, a);
+      return s;
+    }
+    let lo = 1.0, hi = 2.0;
+    // increase hi until sumPow(hi) <= 1
+    while(sumPow(hi) > 1 && hi < 64) hi *= 2;
+    // binary search
+    for(let iter=0; iter<80; iter++){
+      const mid = (lo + hi) / 2;
+      if(sumPow(mid) > 1) lo = mid; else hi = mid;
+    }
+    const a = (lo + hi) / 2;
+    const pPow = q.map(x => Math.pow(x, a));
+    const fairPow = pPow.map(p => 1/p);
+
+    return {
+      overround,
+      proportional: { probs: pProp, fair: fairProp },
+      power: { a, probs: pPow, fair: fairPow }
+    };
+  }
+
+  function nowStamp(){
+    const d = new Date();
+    return d.toLocaleString();
+  }
+
+  function makeHistoryCard(item){
+    const card = document.createElement('div');
+    card.className = 'history-card' + (item.suggested ? ' suggested' : '');
+    card.dataset.id = item.id;
+
+    const header = document.createElement('div');
+    header.className = 'history-header';
+
+    const mt = document.createElement('div');
+    mt.className = 'history-market-type';
+    mt.textContent = item.marketType === '3way' ? '3-WAY (1X2)' : '2-WAY';
+
+    const ts = document.createElement('div');
+    ts.className = 'history-timestamp';
+    ts.textContent = item.timestamp;
+
+    header.appendChild(mt);
+    header.appendChild(ts);
+
+    const outcomes = document.createElement('div');
+    outcomes.className = 'history-outcomes';
+
+    for(const o of item.outcomes){
+      const box = document.createElement('div');
+      box.className = 'history-outcome';
+      box.dataset.outcome = o.key;
+
+      const name = document.createElement('div');
+      name.className = 'history-outcome-name';
+      name.textContent = o.name;
+
+      const det = document.createElement('div');
+      det.className = 'history-outcome-details';
+
+      det.innerHTML = [
+        `<span>Pinn: ${formatNum(o.pinn,2)}</span>`,
+        `<span>Your: ${formatNum(o.your,2)}</span>`,
+        `<span>Fair (Prop): ${formatNum(o.fairProp,2)}</span>`,
+        `<span>EV% (Prop): ${formatPct(o.edgeProp,2)}</span>`,
+        `<span>Fair (Power): ${formatNum(o.fairPow,2)}</span>`,
+        `<span>EV% (Power): ${formatPct(o.edgePow,2)}</span>`
+      ].join('');
+box.appendChild(name);
+      box.appendChild(det);
+      outcomes.appendChild(box);
+    }
+
+    const actions = document.createElement('div');
+    actions.className = 'history-actions';
+
+    const btnAdd = document.createElement('button');
+    btnAdd.textContent = 'Add Bet';
+    btnAdd.dataset.action = 'addBet';
+
+    const btnReload = document.createElement('button');
+    btnReload.textContent = 'Reload';
+    btnReload.className = 'btn-reload-history';
+    btnReload.dataset.action = 'reload';
+
+    const btnRemove = document.createElement('button');
+    btnRemove.textContent = 'Remove';
+    btnRemove.className = 'btn-remove-history';
+    btnRemove.dataset.action = 'remove';
+
+    actions.appendChild(btnAdd);
+    actions.appendChild(btnReload);
+    actions.appendChild(btnRemove);
+
+    card.appendChild(header);
+    card.appendChild(outcomes);
+    card.appendChild(actions);
+    return card;
+  }
+
+  function renderHistory(){
+    const list = el('historyList');
+    if(!list) return;
+    list.innerHTML = '';
+
+    if(!history.length){
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.innerHTML = `<div class="empty-state-icon">📊</div>No calculations yet!`;
+      list.appendChild(empty);
+      return;
+    }
+
+    // newest first
+    const sorted = history.slice().sort((a,b)=> (b.createdAt||0)-(a.createdAt||0));
+    for(const item of sorted){
+      list.appendChild(makeHistoryCard(item));
+    }
+  }
+
+  function saveHistory(){
+    saveArray(STORAGE_KEYS.history, history);
+  }
+
+  // market type change: show/hide draw inputs
+  const marketTypeSel = el('marketType');
+  const pinnDrawGroup = el('pinnDrawGroup');
+  const yourDrawGroup = el('yourDrawGroup');
+
+  function applyMarketVisibility(){
+    const v = marketTypeSel ? marketTypeSel.value : '2way';
+    const is3 = v === '3way';
+    if(pinnDrawGroup) pinnDrawGroup.style.display = is3 ? 'block' : 'none';
+    if(yourDrawGroup) yourDrawGroup.style.display = is3 ? 'block' : 'none';
+  }
+  if(marketTypeSel){
+    marketTypeSel.addEventListener('change', applyMarketVisibility);
+    applyMarketVisibility();
+  }
+
+  const calcBtn = el('calculateEdge');
+  if(calcBtn){
+    calcBtn.addEventListener('click', ()=>{
+      const marketType = marketTypeSel ? marketTypeSel.value : '2way';
+
+      const pinnHome = normalizeOdds(el('pinnHome')?.value);
+      const pinnAway = normalizeOdds(el('pinnAway')?.value);
+      const yourHome = normalizeOdds(el('yourHome')?.value);
+      const yourAway = normalizeOdds(el('yourAway')?.value);
+
+      let pinnDraw = null, yourDraw = null;
+
+      if(marketType === '3way'){
+        pinnDraw = normalizeOdds(el('pinnDraw')?.value);
+        yourDraw = normalizeOdds(el('yourDraw')?.value);
+      }
+
+      const needed = ['Pinnacle Home','Pinnacle Away','Your Home','Your Away'];
+      const missing = [];
+      if(pinnHome===null) missing.push(needed[0]);
+      if(pinnAway===null) missing.push(needed[1]);
+      if(yourHome===null) missing.push(needed[2]);
+      if(yourAway===null) missing.push(needed[3]);
+      if(marketType === '3way'){
+        if(pinnDraw===null) missing.push('Pinnacle Draw');
+        if(yourDraw===null) missing.push('Your Draw');
+      }
+      if(missing.length){
+        alert('Please fill: ' + missing.join(', '));
+        return;
+      }
+
+      const pinnOdds = marketType === '3way' ? [pinnHome, pinnDraw, pinnAway] : [pinnHome, pinnAway];
+      const yourOdds = marketType === '3way' ? [yourHome, yourDraw, yourAway] : [yourHome, yourAway];
+
+      const fairObj = calcFairOdds(pinnOdds);
+      const fairProp = fairObj.proportional.fair;
+      const fairPow = fairObj.power.fair;
+      const expA = fairObj.power.a;
+const names = marketType === '3way' ? [
+        {key:'home', name:'HOME/1'},
+        {key:'draw', name:'DRAW/X'},
+        {key:'away', name:'AWAY/2'}
+      ] : [
+        {key:'home', name:'HOME'},
+        {key:'away', name:'AWAY'}
+      ];
+
+      const outcomes = names.map((n, i)=>{
+        const edgeProp = ((yourOdds[i] / fairProp[i]) - 1) * 100; // EV% using proportional fair
+        const edgePow  = ((yourOdds[i] / fairPow[i])  - 1) * 100; // EV% using power fair
+        return {
+          key:n.key, name:n.name,
+          pinn:pinnOdds[i], your:yourOdds[i],
+          fairProp: fairProp[i], fairPow: fairPow[i],
+          edgeProp, edgePow
+        };
+      });
+
+      const best = outcomes.reduce((a,b)=> (b.edgeProp > a.edgeProp ? b : a), outcomes[0]);
+      const suggested = (best.edgeProp > 0) || (best.edgePow > 0);
+
+      const item = {
+        id: uid(),
+        createdAt: Date.now(),
+        timestamp: nowStamp(),
+        marketType,
+        outcomes,
+        suggested
+      };
+
+      history.push(item);
+      saveHistory();
+      renderHistory();
+    });
+  }
+
+  // history actions: add bet / remove
+  let pendingRemoveHistoryId = null;
+  let pendingAddFromHistory = null; // {historyId, outcomeKey}
+
+  const removeHistoryModalId = 'removeHistoryModal';
+  const clearHistoryModalId = 'clearHistoryModal';
+  const addFromHistoryModalId = 'addFromHistoryModal';
+
+  wireModalCancel(removeHistoryModalId);
+  wireModalCancel(clearHistoryModalId);
+  wireModalCancel(addFromHistoryModalId);
+
+  const historyList = el('historyList');
+  if(historyList){
+    historyList.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button');
+      const card = e.target.closest('.history-card');
+      if(!btn || !card) return;
+      const id = card.dataset.id;
+      const action = btn.dataset.action;
+      if(!id || !action) return;
+
+      if(action === 'remove'){
+        pendingRemoveHistoryId = id;
+        showModal(removeHistoryModalId);
+      }
+      if(action === 'reload'){
+        const item = history.find(h=>h.id===id);
+        if(!item) return;
+        // Switch to calculator tab and load the odds back into inputs
+        if(btnCalc){
+          activateTab('calculatorTab', btnCalc);
+        }
+        // Set market type
+        const mtSel = el('marketType');
+        if(mtSel){
+          mtSel.value = item.marketType || '2way';
+        }
+        if(typeof applyMarketVisibility === 'function'){ applyMarketVisibility(); }
+        // Map outcomes -> inputs
+        const home = item.outcomes.find(o=>o.key==='home');
+        const away = item.outcomes.find(o=>o.key==='away');
+        const draw = item.outcomes.find(o=>o.key==='draw');
+
+        if(home){
+          const ph = el('pinnHome'); if(ph) ph.value = String(home.pinn ?? '');
+          const yh = el('yourHome'); if(yh) yh.value = String(home.your ?? '');
+        }
+        if(away){
+          const pa = el('pinnAway'); if(pa) pa.value = String(away.pinn ?? '');
+          const ya = el('yourAway'); if(ya) ya.value = String(away.your ?? '');
+        }
+        if(draw){
+          const pd = el('pinnDraw'); if(pd) pd.value = String(draw.pinn ?? '');
+          const yd = el('yourDraw'); if(yd) yd.value = String(draw.your ?? '');
+        }else{
+          const pd = el('pinnDraw'); if(pd) pd.value = '';
+          const yd = el('yourDraw'); if(yd) yd.value = '';
+        }
+
+        // Optional: scroll to top of calculator panel for fast edits
+        const calcPanel = document.getElementById('calculatorTab');
+        if(calcPanel && calcPanel.scrollIntoView){
+          calcPanel.scrollIntoView({behavior:'smooth', block:'start'});
+        }
+        return;
+      }
+
+      if(action === 'addBet'){
+        // pick best outcome by default
+        const item = history.find(h=>h.id===id);
+        if(!item) return;
+        const best = item.outcomes.reduce((a,b)=> (b.edgeProp > a.edgeProp ? b : a), item.outcomes[0]);
+        pendingAddFromHistory = {historyId:id, outcomeKey: best.key};
+        openAddFromHistoryModal(item, best);
+      }
+    });
+
+    // allow clicking an outcome box to select that outcome for Add Bet
+    historyList.addEventListener('click', (e)=>{
+      const outcomeBox = e.target.closest('.history-outcome');
+      const card = e.target.closest('.history-card');
+      if(!outcomeBox || !card) return;
+      const item = history.find(h=>h.id===card.dataset.id);
+      if(!item) return;
+      const key = outcomeBox.dataset.outcome;
+      const o = item.outcomes.find(x=>x.key===key);
+      if(!o) return;
+      // store selection for next Add Bet click
+      pendingAddFromHistory = {historyId:item.id, outcomeKey:key};
+    });
+  }
+
+  const btnClearHistory = el('clearHistory');
+  if(btnClearHistory){
+    btnClearHistory.addEventListener('click', ()=> showModal(clearHistoryModalId));
+  }
+
+  // Confirm remove single history item
+  const removeHistModal = el(removeHistoryModalId);
+  if(removeHistModal){
+    const confirm = removeHistModal.querySelector('.btn-confirm');
+    if(confirm){
+      confirm.addEventListener('click', ()=>{
+        if(pendingRemoveHistoryId){
+          history = history.filter(h=>h.id !== pendingRemoveHistoryId);
+          pendingRemoveHistoryId = null;
+          saveHistory();
+          hideModal(removeHistoryModalId);
+          renderHistory();
+        }else{
+          hideModal(removeHistoryModalId);
+        }
+      });
+    }
+  }
+
+  // Confirm clear history
+  const clearHistModal = el(clearHistoryModalId);
+  if(clearHistModal){
+    const confirm = clearHistModal.querySelector('.btn-confirm');
+    if(confirm){
+      confirm.addEventListener('click', ()=>{
+        history = [];
+        saveHistory();
+        hideModal(clearHistoryModalId);
+        renderHistory();
+      });
+    }
+  }
+
+  // Add from history modal logic
+  function openAddFromHistoryModal(item, outcome){
+    // Pre-fill fields (method selection removed: Add always goes to BOTH methods)
+    if(el('histDate')){
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth()+1).padStart(2,'0');
+      const dd = String(today.getDate()).padStart(2,'0');
+      el('histDate').value = `${yyyy}-${mm}-${dd}`;
+    }
+    // league: keep as-is
+    if(el('histOutcome')) el('histOutcome').value = outcome.name;
+    if(el('histOdds')) el('histOdds').value = formatNum(outcome.your, 2);
+    if(el('histUnits')) el('histUnits').value = '1';
+    if(el('histResult')) el('histResult').value = 'pending';
+    if(el('histLive')) el('histLive').checked = false;
+
+    const m = el(addFromHistoryModalId);
+    if(m){ m.dataset.historyId = item.id; m.dataset.outcomeKey = outcome.key; }
+
+    // Display EV% (Proportional) for the current odds as a reference
+    const oddsNow = normalizeOdds(el('histOdds')?.value) ?? outcome.your;
+    const edgeNow = Number.isFinite(oddsNow) ? ((oddsNow / outcome.fairProp) - 1) * 100 : outcome.edgeProp;
+    if(el('histEdge')) el('histEdge').value = formatNum(edgeNow, 2);
+
+    showModal(addFromHistoryModalId);
+  }
+
+  
+  // Keep Edge % in sync when user switches method in "Add Bet from History" modal
+  let __histModalWired = false;
+  function wireHistModalSync(){
+    if(__histModalWired) return;
+    const m = el(addFromHistoryModalId);
+    if(!m) return;
+
+    // Remove method choice in UI: Add always goes to BOTH methods
+    const sel = el('histMethod');
+    if(sel){
+      try{
+        const grp = sel.closest('.input-group');
+        if(grp) grp.style.display = 'none';
+      }catch(e){}
+    }
+
+    const oddsInput = el('histOdds');
+
+    const sync = ()=>{
+      const hid = m.dataset.historyId || pendingAddFromHistory?.historyId;
+      const ok = m.dataset.outcomeKey || pendingAddFromHistory?.outcomeKey;
+      const item = history.find(h=>h.id===hid);
+      if(!item) return;
+      const o = item.outcomes.find(x=>x.key===ok) || item.outcomes[0];
+      if(!o) return;
+
+      const oddsNow = normalizeOdds(oddsInput?.value) ?? o.your;
+      const ep = Number.isFinite(oddsNow) ? ((oddsNow / o.fairProp) - 1) * 100 : o.edgeProp;
+      if(el('histEdge')) el('histEdge').value = formatNum(ep, 2);
+    };
+
+    if(oddsInput) oddsInput.addEventListener('input', sync);
+    m.addEventListener('focusin', sync);
+    __histModalWired = true;
+  }
+  wireHistModalSync();
+
+const addFromHistModal = el(addFromHistoryModalId);
+  if(addFromHistModal){
+    const confirm = addFromHistModal.querySelector('.btn-confirm');
+    if(confirm){
+      confirm.addEventListener('click', ()=>{
+        // Add ALWAYS to BOTH methods, using the SAME pick (chosen by Proportional earlier)
+        const modal = el(addFromHistoryModalId);
+        const hid = modal?.dataset.historyId || pendingAddFromHistory?.historyId;
+        const ok = modal?.dataset.outcomeKey || pendingAddFromHistory?.outcomeKey;
+        const item = history.find(h=>h.id===hid);
+        if(!item) return;
+
+        const o = (item.outcomes.find(x=>x.key===ok)) || item.outcomes[0];
+        if(!o) return;
+
+        // Read fields (with safe defaults)
+        let date = el('histDate')?.value || '';
+        if(!date){
+          const t = new Date();
+          const yyyy = t.getFullYear();
+          const mm = String(t.getMonth()+1).padStart(2,'0');
+          const dd = String(t.getDate()).padStart(2,'0');
+          date = `${yyyy}-${mm}-${dd}`;
+        }
+
+        const league = el('histLeague')?.value || '';
+        const odds = normalizeOdds(el('histOdds')?.value) ?? normalizeOdds(o.your);
+        const units = safeNum(el('histUnits')?.value) ?? 1;
+        const live = !!el('histLive')?.checked;
+
+        if(odds === null || !Number.isFinite(units) || units<=0) return;
+
+        // EV% edges for BOTH methods for the SAME pick/odds
+        const edgeProp = ((odds / o.fairProp) - 1) * 100;
+        const edgePow  = ((odds / o.fairPow)  - 1) * 100;
+
+        const result = normalizeResult(el('histResult')?.value || 'pending');
+
+        const base = { date, league, odds, units, live, result };
+
+        bets.prop.push({ id: uid(), ...base, edge: edgeProp });
+        bets.power.push({ id: uid(), ...base, edge: edgePow });
+
+        saveArray(STORAGE_KEYS.prop, bets.prop);
+        saveArray(STORAGE_KEYS.power, bets.power);
+
+        hideModal(addFromHistoryModalId);
+        render('prop');
+        render('power');
+
+        // Switch to Proportional tab (pick source)
+        if(btnProp) activateTab('proportionalTab', btnProp);
+      });
+    }
+  }
+
+  // Initial render
+  render('prop');
+  render('power');
+  renderHistory();
+
+})();
+</script>
 </html>
