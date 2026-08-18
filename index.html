@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BetAnalytics Pro – Dual Method Tracking (v10)</title>
+<title>BetAnalytics Pro – Multi-DeVig Tracking (v19 Focused)</title>
 <style>
 * { margin: 0px; padding: 0px; box-sizing: border-box; }
 
@@ -233,6 +233,11 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 .devig-method-title.proportional { color: rgb(0, 255, 136); }
 
 .devig-method-title.power { color: rgb(255, 193, 7); }
+.devig-method-title.shin { color: rgb(0, 212, 255); }
+.devig-method-title.ooepc { color: rgb(218, 112, 214); }
+.method-consensus { margin-top: 8px; padding: 7px 9px; border-radius: 7px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.10); font-size: 10px; font-weight: 700; color: #cfe4f7; }
+.method-consensus.strong { border-color: rgba(0,255,136,.45); color: rgb(0,255,136); }
+.method-consensus.mixed { border-color: rgba(255,193,7,.45); color: rgb(255,193,7); }
 
 .devig-method-values { font-size: 10px; color: rgb(224, 224, 224); font-family: "Courier New", monospace; }
 
@@ -304,7 +309,7 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 <body>
 <div class="container">
 <h1>⚡ BetAnalytics Pro</h1>
-<div class="subtitle">Advanced Proportional Edge Tracking System</div>
+<div class="subtitle">Advanced Multi-Method Pinnacle Edge Tracking System · v19 Focused</div>
 <!-- Tab Navigation -->
 <div class="tab-nav">
 <button class="tab-btn proportional-tab active" type="button">📊 Proportional Bets</button>
@@ -337,6 +342,16 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 </div>
 <div class="inline-range" style="margin-bottom:20px;">
 <div class="input-group">
+<label for="oddsFromProp">Odds Min (optional)</label>
+<input id="oddsFromProp" min="1.01" placeholder="1.50" step="0.01" type="number"/>
+</div>
+<div class="input-group">
+<label for="oddsToProp">Odds Max (optional)</label>
+<input id="oddsToProp" min="1.01" placeholder="3.00" step="0.01" type="number"/>
+</div>
+</div>
+<div class="inline-range" style="margin-bottom:20px;">
+<div class="input-group">
 <label for="edgeFromProp">Edge From % (optional)</label>
 <input id="edgeFromProp" placeholder="0" step="0.1" type="number"/>
 </div>
@@ -349,8 +364,8 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 <label for="betTypeFilterProp">Bet Type</label>
 <select id="betTypeFilterProp">
 <option value="all">All bets</option>
-<option value="live">Live only</option>
-<option value="pregame">Pregame only</option>
+<option value="live">Other pregame markets only</option>
+<option value="pregame">1X2 pregame only</option>
 </select>
 </div>
 <button id="resetFiltersProp" type="button">Reset Filters</button>
@@ -383,7 +398,7 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 <div class="stat-value positive" id="statTotalUnitsProp">0.00</div>
 </div>
 <div class="stat-box">
-<div class="stat-label">Total Wagered</div>
+<div class="stat-label">Settled Wagered</div>
 <div class="stat-value" id="statTotalWageredProp">0.00</div>
 </div>
 <div class="stat-box">
@@ -391,14 +406,30 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 <div class="stat-value positive" id="statRoiProp">0.0%</div>
 </div>
 <div class="stat-box">
-<div class="stat-label">Avg Edge %</div>
+<div class="stat-label">Open Exposure</div>
+<div class="stat-value neutral" id="statOpenExposureProp">0.00</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Avg Prop Edge %</div>
 <div class="stat-value neutral" id="statAvgEdgeProp">-</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Avg Power Edge %</div>
+<div class="stat-value neutral" id="statAvgEdgePower">-</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Avg Shin(A) Edge %</div>
+<div class="stat-value neutral" id="statAvgEdgeShin">-</div>
+</div>
+<div class="stat-box">
+<div class="stat-label">Avg OO-EPC Edge %</div>
+<div class="stat-value neutral" id="statAvgEdgeOOEPC">-</div>
 </div>
 </div>
 </div>
 <!-- Add Bet Proportional -->
 <div class="input-section">
-<h2 style="font-size:16px; margin-bottom:16px; color:#00ff88;">Add Proportional Bet</h2>
+<h2 style="font-size:16px; margin-bottom:16px; color:#00ff88;">Add Bet (Proportional primary)</h2>
 <div class="inline-range">
 <div class="input-group">
 <label for="betDateProp">Date</label>
@@ -436,9 +467,9 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 </div>
 <div class="input-group" style="flex-direction:row;align-items:center;gap:11px;margin-top:10px;">
 <input id="betLiveProp" style="width:22px;height:22px;accent-color:#00ff88;" type="checkbox"/>
-<label for="betLiveProp" style="margin:0;font-size:13px;text-transform:none;letter-spacing:0;cursor:pointer;">Live bet</label>
+<label for="betLiveProp" style="margin:0;font-size:13px;text-transform:none;letter-spacing:0;cursor:pointer;">Other pregame market</label>
 </div>
-<button id="addBetProp" style="margin-top:20px;background:linear-gradient(135deg,#00ff88,#00cc66);" type="button">Add Proportional Bet</button>
+<button id="addBetProp" style="margin-top:20px;background:linear-gradient(135deg,#00ff88,#00cc66);" type="button">Add Bet</button>
 </div>
 <!-- Table Proportional -->
 <div class="table-wrapper">
@@ -449,7 +480,7 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 <th>League</th>
 <th>Odds</th>
 <th>Units</th>
-<th>Edge %</th>
+<th>Edges (4 methods)</th>
 <th>P/L</th>
 <th>Result</th>
 <th>Actions</th>
@@ -467,7 +498,7 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 <div class="tab-content" id="calculatorTab">
 <!-- Pinnacle Edge Calculator -->
 <div class="input-section">
-<h2 style="font-size:16px; margin-bottom:16px; color:#00d4ff;">⚡ Pinnacle Edge Calculator</h2>
+<h2 style="font-size:16px; margin-bottom:16px; color:#00d4ff;">⚡ Pinnacle Edge Calculator · 4 De-Vig Methods</h2>
 <div class="input-group">
 <label for="marketType">Market Type</label>
 <select id="marketType">
@@ -653,7 +684,7 @@ JSON:
 </div>
 <div class="input-group" style="flex-direction:row;align-items:center;gap:10px;">
 <input id="histLive" style="width:20px;height:20px;accent-color:#00d4ff;" type="checkbox"/>
-<label for="histLive" style="margin:0;font-size:12px;text-transform:none;letter-spacing:0;">Live bet</label>
+<label for="histLive" style="margin:0;font-size:12px;text-transform:none;letter-spacing:0;">Other pregame market</label>
 </div>
 <div class="modal-buttons" style="margin-top:20px;">
 <button class="btn-cancel" type="button">Άκυρο</button>
@@ -776,8 +807,8 @@ JSON:
     setTimeout(() => {
       forceAllLeaguesUI();
       // hard reset ONLY once per new file open (avoid fighting user)
-      if(!sessionStorage.getItem("ba_v16_reset_done")){
-        sessionStorage.setItem("ba_v16_reset_done","1");
+      if(!sessionStorage.getItem("ba_v17_reset_done")){
+        sessionStorage.setItem("ba_v17_reset_done","1");
         hardResetPowerFilters();
       }
       updateRibbon();
@@ -839,6 +870,45 @@ JSON:
 <script>
 (function(){
   const EXTRA_LEAGUES = ['United Cup', 'Davis Cup', 'Billie Jean King Cup', 'ATP Finals', 'WTA Finals', 'ATP Masters 1000', 'ATP 500', 'ATP 250', 'WTA 1000', 'WTA 500', 'WTA 250', 'ATP Challenger', 'ITF Tennis', 'Olympics (Tennis)', 'Africa Cup of Nations', 'CAF Champions League', 'CAF Confederation Cup', 'Asian Cup', 'AFC Champions League', 'AFC Cup', 'CONCACAF Gold Cup', 'CONCACAF Champions Cup', 'Copa America', 'WC Qualifiers', 'International Friendlies', 'Nations League', 'ATP/WTA Exhibitions'];
+  const CUSTOM_LEAGUES_KEY = 'ba_custom_leagues_v18';
+
+  function loadCustomLeagues(){
+    try{
+      const raw = localStorage.getItem(CUSTOM_LEAGUES_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr.map(x=>String(x||'').trim()).filter(Boolean) : [];
+    }catch(e){ return []; }
+  }
+
+  function saveCustomLeague(name){
+    const clean = String(name || '').trim();
+    if(!clean) return;
+    const arr = loadCustomLeagues();
+    if(!arr.includes(clean)) arr.push(clean);
+    try{ localStorage.setItem(CUSTOM_LEAGUES_KEY, JSON.stringify(arr)); }catch(e){}
+  }
+
+  function discoverPersistedLeagues(){
+    const out = [];
+    const add = x => {
+      const v = String(x || '').trim();
+      if(v && v !== 'Other' && v !== 'Unknown' && !out.includes(v)) out.push(v);
+    };
+    try{
+      const arr = JSON.parse(localStorage.getItem('ba_dual_bets_prop_v1') || '[]');
+      if(Array.isArray(arr)) arr.forEach(b=>add(b && b.league));
+    }catch(e){}
+    try{
+      const draft = JSON.parse(localStorage.getItem('ba_draft_prop_v17') || '{}');
+      add(draft && draft.betLeagueProp);
+    }catch(e){}
+    try{
+      const filt = JSON.parse(localStorage.getItem('ba_filters_prop_v17') || '{}');
+      if(Array.isArray(filt && filt.leagues)) filt.leagues.forEach(add);
+    }catch(e){}
+    return out;
+  }
+
 
   function uniqPush(arr, item){
     if(!arr.includes(item)) arr.push(item);
@@ -926,6 +996,8 @@ JSON:
         if(sel.options.length) sel.selectedIndex = 0;
         return;
       }
+      saveCustomLeague(name);
+
       // add everywhere and select it
       const grids = [
         {grid:'leagueGridProp', prefix:'lg_Prop', all:'allLeaguesProp'},
@@ -957,11 +1029,20 @@ JSON:
     ];
     const selects = ['betLeagueProp','betLeaguePower','histLeague'];
 
-    for(const league of EXTRA_LEAGUES){
+    const allKnownLeagues = [];
+    for(const name of [...EXTRA_LEAGUES, ...loadCustomLeagues(), ...discoverPersistedLeagues()]){
+      if(name && !allKnownLeagues.includes(name)) allKnownLeagues.push(name);
+    }
+
+    for(const league of allKnownLeagues){
       for(const sid of selects) ensureOption(document.getElementById(sid), league);
       for(const g of grids) ensureCheckbox(document.getElementById(g.grid), g.prefix, league);
     }
 
+    // Persist recovered non-built-in names for deterministic future reloads.
+    discoverPersistedLeagues().forEach(name=>{
+      if(!EXTRA_LEAGUES.includes(name)) saveCustomLeague(name);
+    });
 
     // Custom league via "Other" option (no UI change; prompt only)
     attachCustomLeague('betLeagueProp');
@@ -973,10 +1054,12 @@ JSON:
     syncAllLeagues('allLeaguesPower','leagueGridPower');
   }
 
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', run);
-  }else{
+  // Initialise immediately: this script is below the relevant HTML and must run
+  // before the main app restores league filters/drafts.
+  if(document.getElementById('betLeagueProp')){
     run();
+  }else{
+    document.addEventListener('DOMContentLoaded', run, {once:true});
   }
 })();
 </script>
@@ -1028,43 +1111,17 @@ window.addEventListener('load', () => {
   const STORAGE_KEYS = {
     prop: 'ba_dual_bets_prop_v1',
     power: 'ba_dual_bets_power_191seed_v2',
-    history: 'ba_dual_calc_history_v1'
+    history: 'ba_dual_calc_history_v1',
+    filtersProp: 'ba_filters_prop_v17',
+    draftProp: 'ba_draft_prop_v17',
+    draftCalc: 'ba_draft_calc_v17'
   };
+  const BET_SCHEMA_VERSION = 4;
 
   // --- Auto-seeded POWER bets (from uploaded CSV) ---
   // Loaded only if your browser has no existing POWER data yet.
   const SEED_POWER_BETS = [];
-  (function resetStoredDataOnce(){
-  // Start fresh: clear any previously saved bets/history from older versions.
-  // This runs only once per browser/profile.
-  const flag = 'ba_dual_reset_done_v18';
-  try{
-    if(localStorage.getItem(flag)) return;
-
-    const keysToClear = [
-      // current keys
-      (typeof STORAGE_KEYS !== 'undefined' ? STORAGE_KEYS.prop : null),
-      (typeof STORAGE_KEYS !== 'undefined' ? STORAGE_KEYS.power : null),
-      (typeof STORAGE_KEYS !== 'undefined' ? STORAGE_KEYS.history : null),
-
-      // older/alternate keys we may have used
-      'ba_power_bets_v9','ba_power_bets','powerBets','BA_POWER_BETS',
-      'ba_dual_bets_prop_v1','ba_dual_bets_power_191seed_v2','ba_dual_calc_history_v1',
-      'ba_dual_bets_power_v1','ba_dual_bets_power_v2','ba_dual_bets_prop_v2'
-    ].filter(Boolean);
-
-    for(const k of keysToClear){
-      localStorage.removeItem(k);
-      // also remove any timestamped backups
-      for(let i=localStorage.length-1;i>=0;i--){
-        const kk = localStorage.key(i);
-        if(kk && kk.startsWith(k + '_backup_')) localStorage.removeItem(kk);
-      }
-    }
-    try{ sessionStorage.clear(); }catch(e){}
-    localStorage.setItem(flag,'1');
-  }catch(e){}
-})();
+  // v18 SAFETY: never auto-clear existing bets/history from localStorage.
 
 const el = (id) => document.getElementById(id);
 
@@ -1074,6 +1131,12 @@ const el = (id) => document.getElementById(id);
     if(!s) return null;
     const n = Number(s);
     return Number.isFinite(n) ? n : null;
+  }
+
+  function optionalNum(v){
+    if(v === null || v === undefined || v === '') return NaN;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : NaN;
   }
 
   function formatNum(n, decimals=2){
@@ -1098,6 +1161,19 @@ const el = (id) => document.getElementById(id);
 
   function saveArray(key, arr){
     try{ localStorage.setItem(key, JSON.stringify(arr)); }catch(e){}
+  }
+
+  function loadObject(key){
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) return null;
+      const data = JSON.parse(raw);
+      return data && typeof data === 'object' && !Array.isArray(data) ? data : null;
+    }catch(e){ return null; }
+  }
+
+  function saveObject(key, obj){
+    try{ localStorage.setItem(key, JSON.stringify(obj)); }catch(e){}
   }
 
   function uid(){
@@ -1223,19 +1299,40 @@ try{
   if(grid) grid.querySelectorAll('input[type="checkbox"]').forEach(c=>c.checked=true);
 }catch(e){}
 
-// Normalize old data if any
+// v17 non-destructive data migration.
+  // IMPORTANT: preserve every unknown/new field (edgePower, edgeShin, edgeOOEPC,
+  // fair odds, method metadata, etc.) instead of rebuilding a reduced object.
+  function normalizeBetRecord(b, method){
+    const src = (b && typeof b === 'object') ? b : {};
+    const out = {...src};
+    out.id = src.id || uid();
+    out.date = src.date || '';
+    out.league = src.league || '';
+    out.odds = Number(src.odds) || 0;
+    out.units = Number(src.units) || 0;
+    out.edge = Number.isFinite(Number(src.edge)) ? Number(src.edge) : 0;
+    out.live = !!src.live;
+    out.result = ['win','loss','push','pending'].includes(String(src.result || '').toLowerCase())
+      ? String(src.result).toLowerCase() : 'pending';
+    if(method === 'prop' && !Number.isFinite(optionalNum(src.edgeProp))){
+      out.edgeProp = out.edge; // legacy proportional bets remain fully compatible
+    }
+    // Preserve exact additional-method values if they exist; remove null/blank placeholders
+    // so they never masquerade as a real 0.00% edge after Number(null) coercion.
+    ['edgeProp','edgePower','edgeShin','edgeOOEPC','fairProp','fairPower','fairShin','fairOOEPC','legacyEdgeShin','legacyFairShin'].forEach(k=>{
+      const n = optionalNum(src[k]);
+      if(Number.isFinite(n)) out[k] = n;
+      else if(k in out && !(method === 'prop' && k === 'edgeProp')) delete out[k];
+    });
+    out.schemaVersion = BET_SCHEMA_VERSION;
+    return out;
+  }
+
   ['prop','power'].forEach(method=>{
-    bets[method] = bets[method].map(b => ({
-      id: b.id || uid(),
-      date: b.date || '',
-      league: b.league || '',
-      odds: Number(b.odds) || 0,
-      units: Number(b.units) || 0,
-      edge: Number(b.edge) || 0,
-      live: !!b.live,
-      result: (b.result || 'pending')
-    }));
-    saveArray(STORAGE_KEYS[method], bets[method]);
+    const before = JSON.stringify(bets[method]);
+    bets[method] = bets[method].map(b => normalizeBetRecord(b, method));
+    const after = JSON.stringify(bets[method]);
+    if(after !== before) saveArray(STORAGE_KEYS[method], bets[method]);
   });
 
   // ---------------- Filters & UI mapping ----------------
@@ -1251,6 +1348,8 @@ try{
       typeFilterId: 'betTypeFilterProp',
       fromDateId: 'fromDateProp',
       toDateId: 'toDateProp',
+      oddsFromId: 'oddsFromProp',
+      oddsToId: 'oddsToProp',
       edgeFromId: 'edgeFromProp',
       edgeToId: 'edgeToProp',
       inputs: {
@@ -1271,6 +1370,7 @@ try{
         totalUnits: 'statTotalUnitsProp',
         totalWagered: 'statTotalWageredProp',
         roi: 'statRoiProp',
+        openExposure: 'statOpenExposureProp',
         avgEdge: 'statAvgEdgeProp'
       },
       modals: {
@@ -1289,6 +1389,8 @@ try{
       typeFilterId: 'betTypeFilterPower',
       fromDateId: 'fromDatePower',
       toDateId: 'toDatePower',
+      oddsFromId: 'oddsFromPower',
+      oddsToId: 'oddsToPower',
       edgeFromId: 'edgeFromPower',
       edgeToId: 'edgeToPower',
       inputs: {
@@ -1317,6 +1419,82 @@ try{
       }
     }
   };
+
+  // v17: persist filters and unsaved input drafts so a refresh does not erase working state.
+  function getFilterStorageKey(method){ return method === 'prop' ? STORAGE_KEYS.filtersProp : null; }
+  function captureFilterState(method){
+    const cfg = CFG[method];
+    const grid = el(cfg.leagueGridId);
+    const leagues = grid ? Array.from(grid.querySelectorAll('input[type="checkbox"]')).filter(x=>x.checked).map(x=>x.value) : [];
+    return {
+      type: el(cfg.typeFilterId)?.value || 'all',
+      from: el(cfg.fromDateId)?.value || '',
+      to: el(cfg.toDateId)?.value || '',
+      oddsFrom: el(cfg.oddsFromId)?.value || '',
+      oddsTo: el(cfg.oddsToId)?.value || '',
+      edgeFrom: el(cfg.edgeFromId)?.value || '',
+      edgeTo: el(cfg.edgeToId)?.value || '',
+      allLeagues: !!el(cfg.allLeaguesId)?.checked,
+      leagues
+    };
+  }
+  function saveFilterState(method){
+    const key = getFilterStorageKey(method);
+    if(key) saveObject(key, captureFilterState(method));
+  }
+  function restoreFilterState(method){
+    const key = getFilterStorageKey(method);
+    if(!key) return;
+    const s = loadObject(key);
+    if(!s) return;
+    const cfg = CFG[method];
+    if(el(cfg.typeFilterId) && s.type != null) el(cfg.typeFilterId).value = s.type;
+    if(el(cfg.fromDateId)) el(cfg.fromDateId).value = s.from || '';
+    if(el(cfg.toDateId)) el(cfg.toDateId).value = s.to || '';
+    if(el(cfg.oddsFromId)) el(cfg.oddsFromId).value = s.oddsFrom || '';
+    if(el(cfg.oddsToId)) el(cfg.oddsToId).value = s.oddsTo || '';
+    if(el(cfg.edgeFromId)) el(cfg.edgeFromId).value = s.edgeFrom || '';
+    if(el(cfg.edgeToId)) el(cfg.edgeToId).value = s.edgeTo || '';
+    const all = el(cfg.allLeaguesId);
+    const grid = el(cfg.leagueGridId);
+    if(all && grid){
+      const selected = new Set(Array.isArray(s.leagues) ? s.leagues : []);
+      if(s.allLeagues){
+        all.checked = true;
+        grid.querySelectorAll('input[type="checkbox"]').forEach(c=>c.checked=true);
+      }else{
+        all.checked = false;
+        grid.querySelectorAll('input[type="checkbox"]').forEach(c=>c.checked=selected.has(c.value));
+      }
+    }
+  }
+
+  function captureDraft(ids){
+    const out = {};
+    ids.forEach(id=>{
+      const node = el(id); if(!node) return;
+      out[id] = node.type === 'checkbox' ? !!node.checked : node.value;
+    });
+    return out;
+  }
+  function restoreDraft(key, ids){
+    const s = loadObject(key); if(!s) return;
+    ids.forEach(id=>{
+      const node = el(id); if(!node || !(id in s)) return;
+      if(node.type === 'checkbox') node.checked = !!s[id]; else node.value = s[id];
+    });
+  }
+  function wireDraftPersistence(key, ids){
+    const save = ()=>saveObject(key, captureDraft(ids));
+    ids.forEach(id=>{
+      const node = el(id); if(!node) return;
+      node.addEventListener('input', save); node.addEventListener('change', save);
+    });
+    return save;
+  }
+
+  // Re-run league initialization now that CFG exists, then restore saved filter state.
+  try{ initLeagueGrid('prop'); restoreFilterState('prop'); }catch(e){}
 
   function getSelectedLeagues(method){
     const cfg = CFG[method];
@@ -1349,6 +1527,8 @@ try{
 
     const from = parseDateStr(el(cfg.fromDateId)?.value);
     const to = parseDateStr(el(cfg.toDateId)?.value);
+    const oddsFrom = safeNum(el(cfg.oddsFromId)?.value);
+    const oddsTo = safeNum(el(cfg.oddsToId)?.value);
     const edgeFrom = safeNum(el(cfg.edgeFromId)?.value);
     const edgeTo = safeNum(el(cfg.edgeToId)?.value);
 
@@ -1361,6 +1541,10 @@ try{
       const d = parseDateStr(b.date);
       if(from !== null && d !== null && d < from) return false;
       if(to !== null && d !== null && d > to) return false;
+
+      const bo = Number(b.odds);
+      if(oddsFrom !== null && (!Number.isFinite(bo) || bo < oddsFrom)) return false;
+      if(oddsTo !== null && (!Number.isFinite(bo) || bo > oddsTo)) return false;
 
       if(edgeFrom !== null && Number(b.edge) < edgeFrom) return false;
       if(edgeTo !== null && Number(b.edge) > edgeTo) return false;
@@ -1380,13 +1564,34 @@ try{
     const pending = filtered.filter(b=>b.result==='pending').length;
 
     const totalUnits = filtered.reduce((acc,b)=>acc + computePL(Number(b.odds), Number(b.units), b.result), 0);
-    const totalWagered = filtered.reduce((acc,b)=>acc + (Number.isFinite(Number(b.units)) ? Number(b.units) : 0), 0);
+    const settled = filtered.filter(b=>['win','loss','push'].includes(b.result));
+    const totalWagered = settled.reduce((acc,b)=>acc + (Number.isFinite(Number(b.units)) ? Number(b.units) : 0), 0);
+    const openExposure = filtered.filter(b=>b.result==='pending')
+      .reduce((acc,b)=>acc + (Number.isFinite(Number(b.units)) ? Number(b.units) : 0), 0);
     const roi = totalWagered > 0 ? (totalUnits / totalWagered) * 100 : 0;
 
     const winDen = (wins + losses);
     const winRate = winDen > 0 ? (wins / winDen) * 100 : 0;
-    const edgeVals = filtered.map(b=>Number(b.edge)).filter(v=>Number.isFinite(v));
-    const avgEdge = edgeVals.length ? (edgeVals.reduce((a,v)=>a+v,0) / edgeVals.length) : null;
+    // Proportional falls back to legacy `edge` so all historical bets remain compatible.
+    const edgeValues = (key, fallbackLegacy=false) => filtered
+      .map(b => {
+        const direct = optionalNum(b[key]);
+        if(Number.isFinite(direct)) return direct;
+        if(fallbackLegacy){
+          const legacy = optionalNum(b.edge);
+          return Number.isFinite(legacy) ? legacy : NaN;
+        }
+        return NaN;
+      })
+      .filter(Number.isFinite);
+    const meanOrNull = vals => vals.length ? vals.reduce((a,v)=>a+v,0) / vals.length : null;
+    const avgEdge = meanOrNull(edgeValues('edgeProp', true));
+    const avgPower = meanOrNull(edgeValues('edgePower'));
+    const avgShin = meanOrNull(filtered
+      .filter(b=>String(b.shinMethod||'') === 'analytical' && String(b.shinStatus||'') !== 'unstable')
+      .map(b=>optionalNum(b.edgeShin))
+      .filter(Number.isFinite));
+    const avgOOEPC = meanOrNull(edgeValues('edgeOOEPC'));
 const set = (id, val) => { const node = el(id); if(node) node.textContent = val; };
 
     set(cfg.stats.total, String(total));
@@ -1397,7 +1602,13 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
     set(cfg.stats.totalUnits, formatNum(totalUnits, 2));
     set(cfg.stats.totalWagered, formatNum(totalWagered, 2));
     set(cfg.stats.roi, formatNum(roi, 2) + '%');
+    if(cfg.stats.openExposure) set(cfg.stats.openExposure, formatNum(openExposure, 2));
     set(cfg.stats.avgEdge, avgEdge===null ? '-' : (formatNum(avgEdge, 2) + '%'));
+    if(method === 'prop'){
+      set('statAvgEdgePower', avgPower===null ? '-' : (formatNum(avgPower, 2) + '%'));
+      set('statAvgEdgeShin', avgShin===null ? '-' : (formatNum(avgShin, 2) + '%'));
+      set('statAvgEdgeOOEPC', avgOOEPC===null ? '-' : (formatNum(avgOOEPC, 2) + '%'));
+    }
   }
 
   function render(method){
@@ -1451,8 +1662,30 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
       tr.appendChild(tdUnits);
 
       const tdEdge = document.createElement('td');
-      const edgeNum = Number(b.edge);
-      tdEdge.textContent = Number.isFinite(edgeNum) ? (formatNum(edgeNum, 2) + '%') : '-';
+      tdEdge.style.minWidth = '145px';
+      tdEdge.style.lineHeight = '1.55';
+      const propDirect = optionalNum(b.edgeProp);
+      const prop = Number.isFinite(propDirect) ? propDirect : optionalNum(b.edge);
+      const power = optionalNum(b.edgePower);
+      const shin = optionalNum(b.edgeShin);
+      const ooepc = optionalNum(b.edgeOOEPC);
+      const edgeLine = (label, value, color) => {
+        const v = Number.isFinite(value) ? `${value >= 0 ? '+' : ''}${formatNum(value,2)}%` : '—';
+        return `<div style="white-space:nowrap"><span style="color:${color};font-weight:700">${label}</span> ${v}</div>`;
+      };
+      tdEdge.innerHTML = [
+        edgeLine('Prop', prop, '#00ff88'),
+        edgeLine('Power', power, '#ffc107'),
+        edgeLine(
+          String(b.shinMethod||'').startsWith('numerical') ? 'Shin N*' :
+          (b.shinMethod === 'unknown-legacy' ? 'Shin ?*' :
+          (b.shinStatus === 'legacy-unverified' || b.shinMethod === 'analytical-legacy-unverified' ? 'Shin ?' :
+          ((b.shinStatus === 'unstable' || b.shinMethod === 'analytical-unstable') ? 'Shin N/A' :
+          (Number.isFinite(shin) && b.shinMethod === 'analytical' ? 'Shin A' : 'Shin')))),
+          shin, '#00d4ff'
+        ),
+        edgeLine('OO-EPC', ooepc, '#d77bff')
+      ].join('');
       tr.appendChild(tdEdge);
 
       const pl = computePL(Number(b.odds), Number(b.units), b.result);
@@ -1510,7 +1743,7 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
     if(!league) league = 'Unknown';
 
     const odds = normalizeOdds(el(inp.odds)?.value);
-    const units = safeNum(el(inp.units)?.value) ?? 1;
+    const units = safeNum(el(inp.units)?.value) ?? 10;
     const edge = safeNum(el(inp.edge)?.value) ?? 0;
     const live = !!el(inp.live)?.checked;
     const result = el(inp.result)?.value || 'pending';
@@ -1528,7 +1761,7 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
     if(el(inp.date)) el(inp.date).value = '';
     // keep league selection
     if(el(inp.odds)) el(inp.odds).value = '';
-    if(el(inp.units)) el(inp.units).value = '';
+    if(el(inp.units)) el(inp.units).value = '10';
     if(el(inp.edge)) el(inp.edge).value = '';
     if(el(inp.live)) el(inp.live).checked = false;
     if(el(inp.result)) el(inp.result).value = 'pending';
@@ -1568,19 +1801,25 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
     const modal = el(modalId);
     if(!modal || !overlay) return;
     overlay.style.display = 'block';
+    overlay.classList.add('show');
     modal.style.display = 'block';
   }
   function hideModal(modalId){
     const modal = el(modalId);
     if(!modal || !overlay) return;
     modal.style.display = 'none';
-    // If no other modals visible, hide overlay
     const anyVisible = Array.from(document.querySelectorAll('.modal')).some(m => m.style.display === 'block');
-    if(!anyVisible) overlay.style.display = 'none';
+    if(!anyVisible){
+      overlay.classList.remove('show');
+      overlay.style.display = 'none';
+    }
   }
   function hideAllModals(){
     document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-    if(overlay) overlay.style.display = 'none';
+    if(overlay){
+      overlay.classList.remove('show');
+      overlay.style.display = 'none';
+    }
   }
   if(overlay){
     overlay.addEventListener('click', hideAllModals);
@@ -1660,18 +1899,42 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
           alert('Please fill: ' + data.errors.join(', '));
           return;
         }
+        const {errors, ...cleanData} = data;
         const editingId = addBtn.dataset.editingId;
         if(editingId){
           const idx = bets[method].findIndex(b=>b.id===editingId);
           if(idx >= 0){
-            bets[method][idx] = {...bets[method][idx], ...data};
+            const oldBet = bets[method][idx];
+            const merged = {...oldBet, ...cleanData, schemaVersion: BET_SCHEMA_VERSION};
+            // Recalculate every AVAILABLE calculator method when odds are edited.
+            if(method === 'prop' && [oldBet.fairProp,oldBet.fairPower,oldBet.fairOOEPC].every(v=>Number.isFinite(optionalNum(v)))){
+              merged.edgeProp = ((cleanData.odds / Number(oldBet.fairProp)) - 1) * 100;
+              merged.edgePower = ((cleanData.odds / Number(oldBet.fairPower)) - 1) * 100;
+              merged.edgeOOEPC = ((cleanData.odds / Number(oldBet.fairOOEPC)) - 1) * 100;
+              if(Number.isFinite(optionalNum(oldBet.fairShin)) &&
+                 oldBet.shinStatus !== 'unstable' && oldBet.shinMethod !== 'analytical-unstable'){
+                merged.edgeShin = ((cleanData.odds / Number(oldBet.fairShin)) - 1) * 100;
+              }else{
+                delete merged.edgeShin;
+              }
+              merged.edge = merged.edgeProp;
+            }else if(method === 'prop'){
+              merged.edgeProp = cleanData.edge;
+            }
+            bets[method][idx] = merged;
           }
           clearEditing(method);
         }else{
-          bets[method].push({id: uid(), ...data});
+          const rec = {id: uid(), ...cleanData, schemaVersion: BET_SCHEMA_VERSION};
+          if(method === 'prop'){
+            rec.edgeProp = cleanData.edge;
+            rec.edgeSource = 'manual';
+          }
+          bets[method].push(rec);
         }
         saveArray(STORAGE_KEYS[method], bets[method]);
         clearInputs(method);
+        if(method === 'prop') saveObject(STORAGE_KEYS.draftProp, captureDraft(['betDateProp','betLeagueProp','betOddsProp','betUnitsProp','betEdgeProp','betResultProp','betLiveProp']));
         render(method);
       });
     }
@@ -1683,6 +1946,8 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
         if(el(cfg.typeFilterId)) el(cfg.typeFilterId).value = 'all';
         if(el(cfg.fromDateId)) el(cfg.fromDateId).value = '';
         if(el(cfg.toDateId)) el(cfg.toDateId).value = '';
+        if(el(cfg.oddsFromId)) el(cfg.oddsFromId).value = '';
+        if(el(cfg.oddsToId)) el(cfg.oddsToId).value = '';
         if(el(cfg.edgeFromId)) el(cfg.edgeFromId).value = '';
         if(el(cfg.edgeToId)) el(cfg.edgeToId).value = '';
 
@@ -1693,6 +1958,7 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
         if(grid){
           grid.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = true);
         }
+        saveFilterState(method);
         render(method);
       });
     }
@@ -1702,20 +1968,43 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
     if(exportBtn){
       exportBtn.addEventListener('click', ()=>{
         const rows = bets[method].slice().sort((a,b)=>(parseDateStr(b.date)||0)-(parseDateStr(a.date)||0));
-        const header = ['Date','League','Odds','Units','Edge%','Live','Result','P/L'];
+        const header = method === 'prop'
+          ? ['Date','League','Odds','Units','Edge%','Edge_Prop%','Edge_Power%','Edge_Shin%','Shin_Method','Shin_Status','Shin_Reason','Legacy_Edge_Shin','Edge_OOEPC%','Fair_Prop','Fair_Power','Fair_Shin','Legacy_Fair_Shin','Fair_OOEPC','MarketType','Result','P/L','SchemaVersion']
+          : ['Date','League','Odds','Units','Edge%','MarketType','Result','P/L'];
         const lines = [header.join(',')];
         for(const b of rows){
           const pl = computePL(Number(b.odds), Number(b.units), b.result);
-          lines.push([
+          const baseCells = [
             csvEscape(b.date),
             csvEscape(b.league),
             csvEscape(formatNum(Number(b.odds),2)),
             csvEscape(formatNum(Number(b.units),2)),
-            csvEscape(formatNum(Number(b.edge),2)),
-            csvEscape(b.live ? 'Live' : 'Pregame'),
+            csvEscape(formatNum(Number(b.edge),2))
+          ];
+          if(method === 'prop'){
+            baseCells.push(
+              csvEscape(Number.isFinite(optionalNum(b.edgeProp)) ? formatNum(optionalNum(b.edgeProp),2) : ''),
+              csvEscape(Number.isFinite(optionalNum(b.edgePower)) ? formatNum(optionalNum(b.edgePower),2) : ''),
+              csvEscape(Number.isFinite(optionalNum(b.edgeShin)) ? formatNum(optionalNum(b.edgeShin),2) : ''),
+              csvEscape(b.shinMethod || ''),
+              csvEscape(b.shinStatus || ''),
+              csvEscape(b.shinReason || ''),
+              csvEscape(Number.isFinite(optionalNum(b.legacyEdgeShin)) ? formatNum(optionalNum(b.legacyEdgeShin),2) : ''),
+              csvEscape(Number.isFinite(optionalNum(b.edgeOOEPC)) ? formatNum(optionalNum(b.edgeOOEPC),2) : ''),
+              csvEscape(Number.isFinite(optionalNum(b.fairProp)) ? formatNum(optionalNum(b.fairProp),4) : ''),
+              csvEscape(Number.isFinite(optionalNum(b.fairPower)) ? formatNum(optionalNum(b.fairPower),4) : ''),
+              csvEscape(Number.isFinite(optionalNum(b.fairShin)) ? formatNum(optionalNum(b.fairShin),4) : ''),
+              csvEscape(Number.isFinite(optionalNum(b.legacyFairShin)) ? formatNum(optionalNum(b.legacyFairShin),4) : ''),
+              csvEscape(Number.isFinite(optionalNum(b.fairOOEPC)) ? formatNum(optionalNum(b.fairOOEPC),4) : '')
+            );
+          }
+          baseCells.push(
+            csvEscape(b.live ? 'Other pregame market' : '1X2 pregame'),
             csvEscape(b.result),
             csvEscape(formatNum(pl,2))
-          ].join(','));
+          );
+          if(method === 'prop') baseCells.push(csvEscape(b.schemaVersion || ''));
+          lines.push(baseCells.join(','));
         }
         const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8'});
         const a = document.createElement('a');
@@ -1742,21 +2031,23 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
       all.addEventListener('change', ()=>{
         const checked = all.checked;
         grid.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = checked);
+        saveFilterState(method);
         render(method);
       });
       grid.addEventListener('change', ()=>{
         const boxes = Array.from(grid.querySelectorAll('input[type="checkbox"]'));
         const allChecked = boxes.every(c=>c.checked);
         all.checked = allChecked;
+        saveFilterState(method);
         render(method);
       });
     }
 
     // Filters change
-    [cfg.typeFilterId,cfg.fromDateId,cfg.toDateId,cfg.edgeFromId,cfg.edgeToId].forEach(fid=>{
+    [cfg.typeFilterId,cfg.fromDateId,cfg.toDateId,cfg.oddsFromId,cfg.oddsToId,cfg.edgeFromId,cfg.edgeToId].forEach(fid=>{
       const node = el(fid);
-      if(node) node.addEventListener('input', ()=> render(method));
-      if(node) node.addEventListener('change', ()=> render(method));
+      if(node) node.addEventListener('input', ()=>{ saveFilterState(method); render(method); });
+      if(node) node.addEventListener('change', ()=>{ saveFilterState(method); render(method); });
     });
 
     // Table actions (delegation)
@@ -1801,6 +2092,10 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
   wireMethod('prop');
   wireMethod('power');
 
+  // Restore + persist unsaved main-tracker draft.
+  const __propDraftIds = ['betDateProp','betLeagueProp','betOddsProp','betUnitsProp','betEdgeProp','betResultProp','betLiveProp'];
+  restoreDraft(STORAGE_KEYS.draftProp, __propDraftIds);
+  wireDraftPersistence(STORAGE_KEYS.draftProp, __propDraftIds);
 
   // ---------------- Import POWER ----------------
   const importBtnPower = el('importPower');
@@ -2028,43 +2323,343 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
   function normalizeOdds(x){
     const n = toDecimalOdds(x);
     if(n === null) return null;
-    if(n < 1.01) return null;
+    if(!Number.isFinite(n) || n < 1.01 || n > 100000) return null;
     return n;
   }
 
-  function calcFairOdds(pinn){
-    // Returns both Proportional (simple normalization) and Power/Exponent (OddsNotifier) fair odds.
-    const q = pinn.map(o => 1/o); // implied probs
+  function validatePinnacleMarket(pinn){
+    if(!Array.isArray(pinn) || pinn.length < 2 || pinn.some(o=>!Number.isFinite(o) || o <= 1)){
+      return {ok:false, message:'Invalid Pinnacle odds.'};
+    }
+    const q = pinn.map(o=>1/o);
     const overround = q.reduce((a,b)=>a+b,0);
+    if(!(overround > 1.0)){
+      return {ok:false, message:`Pinnacle overround is ${(overround*100).toFixed(2)}%. No positive vig is detected; check the closing odds/input.`};
+    }
+    if(overround > 1.25){
+      return {ok:false, message:`Pinnacle overround is ${(overround*100).toFixed(2)}%, which is implausibly high for this workflow. Check for a typo or mismatched market.`};
+    }
+    return {ok:true, overround};
+  }
 
-    // proportional
+  function calcFairOdds(pinn){
+    // Multi-method de-vig for one-winner markets (2-way / 1X2).
+    // Methods: Proportional (multiplicative), Power, analytical Shin, and OO-EPC.
+    const q = pinn.map(o => 1/o); // bookmaker implied probabilities
+    const overround = q.reduce((a,b)=>a+b,0);
+    const target = 1.0; // exactly one successful outcome
+
+    // 1) Proportional / multiplicative
     const pProp = q.map(x => x / overround);
     const fairProp = pProp.map(p => 1/p);
 
-    // power / exponent: find a>1 such that sum(q_i^a)=1
-    function sumPow(a){
-      let s = 0;
-      for(const x of q) s += Math.pow(x, a);
-      return s;
+    // 2) Power: solve sum(q_i^a)=1 with an adaptive bracket.
+    // This remains stable even for extreme but valid decimal odds.
+    function sumPow(a){ return q.reduce((acc,x)=>acc + Math.pow(x,a), 0); }
+    let loA = 1e-8, hiA = 1.0;
+    while(sumPow(hiA) > target && hiA < 4096) hiA *= 2;
+    let powerValid = sumPow(loA) >= target && sumPow(hiA) <= target;
+    let a = 1.0;
+    let pPow;
+    if(powerValid){
+      for(let iter=0; iter<160; iter++){
+        const mid = (loA + hiA) / 2;
+        if(sumPow(mid) > target) loA = mid; else hiA = mid;
+      }
+      a = (loA + hiA) / 2;
+      pPow = q.map(x => Math.pow(x, a));
+      const sm = pPow.reduce((acc,x)=>acc+x,0);
+      if(!(sm > 0) || pPow.some(x=>!Number.isFinite(x) || x<=0)){
+        powerValid = false;
+        pPow = pProp.slice();
+      }else{
+        pPow = pPow.map(x=>x/sm);
+      }
+    }else{
+      pPow = pProp.slice();
     }
-    let lo = 1.0, hi = 2.0;
-    // increase hi until sumPow(hi) <= 1
-    while(sumPow(hi) > 1 && hi < 64) hi *= 2;
-    // binary search
-    for(let iter=0; iter<80; iter++){
-      const mid = (lo + hi) / 2;
-      if(sumPow(mid) > 1) lo = mid; else hi = mid;
-    }
-    const a = (lo + hi) / 2;
-    const pPow = q.map(x => Math.pow(x, a));
     const fairPow = pPow.map(p => 1/p);
+
+    // 3) Shin — analytical variant (Algorithm 3).
+    // z_i is a proportion of insider bettors, so 0 <= z_i < 1 is required.
+    // Near c_i^2 = 1 the analytical expression is singular. In that region
+    // Shin is explicitly unavailable instead of silently becoming Proportional.
+    const cShin = q.map(x => x - (overround - x));
+    const zShin = [];
+    let shinReason = '';
+    let pShinRaw = [];
+    let shinValid = true;
+
+    for(let i=0; i<q.length; i++){
+      const x = q[i];
+      const c = cShin[i];
+      const cDenom = c*c - 1;
+      const denomZ = overround * cDenom;
+
+      if(!Number.isFinite(denomZ) || Math.abs(cDenom) < 1e-8){
+        shinValid = false;
+        shinReason = 'analytical singularity (c²≈1)';
+        break;
+      }
+
+      const z = ((overround - 1) * (c*c - overround)) / denomZ;
+      zShin.push(z);
+      if(!Number.isFinite(z) || z < 0 || z >= 1){
+        shinValid = false;
+        shinReason = 'invalid insider proportion z';
+        break;
+      }
+
+      const denomP = 2 * (1 - z);
+      const inside = z*z + 4*(1-z)*(x*x/overround);
+      if(!Number.isFinite(inside) || inside < -1e-12 || Math.abs(denomP) < 1e-12){
+        shinValid = false;
+        shinReason = 'invalid analytical probability';
+        break;
+      }
+
+      const p = (Math.sqrt(Math.max(0, inside)) - z) / denomP;
+      if(!Number.isFinite(p) || p <= 0){
+        shinValid = false;
+        shinReason = 'non-positive analytical probability';
+        break;
+      }
+      pShinRaw.push(p);
+    }
+
+    let pShin;
+    let fairShin;
+    if(shinValid){
+      const shinSum = pShinRaw.reduce((a,b)=>a+b,0);
+      if(!(shinSum > 0) || !Number.isFinite(shinSum)){
+        shinValid = false;
+        shinReason = 'invalid analytical normaliser';
+      }else{
+        pShin = pShinRaw.map(x => x/shinSum);
+        fairShin = pShin.map(p => 1/p);
+      }
+    }
+    if(!shinValid){
+      pShin = Array(q.length).fill(NaN);
+      fairShin = Array(q.length).fill(NaN);
+    }
+
+    // 4) OO-EPC (Goto, Takeishi & Yairi, 2026, Algorithm 5).
+    // sigma_i = sqrt(q_i(1-q_i)/q_i) = sqrt(1-q_i)
+    // z = (sum(q)-1)/sum(sigma); p_i = q_i - z*sigma_i.
+    // Paper specifies multiplicative fallback if any probability would be non-positive.
+    const sigma = q.map(x => Math.sqrt(Math.max(0, 1-x)));
+    const sigmaSum = sigma.reduce((a,b)=>a+b,0);
+    const zEpc = sigmaSum > 0 ? (overround-target)/sigmaSum : 0;
+    let pOO = q.map((x,i)=>x - zEpc*sigma[i]);
+    const ooValid = (overround > target) &&
+      pOO.every((x,i)=> Number.isFinite(x) && x > 0 && zEpc < (q[i]/Math.max(sigma[i],1e-15)));
+    if(!ooValid){
+      pOO = pProp.slice();
+    } else {
+      const sm = pOO.reduce((a,b)=>a+b,0);
+      pOO = pOO.map(x => x/sm); // numerical guard; analytically sums to 1
+    }
+    const fairOO = pOO.map(p => 1/p);
 
     return {
       overround,
       proportional: { probs: pProp, fair: fairProp },
-      power: { a, probs: pPow, fair: fairPow }
+      power: { a, probs: pPow, fair: fairPow, fallback: !powerValid },
+      shin: { z: zShin, probs: pShin, fair: fairShin, valid: shinValid, status: shinValid ? 'ok' : 'unstable', reason: shinReason },
+      ooepc: { z: zEpc, probs: pOO, fair: fairOO, fallback: !ooValid }
     };
   }
+
+  // v19 history migration:
+  // Preserve genuine Numerical/unknown legacy Shin. Revalidate Analytical Shin
+  // from the saved Pinnacle odds so unstable old analytical values are not kept.
+  (function migrateHistoryMethods(){
+    let changed = false;
+    for(const item of history){
+      if(!item || !Array.isArray(item.outcomes) || !item.outcomes.length) continue;
+      const oldMeta = item.methodMeta && typeof item.methodMeta === 'object' ? item.methodMeta : {};
+      const pinn = item.outcomes.map(o=>normalizeOdds(o?.pinn));
+      if(pinn.some(v=>v===null)) continue;
+
+      const f = calcFairOdds(pinn);
+      const priorMethod = String(oldMeta.shinMethod || '');
+      const hadAnyShin = item.outcomes.some(o=>Number.isFinite(optionalNum(o.fairShin)) || Number.isFinite(optionalNum(o.edgeShin)));
+      let preserveLegacyShin = priorMethod.startsWith('numerical') || priorMethod === 'unknown-legacy';
+      if(!priorMethod && oldMeta.shinZ !== null && oldMeta.shinZ !== undefined &&
+         oldMeta.shinZ !== '' && Number.isFinite(Number(oldMeta.shinZ))){
+        preserveLegacyShin = true;
+      }
+
+      let shinMethod, shinStatus, shinReason = '';
+      if(preserveLegacyShin){
+        // Never "upgrade" unknown legacy data into Numerical without evidence.
+        // A stored numeric shinZ is evidence of the old numerical implementation;
+        // an explicit unknown-legacy label must remain unknown.
+        if(priorMethod === 'unknown-legacy'){
+          shinMethod = 'unknown-legacy';
+        }else if(priorMethod.startsWith('numerical')){
+          shinMethod = priorMethod;
+        }else if(!priorMethod && oldMeta.shinZ !== null && oldMeta.shinZ !== undefined &&
+                 oldMeta.shinZ !== '' && Number.isFinite(Number(oldMeta.shinZ))){
+          shinMethod = 'numerical-legacy';
+        }else{
+          shinMethod = 'unknown-legacy';
+        }
+        shinStatus = 'legacy';
+      }else if(f.shin.valid){
+        shinMethod = 'analytical';
+        shinStatus = 'ok';
+      }else{
+        shinMethod = 'analytical-unstable';
+        shinStatus = 'unstable';
+        shinReason = f.shin.reason || 'unstable analytical Shin';
+      }
+
+      item.outcomes.forEach((o,i)=>{
+        if(!o || typeof o !== 'object') return;
+        const your = normalizeOdds(o.your);
+
+        if(!Number.isFinite(optionalNum(o.fairProp))){ o.fairProp=f.proportional.fair[i]; changed=true; }
+        if(!Number.isFinite(optionalNum(o.fairPow))){ o.fairPow=f.power.fair[i]; changed=true; }
+        if(!Number.isFinite(optionalNum(o.fairOOEPC))){ o.fairOOEPC=f.ooepc.fair[i]; changed=true; }
+        if(Number.isFinite(your)){
+          if(!Number.isFinite(optionalNum(o.edgeProp))){ o.edgeProp=((your/Number(o.fairProp))-1)*100; changed=true; }
+          if(!Number.isFinite(optionalNum(o.edgePow))){ o.edgePow=((your/Number(o.fairPow))-1)*100; changed=true; }
+          if(!Number.isFinite(optionalNum(o.edgeOOEPC))){ o.edgeOOEPC=((your/Number(o.fairOOEPC))-1)*100; changed=true; }
+        }
+
+        if(!preserveLegacyShin){
+          if(f.shin.valid){
+            const nf=f.shin.fair[i];
+            const ne=Number.isFinite(your) ? ((your/nf)-1)*100 : NaN;
+            if(!Number.isFinite(optionalNum(o.fairShin)) || Math.abs(Number(o.fairShin)-nf)>1e-12){ o.fairShin=nf; changed=true; }
+            if(Number.isFinite(ne)){
+              if(!Number.isFinite(optionalNum(o.edgeShin)) || Math.abs(Number(o.edgeShin)-ne)>1e-12){ o.edgeShin=ne; changed=true; }
+            }else if('edgeShin' in o){ delete o.edgeShin; changed=true; }
+          }else{
+            if('fairShin' in o){ delete o.fairShin; changed=true; }
+            if('edgeShin' in o){ delete o.edgeShin; changed=true; }
+          }
+        }
+      });
+
+      const newMeta={
+        ...oldMeta,
+        calculatorVersion: oldMeta.calculatorVersion || 'legacy',
+        calculatorSchemaVersion: 3,
+        powerExponent: Number.isFinite(Number(oldMeta.powerExponent)) ? Number(oldMeta.powerExponent) : f.power.a,
+        powerFallback: typeof oldMeta.powerFallback === 'boolean' ? oldMeta.powerFallback : f.power.fallback,
+        shinMethod, shinStatus, shinReason,
+        shinZ: preserveLegacyShin ? (oldMeta.shinZ ?? null) : f.shin.z,
+        ooepcZ: Number.isFinite(Number(oldMeta.ooepcZ)) ? Number(oldMeta.ooepcZ) : f.ooepc.z,
+        ooepcFallback: typeof oldMeta.ooepcFallback === 'boolean' ? oldMeta.ooepcFallback : f.ooepc.fallback
+      };
+      if(JSON.stringify(item.methodMeta||{}) !== JSON.stringify(newMeta)){ item.methodMeta=newMeta; changed=true; }
+    }
+    if(changed) saveArray(STORAGE_KEYS.history, history);
+  })();
+
+  // v19 tracker migration:
+  // Synchronise calculator-generated tracker bets with the already-revalidated history.
+  // If a v17 Analytical Shin result is now known to be unstable, preserve its old raw
+  // value in legacy* audit fields but remove it from active Shin statistics/consensus.
+  // If the linked history is gone, mark the old v17 Analytical result as unverified
+  // instead of pretending it is a valid modern Analytical Shin value.
+  (function migrateTrackerShin(){
+    let changed = false;
+    const historyById = new Map(history.filter(x=>x && x.id).map(x=>[x.id, x]));
+
+    for(const b of bets.prop){
+      if(!b || typeof b !== 'object') continue;
+      const isCalculatorBet = b.edgeSource === 'calculator' || !!b.calculatorHistoryId;
+      if(!isCalculatorBet) continue;
+
+      const linked = b.calculatorHistoryId ? historyById.get(b.calculatorHistoryId) : null;
+
+      const preserveOldShin = () => {
+        const oldEdge = optionalNum(b.edgeShin);
+        const oldFair = optionalNum(b.fairShin);
+        if(Number.isFinite(oldEdge) && !Number.isFinite(optionalNum(b.legacyEdgeShin))){
+          b.legacyEdgeShin = oldEdge; changed = true;
+        }
+        if(Number.isFinite(oldFair) && !Number.isFinite(optionalNum(b.legacyFairShin))){
+          b.legacyFairShin = oldFair; changed = true;
+        }
+      };
+      const clearActiveShin = () => {
+        if('edgeShin' in b){ delete b.edgeShin; changed = true; }
+        if('fairShin' in b){ delete b.fairShin; changed = true; }
+      };
+      const setField = (k,v) => {
+        if(b[k] !== v){ b[k] = v; changed = true; }
+      };
+
+      if(linked){
+        const meta = linked.methodMeta && typeof linked.methodMeta === 'object' ? linked.methodMeta : {};
+        const outcome = Array.isArray(linked.outcomes)
+          ? (linked.outcomes.find(o=>o && o.key === b.outcomeKey) || null)
+          : null;
+        const method = String(meta.shinMethod || '');
+        const status = String(meta.shinStatus || '');
+
+        if(status === 'unstable' || method === 'analytical-unstable'){
+          preserveOldShin();
+          clearActiveShin();
+          setField('shinMethod', 'analytical-unstable');
+          setField('shinStatus', 'unstable');
+          setField('shinReason', meta.shinReason || 'revalidated as unstable analytical Shin');
+        }else if(method === 'unknown-legacy'){
+          // Preserve the raw value but do not classify it as Analytical/Numerical.
+          setField('shinMethod', 'unknown-legacy');
+          setField('shinStatus', 'legacy');
+          setField('shinReason', meta.shinReason || '');
+          if(outcome){
+            const fs = optionalNum(outcome.fairShin), es = optionalNum(outcome.edgeShin);
+            if(Number.isFinite(fs) && optionalNum(b.fairShin) !== fs){ b.fairShin = fs; changed = true; }
+            if(Number.isFinite(es) && optionalNum(b.edgeShin) !== es){ b.edgeShin = es; changed = true; }
+          }
+        }else if(method.startsWith('numerical')){
+          setField('shinMethod', method);
+          setField('shinStatus', 'legacy');
+          setField('shinReason', meta.shinReason || '');
+          if(outcome){
+            const fs = optionalNum(outcome.fairShin), es = optionalNum(outcome.edgeShin);
+            if(Number.isFinite(fs) && optionalNum(b.fairShin) !== fs){ b.fairShin = fs; changed = true; }
+            if(Number.isFinite(es) && optionalNum(b.edgeShin) !== es){ b.edgeShin = es; changed = true; }
+          }
+        }else if(method === 'analytical' && status !== 'unstable'){
+          setField('shinMethod', 'analytical');
+          setField('shinStatus', 'ok');
+          setField('shinReason', meta.shinReason || '');
+          if(outcome){
+            const fs = optionalNum(outcome.fairShin), es = optionalNum(outcome.edgeShin);
+            if(Number.isFinite(fs)){
+              if(optionalNum(b.fairShin) !== fs){ b.fairShin = fs; changed = true; }
+            }else if('fairShin' in b){ delete b.fairShin; changed = true; }
+            if(Number.isFinite(es)){
+              if(optionalNum(b.edgeShin) !== es){ b.edgeShin = es; changed = true; }
+            }else if('edgeShin' in b){ delete b.edgeShin; changed = true; }
+          }
+        }
+      }else{
+        // Old v17 calculator bet with no remaining history cannot be safely revalidated.
+        const looksLikeV17Analytical =
+          String(b.calculatorVersion || '') === 'v17' &&
+          String(b.shinMethod || '') === 'analytical' &&
+          (Number.isFinite(optionalNum(b.edgeShin)) || Number.isFinite(optionalNum(b.fairShin)));
+        if(looksLikeV17Analytical){
+          preserveOldShin();
+          clearActiveShin();
+          setField('shinMethod', 'analytical-legacy-unverified');
+          setField('shinStatus', 'legacy-unverified');
+          setField('shinReason', 'v17 analytical Shin could not be revalidated because linked calculation history is unavailable');
+        }
+      }
+    }
+
+    if(changed) saveArray(STORAGE_KEYS.prop, bets.prop);
+  })();
 
   function nowStamp(){
     const d = new Date();
@@ -2105,13 +2700,29 @@ const set = (id, val) => { const node = el(id); if(node) node.textContent = val;
       const det = document.createElement('div');
       det.className = 'history-outcome-details';
 
+      const methodEdges = [o.edgeProp, o.edgePow, o.edgeShin, o.edgeOOEPC].filter(Number.isFinite);
+      const positives = methodEdges.filter(v => v > 0).length;
+      const available = methodEdges.length;
+      const consensusClass = (available >= 3 && positives === available) ? 'strong' : (positives >= 2 ? 'mixed' : '');
+      const shinMethod = String(item.methodMeta?.shinMethod || '');
+      const shinUnstable = shinMethod === 'analytical-unstable' || item.methodMeta?.shinStatus === 'unstable';
+      const shinTitle = shinUnstable ? 'SHIN (UNSTABLE)' :
+        (shinMethod.startsWith('numerical') ? 'SHIN (NUMERICAL LEGACY)' :
+        (shinMethod==='unknown-legacy' ? 'SHIN (LEGACY / UNKNOWN)' : 'SHIN (ANALYTICAL)'));
+      const shinValues = shinUnstable
+        ? `N/A${item.methodMeta?.shinReason ? ' · ' + item.methodMeta.shinReason : ''}`
+        : `Fair: ${formatNum(o.fairShin,3)} · EV: ${formatPct(o.edgeShin,2)}`;
+
       det.innerHTML = [
         `<span>Pinn: ${formatNum(o.pinn,2)}</span>`,
         `<span>Your: ${formatNum(o.your,2)}</span>`,
-        `<span>Fair (Prop): ${formatNum(o.fairProp,2)}</span>`,
-        `<span>EV% (Prop): ${formatPct(o.edgeProp,2)}</span>`,
-        `<span>Fair (Power): ${formatNum(o.fairPow,2)}</span>`,
-        `<span>EV% (Power): ${formatPct(o.edgePow,2)}</span>`
+        `<div class="devig-comparison">`,
+        `<div class="devig-method"><div class="devig-method-title proportional">PROPORTIONAL</div><div class="devig-method-values">Fair: ${formatNum(o.fairProp,3)} · EV: ${formatPct(o.edgeProp,2)}</div></div>`,
+        `<div class="devig-method"><div class="devig-method-title power">POWER</div><div class="devig-method-values">Fair: ${formatNum(o.fairPow,3)} · EV: ${formatPct(o.edgePow,2)}</div></div>`,
+        `<div class="devig-method"><div class="devig-method-title shin">${shinTitle}</div><div class="devig-method-values">${shinValues}</div></div>`,
+        `<div class="devig-method"><div class="devig-method-title ooepc">OO-EPC</div><div class="devig-method-values">Fair: ${formatNum(o.fairOOEPC,3)} · EV: ${formatPct(o.edgeOOEPC,2)}</div></div>`,
+        `</div>`,
+        `<div class="method-consensus ${consensusClass}">Consensus: ${positives}/${available} available methods positive EV</div>`
       ].join('');
 box.appendChild(name);
       box.appendChild(det);
@@ -2185,6 +2796,11 @@ box.appendChild(name);
     applyMarketVisibility();
   }
 
+  const __calcDraftIds = ['marketType','pinnHome','pinnDraw','pinnAway','yourHome','yourDraw','yourAway'];
+  restoreDraft(STORAGE_KEYS.draftCalc, __calcDraftIds);
+  wireDraftPersistence(STORAGE_KEYS.draftCalc, __calcDraftIds);
+  try{ applyMarketVisibility(); }catch(e){}
+
   const calcBtn = el('calculateEdge');
   if(calcBtn){
     calcBtn.addEventListener('click', ()=>{
@@ -2220,9 +2836,13 @@ box.appendChild(name);
       const pinnOdds = marketType === '3way' ? [pinnHome, pinnDraw, pinnAway] : [pinnHome, pinnAway];
       const yourOdds = marketType === '3way' ? [yourHome, yourDraw, yourAway] : [yourHome, yourAway];
 
+      const sanity = validatePinnacleMarket(pinnOdds);
+      if(!sanity.ok){ alert(sanity.message); return; }
       const fairObj = calcFairOdds(pinnOdds);
       const fairProp = fairObj.proportional.fair;
       const fairPow = fairObj.power.fair;
+      const fairShin = fairObj.shin.fair;
+      const fairOOEPC = fairObj.ooepc.fair;
       const expA = fairObj.power.a;
 const names = marketType === '3way' ? [
         {key:'home', name:'HOME/1'},
@@ -2234,24 +2854,43 @@ const names = marketType === '3way' ? [
       ];
 
       const outcomes = names.map((n, i)=>{
-        const edgeProp = ((yourOdds[i] / fairProp[i]) - 1) * 100; // EV% using proportional fair
-        const edgePow  = ((yourOdds[i] / fairPow[i])  - 1) * 100; // EV% using power fair
+        const edgeProp = ((yourOdds[i] / fairProp[i]) - 1) * 100;
+        const edgePow  = ((yourOdds[i] / fairPow[i]) - 1) * 100;
+        const edgeShin = fairObj.shin.valid && Number.isFinite(fairShin[i])
+          ? ((yourOdds[i] / fairShin[i]) - 1) * 100
+          : NaN;
+        const edgeOOEPC = ((yourOdds[i] / fairOOEPC[i]) - 1) * 100;
         return {
           key:n.key, name:n.name,
           pinn:pinnOdds[i], your:yourOdds[i],
-          fairProp: fairProp[i], fairPow: fairPow[i],
-          edgeProp, edgePow
+          fairProp: fairProp[i], fairPow: fairPow[i], fairShin: fairShin[i], fairOOEPC: fairOOEPC[i],
+          edgeProp, edgePow, edgeShin, edgeOOEPC
         };
       });
 
       const best = outcomes.reduce((a,b)=> (b.edgeProp > a.edgeProp ? b : a), outcomes[0]);
-      const suggested = (best.edgeProp > 0) || (best.edgePow > 0);
+      const suggested = outcomes.some(o => {
+        const vals=[o.edgeProp,o.edgePow,o.edgeShin,o.edgeOOEPC].filter(Number.isFinite);
+        return vals.length >= 3 && vals.filter(v=>v>0).length >= Math.min(3, vals.length);
+      });
 
       const item = {
         id: uid(),
         createdAt: Date.now(),
         timestamp: nowStamp(),
         marketType,
+        methodMeta: {
+          calculatorVersion:'v19',
+          calculatorSchemaVersion:3,
+          powerExponent: fairObj.power.a,
+          powerFallback: fairObj.power.fallback,
+          shinMethod: fairObj.shin.valid ? 'analytical' : 'analytical-unstable',
+          shinStatus: fairObj.shin.status,
+          shinReason: fairObj.shin.reason || '',
+          shinZ: fairObj.shin.z,
+          ooepcZ: fairObj.ooepc.z,
+          ooepcFallback: fairObj.ooepc.fallback
+        },
         outcomes,
         suggested
       };
@@ -2331,12 +2970,15 @@ const names = marketType === '3way' ? [
       }
 
       if(action === 'addBet'){
-        // pick best outcome by default
         const item = history.find(h=>h.id===id);
         if(!item) return;
         const best = item.outcomes.reduce((a,b)=> (b.edgeProp > a.edgeProp ? b : a), item.outcomes[0]);
-        pendingAddFromHistory = {historyId:id, outcomeKey: best.key};
-        openAddFromHistoryModal(item, best);
+        // If the user clicked an outcome box first, respect that selection.
+        const selected = (pendingAddFromHistory && pendingAddFromHistory.historyId === id)
+          ? (item.outcomes.find(o => o.key === pendingAddFromHistory.outcomeKey) || best)
+          : best;
+        pendingAddFromHistory = {historyId:id, outcomeKey:selected.key};
+        openAddFromHistoryModal(item, selected);
       }
     });
 
@@ -2395,7 +3037,7 @@ const names = marketType === '3way' ? [
 
   // Add from history modal logic
   function openAddFromHistoryModal(item, outcome){
-    // Pre-fill fields (method selection removed: Add always goes to BOTH methods)
+    // Pre-fill fields for the selected outcome
     if(el('histDate')){
       const today = new Date();
       const yyyy = today.getFullYear();
@@ -2406,7 +3048,7 @@ const names = marketType === '3way' ? [
     // league: keep as-is
     if(el('histOutcome')) el('histOutcome').value = outcome.name;
     if(el('histOdds')) el('histOdds').value = formatNum(outcome.your, 2);
-    if(el('histUnits')) el('histUnits').value = '1';
+    if(el('histUnits')) el('histUnits').value = '10';
     if(el('histResult')) el('histResult').value = 'pending';
     if(el('histLive')) el('histLive').checked = false;
 
@@ -2429,7 +3071,7 @@ const names = marketType === '3way' ? [
     const m = el(addFromHistoryModalId);
     if(!m) return;
 
-    // Remove method choice in UI: Add always goes to BOTH methods
+    // Legacy method selector is hidden; all four edges are stored on one tracker record
     const sel = el('histMethod');
     if(sel){
       try{
@@ -2464,7 +3106,7 @@ const addFromHistModal = el(addFromHistoryModalId);
     const confirm = addFromHistModal.querySelector('.btn-confirm');
     if(confirm){
       confirm.addEventListener('click', ()=>{
-        // Add ALWAYS to BOTH methods, using the SAME pick (chosen by Proportional earlier)
+        // Add to the main tracker with all four method edges, using the SAME pick (chosen by Proportional earlier)
         const modal = el(addFromHistoryModalId);
         const hid = modal?.dataset.historyId || pendingAddFromHistory?.historyId;
         const ok = modal?.dataset.outcomeKey || pendingAddFromHistory?.outcomeKey;
@@ -2486,28 +3128,53 @@ const addFromHistModal = el(addFromHistoryModalId);
 
         const league = el('histLeague')?.value || '';
         const odds = normalizeOdds(el('histOdds')?.value) ?? normalizeOdds(o.your);
-        const units = safeNum(el('histUnits')?.value) ?? 1;
+        const units = safeNum(el('histUnits')?.value) ?? 10;
         const live = !!el('histLive')?.checked;
 
         if(odds === null || !Number.isFinite(units) || units<=0) return;
 
-        // EV% edges for BOTH methods for the SAME pick/odds
+        // EV% edges for all four methods for the SAME pick/odds
         const edgeProp = ((odds / o.fairProp) - 1) * 100;
-        const edgePow  = ((odds / o.fairPow)  - 1) * 100;
+        const edgePow  = ((odds / o.fairPow) - 1) * 100;
+        const shinAvailable = Number.isFinite(optionalNum(o.fairShin)) &&
+          item.methodMeta?.shinStatus !== 'unstable' &&
+          item.methodMeta?.shinMethod !== 'analytical-unstable';
+        const edgeShin = shinAvailable ? ((odds / Number(o.fairShin)) - 1) * 100 : null;
+        const edgeOOEPC = ((odds / o.fairOOEPC) - 1) * 100;
 
         const result = normalizeResult(el('histResult')?.value || 'pending');
 
-        const base = { date, league, odds, units, live, result };
+        const base = {
+          date, league, odds, units, live, result,
+          edgeProp,
+          edgePower: edgePow,
+          edgeOOEPC,
+          fairProp:Number(o.fairProp),
+          fairPower:Number(o.fairPow),
+          fairOOEPC:Number(o.fairOOEPC),
+          shinMethod:item.methodMeta?.shinMethod || 'analytical',
+          shinStatus:item.methodMeta?.shinStatus || (shinAvailable ? 'ok' : 'unstable'),
+          shinReason:item.methodMeta?.shinReason || '',
+          edgeSource:'calculator',
+          calculatorVersion:item.methodMeta?.calculatorVersion || 'legacy',
+          calculatorHistoryId:item.id,
+          sourceMarketType:item.marketType,
+          outcomeKey:o.key,
+          schemaVersion:BET_SCHEMA_VERSION
+        };
+        if(shinAvailable){
+          base.edgeShin = edgeShin;
+          base.fairShin = Number(o.fairShin);
+        }
 
+        // Main visible tracker remains Proportional for backwards compatibility.
+        // All four method edges live on this SAME bet record for comparison/export.
         bets.prop.push({ id: uid(), ...base, edge: edgeProp });
-        bets.power.push({ id: uid(), ...base, edge: edgePow });
 
         saveArray(STORAGE_KEYS.prop, bets.prop);
-        saveArray(STORAGE_KEYS.power, bets.power);
 
         hideModal(addFromHistoryModalId);
         render('prop');
-        render('power');
 
         // Switch to Proportional tab (pick source)
         if(btnProp) activateTab('proportionalTab', btnProp);
