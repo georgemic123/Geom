@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="el"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Geom — Έλεγχος αποθήκευσης (μόνο ανάγνωση)</title>
+<style>body{font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;margin:18px;line-height:1.5;background:#f7f8fa;color:#18202b}main{max-width:760px;margin:auto}h1{font-size:1.45rem}button{font-size:1rem;padding:12px;border:0;border-radius:8px;background:#174b8b;color:white;margin:6px 8px 6px 0}button:disabled{opacity:.45}table{border-collapse:collapse;width:100%;font-size:.88rem;word-break:break-word}th,td{border:1px solid #ccd1d8;padding:8px;text-align:left}th{background:#e8eef6}.box{background:white;border-radius:10px;padding:14px;margin:14px 0}small{color:#445}#status{white-space:pre-wrap}code{word-break:break-all}</style></head>
+<body><main><h1>Geom — ασφαλής έλεγχος δεδομένων</h1>
+<div class="box"><strong>ΜΟΝΟ ΑΝΑΓΝΩΣΗ:</strong> Αυτή η σελίδα δεν γράφει, δεν διαγράφει και δεν μεταβάλλει τα δεδομένα του Safari. Δεν αποστέλλει τίποτα σε διακομιστή. Το αντίγραφο ασφαλείας περιέχει ιδιωτικά δεδομένα στοιχημάτων — κράτησέ το ιδιωτικό και μην το ανεβάσεις σε δημόσιο GitHub.</div>
+<div class="box"><div id="status">Έτοιμο για έλεγχο.</div><button id="scan">Έλεγχος αποθήκευσης</button><button id="backup" disabled>Αποθήκευση αντιγράφου JSON</button><button id="copy" disabled>Αντιγραφή αναφοράς κλειδιών</button></div>
+<div class="box"><h2>Κλειδιά localStorage</h2><div id="results">Πάτησε «Έλεγχος αποθήκευσης».</div></div>
+<div class="box"><small>Ο έλεγχος αφορά μόνο τα δεδομένα που είναι προσβάσιμα από τη συγκεκριμένη καρτέλα Safari στο <code>georgemic123.github.io</code>. Αν η εφαρμογή χρησιμοποιούσε άλλον χώρο αποθήκευσης ή IndexedDB, μπορεί να μη φαίνονται εδώ. Μην καθαρίσεις τα δεδομένα του Safari.</small></div>
+<script>
+'use strict';
+const statusEl=document.getElementById('status'),resultsEl=document.getElementById('results');
+let snapshot=null, report='';
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function scan(){
+ try{
+  const entries=[];
+  for(let i=0;i<localStorage.length;i++){
+   const key=localStorage.key(i);const value=localStorage.getItem(key);
+   entries.push({key,value});
+  }
+  entries.sort((a,b)=>a.key.localeCompare(b.key));
+  snapshot={createdAt:new Date().toISOString(),origin:location.origin,page:location.href,storage:'localStorage',entries};
+  report='Origin: '+location.origin+'\nKeys: '+entries.length+'\n'+entries.map(x=>x.key+' ('+(x.value===null?0:x.value.length)+' chars)').join('\n');
+  statusEl.textContent='Βρέθηκαν '+entries.length+' κλειδιά localStorage. Δεν έγινε καμία αλλαγή.';
+  resultsEl.innerHTML=entries.length?'<table><thead><tr><th>Κλειδί</th><th>Μέγεθος (χαρακτήρες)</th></tr></thead><tbody>'+entries.map(x=>'<tr><td>'+esc(x.key)+'</td><td>'+(x.value===null?0:x.value.length)+'</td></tr>').join('')+'</tbody></table>':'Δεν βρέθηκαν κλειδιά localStorage σε αυτόν τον χώρο.';
+  document.getElementById('backup').disabled=false;document.getElementById('copy').disabled=false;
+ }catch(e){statusEl.textContent='Αποτυχία ανάγνωσης: '+String(e);}
+}
+document.getElementById('scan').addEventListener('click',scan);
+document.getElementById('backup').addEventListener('click',()=>{
+ if(!snapshot)return;
+ const blob=new Blob([JSON.stringify(snapshot,null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='geom-localstorage-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+ statusEl.textContent='Το αντίγραφο ετοιμάστηκε για αποθήκευση στο iPhone. Φύλαξέ το ιδιωτικά.';
+});
+document.getElementById('copy').addEventListener('click',async()=>{
+ try{await navigator.clipboard.writeText(report);statusEl.textContent='Αντιγράφηκε η αναφορά κλειδιών (χωρίς τις τιμές).';}
+ catch(e){statusEl.textContent='Δεν επιτράπηκε η αντιγραφή. Μπορείς να στείλεις φωτογραφία του πίνακα.';}
+});
+</script></main></body></html>
