@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BetAnalytics Pro – Multi-DeVig Tracking (v19 Focused)</title>
+<title>BetAnalytics Pro – Multi-DeVig Tracking (v20 Final)</title>
 <style>
 * { margin: 0px; padding: 0px; box-sizing: border-box; }
 
@@ -309,7 +309,7 @@ tr.pending { background: rgba(255, 193, 7, 0.08); }
 <body>
 <div class="container">
 <h1>⚡ BetAnalytics Pro</h1>
-<div class="subtitle">Advanced Multi-Method Pinnacle Edge Tracking System · v19 Focused</div>
+<div class="subtitle">Advanced Multi-Method Pinnacle Edge Tracking System · v20</div>
 <!-- Tab Navigation -->
 <div class="tab-nav">
 <button class="tab-btn proportional-tab active" type="button">📊 Proportional Bets</button>
@@ -1103,6 +1103,41 @@ window.addEventListener('load', () => {
 })();
 </script>
 
+<style>
+.v20-tools{padding:10px 12px;margin:8px 0 12px;border:1px solid rgba(0,212,255,.3);border-radius:10px;background:rgba(0,212,255,.06)}
+.v20-tools input,.v20-tools select{width:100%;max-width:100%;padding:9px;margin:4px 0 8px;border-radius:7px;background:#14202a;color:white;border:1px solid #516575}
+.v20-group{grid-column:1/-1;font-weight:800;color:#00d4ff;border-bottom:1px solid rgba(0,212,255,.25);padding-top:10px}
+.v20-fav{background:transparent;color:#f7c74a;border:0;font-size:20px;padding:0 4px;cursor:pointer}
+.v20-tools small{opacity:.8}
+</style>
+<script>
+/* v20 sorted competition selector (favorites / most-used -> majors -> groups by sport).
+   Read-only against bet data, except explicit favorite star toggle. */
+(function(){'use strict';
+const FKEY='ba_v20_favorite_leagues';
+const extras=['Basketball Champions League','FIBA Europe Cup','WNBA','NCAA Basketball','EuroLeague Women','FIBA EuroBasket Women','FIBA Asia Cup','FIBA Americas','CONCACAF Champions Cup'];
+const groups=[['Football',/premier league|la liga|serie a|bundesliga|ligue 1|ucl|europa league|conference league|eredivisie|primeira liga|super league|premiership|pro league|super lig|cup|pokal|beker|copa|world cup|championship|division|liga mx|mls|brasileiro|libertadores|sudamericana|africa cup|caf |asian cup|afc |concacaf|nations league|qualifiers|friendlies|football|soccer|leagues cup|fa cup|serie b/i],['Basketball',/nba|wnba|euroleague|eurocup|basket|acb|lega a|bbl|lnb|fiba|eurobasket|ncaa basketball/i],['Tennis',/tennis|atp|wta|grand slams|davis cup|billie jean|united cup|challenger|itf/i],['Ice Hockey',/nhl|stanley cup|hockey/i],['American Football',/nfl|super bowl|ncaa football/i],['Baseball',/mlb|world series|baseball/i],['Other Sports',/.*/]];
+const big=['UCL','Premier League','La Liga','Bundesliga','Serie A','Europa League','Conference League','NBA','Euroleague','WNBA','Basketball Champions League','FIBA Europe Cup','Eurocup','Greek Basket League','Tennis ATP','Tennis WTA','Grand Slams','NFL','NHL','MLB'];
+function sport(n){if(/FIBA|Euroleague|Eurocup|WNBA|NBA|Basketball|Basket League|NCAA Basketball/i.test(n))return 'Basketball';if(/NFL|NCAA Football/i.test(n))return 'American Football';for(const [g,r] of groups){if(r.test(n))return g}return 'Other Sports'}
+function favorites(){try{let a=JSON.parse(localStorage.getItem(FKEY)||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
+function usage(){let m=new Map();try{for(const key of ['ba_dual_bets_prop_v1','ba_dual_bets_power_191seed_v2']){let arr=JSON.parse(localStorage.getItem(key)||'[]');if(Array.isArray(arr))for(const b of arr){if(b&&typeof b.league==='string')m.set(b.league,(m.get(b.league)||0)+1)}}}catch(e){}return m}
+const majors=new Set(big);
+function getPriority(names){const used=usage();let liked=new Set(favorites());let common=[...names].filter(n=>used.has(n)).sort((a,b)=>used.get(b)-used.get(a)||a.localeCompare(b)).slice(0,8);return {liked,common:new Set(common),used}}
+function section(n,p){return p.liked.has(n)?0:p.common.has(n)?1:majors.has(n)?2:3}
+function sortNames(a,b,p){let sa=section(a,p),sb=section(b,p);if(sa!==sb)return sa-sb;if(sa===1){let d=(p.used.get(b)||0)-(p.used.get(a)||0);if(d)return d}if(sa===3){let d=groups.findIndex(x=>x[0]===sport(a))-groups.findIndex(x=>x[0]===sport(b));if(d)return d}return a.localeCompare(b)}
+function addMissing(){for(const id of ['betLeagueProp','betLeaguePower','histLeague']){let e=document.getElementById(id);if(!e)continue;for(const n of extras)if(![...e.options].some(o=>o.value===n)){let o=new Option(n,n);e.add(o,e.querySelector('option[value="Other"]')||null)}}for(const id of ['leagueGridProp','leagueGridPower']){let g=document.getElementById(id);if(!g)continue;for(const n of extras){if([...g.querySelectorAll('label')].some(x=>x.textContent.trim()===n))continue;let item=document.createElement('div');item.className='league-item';let c=document.createElement('input');c.type='checkbox';c.id='v20_'+id+'_'+n.replace(/[^a-z0-9]/gi,'_');c.value=n;c.checked=!!document.getElementById(id==='leagueGridProp'?'allLeaguesProp':'allLeaguesPower')?.checked;let l=document.createElement('label');l.htmlFor=c.id;l.textContent=n;item.append(c,l);g.append(item)}}}
+function sectionsFor(names){let p=getPriority(names);let bins=new Map();let sorted=[...names].sort((a,b)=>sortNames(a,b,p));for(const n of sorted){const sec=section(n,p);const group=sec===0?'★ Favorites':sec===1?'Most-used':sec===2?'Major competitions':sport(n);if(!bins.has(group))bins.set(group,[]);bins.get(group).push(n)}return {bins,p}}
+function decorateSelect(id){let sel=document.getElementById(id);if(!sel)return;let val=sel.value;let names=[...new Set([...sel.options].map(o=>o.value).filter(n=>n&&n!=='Other'))];let {bins,p}=sectionsFor(names);sel.replaceChildren();for(const [group,ls] of bins){let og=document.createElement('optgroup');og.label=group;for(const n of ls)og.append(new Option((p.liked.has(n)?'★ ':'')+n,n));sel.append(og)}sel.append(new Option('Other / Add new…','Other'));if([...sel.options].some(o=>o.value===val))sel.value=val}
+function organizeGrid(id){let grid=document.getElementById(id);if(!grid)return;let items=[...grid.querySelectorAll(':scope > .league-item')];let map=new Map(items.map(it=>[it.querySelector('label')?.textContent.trim(),it]).filter(x=>x[0]));const {bins}=sectionsFor([...map.keys()]);grid.replaceChildren();for(const [group,ls] of bins){let head=document.createElement('div');head.className='v20-group';head.textContent=group;grid.append(head);for(const name of ls)grid.append(map.get(name))}}
+function drawTools(gridId){let grid=document.getElementById(gridId);if(!grid)return;let previous=document.getElementById('tools_'+gridId);if(previous)previous.remove();let bar=document.createElement('div');bar.id='tools_'+gridId;bar.className='v20-tools';let search=document.createElement('input');search.type='search';search.placeholder='Search competition…';search.setAttribute('aria-label','Search competition');let sportSel=document.createElement('select');sportSel.append(new Option('All sports',''));for(const [g] of groups)sportSel.append(new Option(g,g));let favSel=document.createElement('select');favSel.append(new Option('All competitions',''));favSel.append(new Option('Favorites only','favorites'));let hint=document.createElement('small');hint.textContent='Favorites / most-used first, then major competitions and sports. Filters do not alter saved bets.';bar.append(search,sportSel,favSel,hint);grid.before(bar);
+function filter(){let q=search.value.toLocaleLowerCase(),sp=sportSel.value,only=favSel.value==='favorites';for(const item of grid.querySelectorAll('.league-item')){let n=item.querySelector('label')?.textContent.trim()||'';item.style.display=(!q||n.toLocaleLowerCase().includes(q))&&(!sp||sport(n)===sp)&&(!only||favorites().includes(n))?'':'none'}for(const head of grid.querySelectorAll('.v20-group')){let p=head.nextElementSibling,show=false;while(p&&!p.classList.contains('v20-group')){if(p.classList.contains('league-item')&&p.style.display!=='none')show=true;p=p.nextElementSibling}head.style.display=show?'':'none'}}
+search.addEventListener('input',filter);sportSel.addEventListener('change',filter);favSel.addEventListener('change',filter);
+for(const item of grid.querySelectorAll('.league-item')){let n=item.querySelector('label')?.textContent.trim();if(!n)continue;let b=item.querySelector('button.v20-fav');if(!b){b=document.createElement('button');b.type='button';b.className='v20-fav';item.append(b)}b.setAttribute('aria-label','Toggle favorite '+n);b.textContent=favorites().includes(n)?'★':'☆';b.onclick=()=>{let a=favorites().filter(x=>x!==n);if(!favorites().includes(n))a.push(n);try{localStorage.setItem(FKEY,JSON.stringify(a))}catch(e){alert('Could not save favorites: '+e.message);return}for(const id of ['betLeagueProp','betLeaguePower','histLeague'])decorateSelect(id);for(const id of ['leagueGridProp','leagueGridPower']){organizeGrid(id);drawTools(id)}}}
+filter()}
+function run(){addMissing();for(const x of ['betLeagueProp','betLeaguePower','histLeague'])decorateSelect(x);for(const x of ['leagueGridProp','leagueGridPower']){organizeGrid(x);drawTools(x)}}
+window.addEventListener('load',()=>setTimeout(run,100));
+})();
+</script>
 </body>
 <script>
 (function(){
@@ -3187,6 +3222,82 @@ const addFromHistModal = el(addFromHistoryModalId);
   render('power');
   renderHistory();
 
+})();
+</script>
+<script>
+/* v20 backup/restore utility: explicit user action only; no automatic mutation. */
+(function(){
+'use strict';
+// Back up ONLY BetAnalytics keys; never export unrelated same-origin data.
+// Restore is restricted to ba_* keys.
+const isBetKey=k=>typeof k==='string' && /^ba_[A-Za-z0-9_]+$/.test(k);
+const allKeys=()=>Object.keys(localStorage).filter(isBetKey).sort();
+
+const REQUIRED=['ba_dual_bets_prop_v1','ba_dual_bets_power_191seed_v2','ba_dual_calc_history_v1'];
+const panel=document.createElement('section');panel.id='v20BackupPanel';
+panel.style.cssText='position:relative;margin:16px auto;padding:14px;max-width:850px;border:2px solid #7b8ca8;border-radius:12px;background:#101d32;color:white;font:14px system-ui;';
+panel.innerHTML='<strong>🔒 v20 Data Safety</strong><p>Backup saves your browser data as a JSON file. Restore is manual, validated, and replaces the listed data only after confirmation. Keep the backup outside Safari.</p><button type="button" id="v20BackupBtn">Download full backup</button> <button type="button" id="v20RestoreBtn">Review restore file</button><input type="file" id="v20RestoreFile" accept=".json,application/json" hidden><pre id="v20RestoreStatus" style="white-space:pre-wrap;word-break:break-word"></pre>';
+document.body.insertBefore(panel,document.body.firstChild);
+const status=document.getElementById('v20RestoreStatus');
+function snap(){return {format:'betanalytics-v20-storage-backup',createdAt:new Date().toISOString(),origin:location.origin,entries:allKeys().filter(k=>localStorage.getItem(k)!==null).map(k=>({key:k,value:localStorage.getItem(k)}))}}
+function download(obj,name){const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
+function parseFile(data){if(!data||!Array.isArray(data.entries)||data.entries.length>200)throw Error('Invalid backup: entries missing or too many');const map=new Map();for(const e of data.entries){if(!e||typeof e.key!=='string'||typeof e.value!=='string'||e.value.length>25*1024*1024||!isBetKey(e.key)||map.has(e.key))throw Error('Unexpected or duplicate storage key');try{JSON.parse(e.value)}catch{throw Error('Invalid JSON value for '+e.key)}map.set(e.key,e.value)}for(const k of REQUIRED){if(!map.has(k))throw Error('Required data missing: '+k);const v=JSON.parse(map.get(k));if(!Array.isArray(v))throw Error('Required data is not an array: '+k)}for(const k of ['ba_dual_bets_prop_v1','ba_dual_bets_power_191seed_v2']){const a=JSON.parse(map.get(k));if(a.some(x=>!x||typeof x!=='object'||Array.isArray(x)))throw Error('Invalid bet records: '+k);if(a.some(x=>x.id==null))throw Error('Missing bet ID: '+k);const ids=a.map(x=>String(x.id));if(new Set(ids).size!==ids.length)throw Error('Duplicate bet IDs: '+k)}return map}
+function count(map,k){return JSON.parse(map.get(k)).length}
+document.getElementById('v20BackupBtn').onclick=()=>{try{const s=snap();download(s,'betanalytics-v20-backup-'+new Date().toISOString().slice(0,10)+'.json');status.textContent='Backup download requested. Verify that the file was saved in Files before proceeding.'}catch(e){status.textContent='Backup failed: '+e.message}};
+document.getElementById('v20RestoreBtn').onclick=()=>document.getElementById('v20RestoreFile').click();
+document.getElementById('v20RestoreFile').onchange=async function(){try{const f=this.files[0];if(!f)return;if(f.size>25*1024*1024)throw Error('File exceeds 25 MB');const data=JSON.parse(await f.text());const map=parseFile(data);const current=snap();const currentMap=new Map(current.entries.map(e=>[e.key,e.value]));// Critical safety: do not drop any current bets or calculation history during restore.
+for(const key of REQUIRED){if(currentMap.has(key)){
+const live=JSON.parse(currentMap.get(key)), incoming=JSON.parse(map.get(key));
+if(incoming.length<live.length)throw Error('Backup has fewer records than browser for '+key+'. Restore blocked; use Edge patch instead.');
+if(key!=='ba_dual_calc_history_v1'){
+const srcIds=new Set(incoming.map(x=>String(x.id)));
+for(const bet of live){if(!srcIds.has(String(bet.id)))throw Error('Restore would remove bet ID '+bet.id+'. Blocked.');
+const candidate=incoming.find(x=>String(x.id)===String(bet.id));
+for(const k of ['date','league','odds','units','edge','result','live']){
+if(JSON.stringify(candidate[k])!==JSON.stringify(bet[k]))throw Error('Restore would change existing bet '+bet.id+' field '+k+'. Use Edge patch instead.');}
+}
+}else{const srcIds=new Set(incoming.map(x=>String(x.id)));for(const h of live){if(!srcIds.has(String(h.id)))throw Error('Restore would remove calculation history '+h.id+'. Blocked.')}}
+}}
+const message='RESTORE PREVIEW (no changes yet)\nProportional bets: '+count(map,REQUIRED[0])+' (currently '+(currentMap.has(REQUIRED[0])?count(currentMap,REQUIRED[0]):0)+')\nPower bets: '+count(map,REQUIRED[1])+'\nCalculation history: '+count(map,REQUIRED[2])+'\nKeys to replace: '+map.size+'\nThis will REPLACE existing browser data for these keys. Continue?';status.textContent=message;if(!confirm(message))return;download(current,'betanalytics-PRE-RESTORE-backup-'+new Date().toISOString().slice(0,10)+'.json');if(!confirm('STOP: Confirm the PRE-RESTORE backup was actually saved in your Files app. Restore and reload now?'))return;const original=new Map([...map.keys()].map(k=>[k,localStorage.getItem(k)]));try{for(const [k,v] of map)localStorage.setItem(k,v);for(const [k,v] of map){if(localStorage.getItem(k)!==v)throw Error('Storage verification failed: '+k)}}catch(e){for(const [k,v] of original){if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}throw Error('Restore failed; rollback attempted: '+e.message)}status.textContent='Restore written and verified. Reloading.';location.reload()}catch(e){status.textContent='Restore cancelled/failed: '+e.message}finally{this.value=''}};
+})();
+</script>
+<script>
+/* v20 recovered edges import. Never writes unless a user chooses a file and confirms.
+   Only changes three edge fields, corresponding fair odds, Shin metadata and provenance
+   for records whose immutable ID/date/league/odds/proportional edge match exactly. */
+(function(){'use strict';
+const propKey='ba_dual_bets_prop_v1';
+const host=document.getElementById('v20BackupPanel');if(!host)return;
+const row=document.createElement('div');row.style.cssText='margin-top:10px;border-top:1px solid #60738b;padding-top:10px';
+row.innerHTML='<strong>🔧 Verified historic Edge recovery</strong><p>Apply the separate 184-Edge repair file. Existing bets, results, history and POWER tracker are preserved. 168 entries were cross-checked against a CSV; 16 were recovered from calculator history. No automatic repair.</p><button type="button" id="v20RepairBtn">Import / review Edge patch</button><input type="file" id="v20RepairFile" accept=".json,application/json" hidden><pre id="v20RepairStatus" style="white-space:pre-wrap;word-break:break-word"></pre><div id="v20DataHealth" role="status" aria-live="polite"></div>';
+host.append(row);
+const status=document.getElementById('v20RepairStatus'), health=document.getElementById('v20DataHealth');
+function inspect(){try{let a=JSON.parse(localStorage.getItem(propKey)||'[]');let power=JSON.parse(localStorage.getItem('ba_dual_bets_power_191seed_v2')||'[]');let h=JSON.parse(localStorage.getItem('ba_dual_calc_history_v1')||'[]');const ok=(b,k)=>b&&typeof b[k]==='number'&&Number.isFinite(b[k]);let full=a.filter(b=>['edgeProp','edgePower','edgeShin','edgeOOEPC'].every(k=>ok(b,k))).length;health.textContent='Current browser: '+a.length+' proportional bets · '+power.length+' power bets · '+h.length+' calculations · '+full+' bets with all four Edges.'}catch(e){health.textContent='Could not read current storage: '+e.message}}
+function snap(){let entries=Object.keys(localStorage).filter(k=>/^ba_[A-Za-z0-9_]+$/.test(k)).sort().map(k=>({key:k,value:localStorage.getItem(k)}));return {format:'betanalytics-v20-storage-backup',createdAt:new Date().toISOString(),origin:location.origin,entries}}
+function download(obj,name){let blob=new Blob([JSON.stringify(obj)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
+const editableFields=['edgePower','edgeShin','edgeOOEPC','fairProp','fairPower','fairShin','fairOOEPC','shinMethod','shinStatus','edgeSourceRecovered','edgeRecoveryAudit','edgeRecoveryHistoryId'];
+function makeRepaired(data){if(!data||data.format!=='betanalytics-v20-edges-patch'||data.version!==1||!Array.isArray(data.patches)||data.patches.length!==184)throw Error('Unexpected Edge patch format or count (must be 184)');
+const source=localStorage.getItem(propKey);if(!source)throw Error('No current proportional tracker found. No changes made.');let bets=JSON.parse(source);if(!Array.isArray(bets))throw Error('Current bet storage is not an array');
+const ids=new Map();for(const b of bets){if(!b||typeof b.id!=='string'||ids.has(b.id))throw Error('Missing/duplicate current bet IDs');ids.set(b.id,b)}
+const changed=new Set();let update=0;
+for(const patch of data.patches){if(!patch||typeof patch.id!=='string'||changed.has(patch.id)||typeof patch.fields!=='object'||!patch.fields)throw Error('Invalid/duplicate patch ID');changed.add(patch.id);const b=ids.get(patch.id);if(!b)throw Error('Bet ID not found: '+patch.id+' (nothing changed)');
+if(b.date!==patch.date||b.league!==patch.league||Math.abs(Number(b.odds)-Number(patch.odds))>1e-9||Math.abs(Number(b.edgeProp??b.edge)-Number(patch.edgeProp))>1e-8)throw Error('Bet details changed for '+patch.id+' (nothing changed)');
+for(const [k,v] of Object.entries(patch.fields)){if(!editableFields.includes(k))throw Error('Unexpected field: '+k);if(['edgePower','edgeShin','edgeOOEPC','fairProp','fairPower','fairShin','fairOOEPC'].includes(k)&&!(typeof v==='number'&&Number.isFinite(v)))throw Error('Invalid numeric field '+k);if(!['edgePower','edgeShin','edgeOOEPC','fairProp','fairPower','fairShin','fairOOEPC'].includes(k)&&typeof v!=='string')throw Error('Invalid text field '+k)}
+for(const key of ['edgePower','edgeShin','edgeOOEPC'])if(typeof patch.fields[key]!=='number')throw Error('Missing '+key+' for '+patch.id);
+Object.assign(b,patch.fields);update++;}
+return {source,updated:JSON.stringify(bets),before:bets.length,changed:update}
+}
+document.getElementById('v20RepairBtn').onclick=()=>document.getElementById('v20RepairFile').click();
+document.getElementById('v20RepairFile').onchange=async function(){try{const file=this.files[0];if(!file)return;if(file.size>1024*1024)throw Error('Patch exceeds 1 MB');const data=JSON.parse(await file.text());const result=makeRepaired(data);let preview='EDGE REPAIR PREVIEW — no changes yet\nCurrent bets: '+result.before+'\nMatched IDs: '+result.changed+' / 184\nSource: 168 CSV-verified (2 decimals); 16 history-reconstructed.\nOther records, results, stakes, Power tracker, and history: not modified.';status.textContent=preview;
+if(!confirm(preview+'\n\nDownload safety backup and continue?'))return;
+download(snap(),'betanalytics-PRE-EDGE-PATCH-'+new Date().toISOString().slice(0,10)+'.json');
+if(!confirm('Important: Check that the PRE-EDGE-PATCH backup was saved in Files. Apply the repair now?'))return;
+const live=localStorage.getItem(propKey);if(live!==result.source)throw Error('Data changed since preview. Cancelled, no write.');
+try{localStorage.setItem(propKey,result.updated)}catch(e){throw Error('Browser storage rejected Edge repair (old data unchanged): '+e.message)}
+if(localStorage.getItem(propKey)!==result.updated){try{localStorage.setItem(propKey,result.source)}catch(e){}throw Error('Storage verification failed; rollback attempted')}
+status.textContent='Applied and verified '+result.changed+' Edge updates. Refreshing…';location.reload();
+}catch(e){status.textContent='REPAIR NOT APPLIED: '+e.message}finally{this.value=''}};
+inspect();
 })();
 </script>
 </html>
